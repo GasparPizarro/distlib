@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Distlib</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+		<script src="js/jquery.event.gevent.js"></script> 
+		<script src="https://use.fontawesome.com/cc30055263.js"></script>
+		<script src="js/distlib.js"></script>
+		<script src="js/services.js"></script>
+		<script src="js/menu.js"></script>
+		<script src="js/search.js"></script>
+		<script src="js/books.js"></script>
+		<script src="js/book_detail.js"></script>
+		<script src="js/debts.js"></script>
+		<script src="js/loans.js"></script>
+		<script src="js/user.js"></script>
+		<script src="js/shell.js"></script>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/w3.css">
+		<link rel="stylesheet" href="css/css.css">
+		<script>
+			$(function() {distlib.initModule($('#distlib'));});
+		</script>
+		<style>
+			#toast {
+				display: none;
+				min-width: 200px;
+				margin-left: -100px;
+				position: fixed;
+				z-index: 1;
+				left: 50%;
+				bottom: 30px;
+			}
+		</style>
+	</head>
+	<body class="w3-light-grey" id="distlib">
+	</body>
+</html>
