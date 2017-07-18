@@ -73,7 +73,7 @@ def book_search():
 	query = request.args["q"]
 	limit = request.args.get("limit", 10)
 	offset = request.args.get("offset", 0)
-	books = query_db("select id, owner, title, author, year from book where title like ? or author like ? limit ? offset ?", ("%" + query + "%", "%" + query + "%", limit, offset))
+	books = query_db("select id, owner, title, author, year from book where title like ? or author like ? group by title limit ? offset ?", ("%" + query + "%", "%" + query + "%", limit, offset))
 	return jsonify([{
 		"id": id,
 		"owner": owner,
@@ -88,14 +88,14 @@ def book_search():
 @environment_user
 @login_required
 def debts():
-	id, book, start, span, status = query_db("select id, book, start, span, status from loan where recipient = ?", (g.user,))
+	debts = query_db("select id, book, start, span, status from loan where recipient = ? and status = 2", (g.user,))
 	return jsonify([{
-		"id": id,
-		"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (book,), one=True))},
-		"lender": query_db("select owner from book where id = ?", (book,), one=True)[0],
-		"start": start,
-		"span": span,
-		"status": status
+		"id": debt[0],
+		"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (debt[1],), one=True))},
+		"lender": query_db("select owner from book where id = ?", (debt[1],), one=True)[0],
+		"start": debt[2],
+		"span": debt[3],
+		"status": debt[4]
 	}
 	for debt in debts])
 

@@ -32,12 +32,14 @@ distlib.books = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var more_books_button = $('<div class="w3-center" id="book-pad" style="height: 75px"><button id="more-books" type="button" class="w3-button w3-blue">Más</button></div>').click(function(event) {
+	var more_books_button = $('<div class="w3-center" id="book-pad" style="height: 75px"><button id="more-books" type="button" class="w3-button w3-blue">Más</button></div>');
+
+	var on_more_books = function(event) {
 		event.preventDefault();
-		$(event.target).addClass("w3-disabled");
+		$(event.target).prop("disabled", true);
 		distlib.shell.set_loading(true);
 		$.when(distlib.services.get_books(page_size, book_count)).then(function(books) {
-			$(event.target).removeClass("w3-disabled");
+			$(event.target).prop("disabled", false);
 			distlib.shell.set_loading(false);
 			if (books.length != 0)
 				add_books_to_view($("#books-list"), books);
@@ -45,12 +47,12 @@ distlib.books = (function() {
 				$("#more-books").remove();
 			}
 		);
-	});
+	}
 
 	var on_add_book = function(event) {
 		event.preventDefault();
 		distlib.shell.set_loading(true);
-		$.when(distlib.services.add_book(objectifyForm($("#add-book-form").serializeArray()))).then(function(result) {
+		$.when(distlib.services.add_book($("#add-book-form").serialize())).then(function(result) {
 			distlib.shell.set_loading(false);
 			$("#add-book-form")[0].reset()
 			set_display_book_modal(false);
@@ -75,10 +77,10 @@ distlib.books = (function() {
 				$("#books-list").replaceWith('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
 			else {
 				add_books_to_view($("#books-list"), books);
+				if (books.length >= page_size)
+					$("#books-list").after(more_books_button.click(on_more_books));
 			}
 		});
-		if ($("#books-list").length > 0)
-			$("#books-list").after(more_books_button);
 		$("#show-book-modal").click(function(event) {set_display_book_modal(true)});
 		$("#close-book-modal").click(function(event) {set_display_book_modal(false)});
 		$("#add-book").click(on_add_book);
@@ -104,13 +106,6 @@ distlib.books = (function() {
 			$container.append(element);
 		}
 	}
-
-	var objectifyForm = function(formArray) {//serialize data function
-		var returnArray = {};
-		for (var i = 0; i < formArray.length; i = i + 1)
-			returnArray[formArray[i]['name']] = formArray[i]['value'];
-		return returnArray;
-	};
 
 	return {
 		render: render,
