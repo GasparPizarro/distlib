@@ -51,11 +51,7 @@ distlib.books = (function() {
 	var on_add_book = function(event) {
 		event.preventDefault();
 		$.when(distlib.services.add_book($("#add-book-form").serialize())).then(function(result) {
-			$("#add-book-form")[0].reset()
-			set_display_book_modal(false);
-			if ($("#empty-books-list").length)
-				$("#empty-books-list").replaceWith('<ul class="w3-ul" id="books-list"></ul>');
-			add_books_to_view($("#books-list"), [result]);
+			$.gevent.publish("hashchange");
 		})
 	};
 

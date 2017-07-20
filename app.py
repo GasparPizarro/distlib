@@ -18,7 +18,7 @@ app = Flask(__name__)
 def books():
 	limit = request.args.get("limit", 10)
 	offset = request.args.get("offset", 0)
-	books = query_db("select id, title, author, year from book where owner = ? order by title limit ? offset ?", (g.user, limit, offset))
+	books = query_db("select id, title, author, year from book where owner = ? order by title collate nocase limit ? offset ?", (g.user, limit, offset))
 	return jsonify([{
 		"id": id,
 		"title": title,
