@@ -39,6 +39,7 @@ distlib.loans = (function() {
 		var they_owe_me = $("#they-owe-me");
 		var i_owe_them = $("#i-owe-them");
 		var new_loans = $("#new-loans");
+		distlib.shell.set_loading(true);
 		$.when(distlib.services.get_loans()).then(function(loans) {
 			for (var i = 0; i < loans.length; i = i + 1) {
 				if (loans[i].status == 0)
@@ -46,56 +47,67 @@ distlib.loans = (function() {
 				else {
 					var start_date = new Date(loans[i].start);
 					var end_date = new Date(loans[i].start);
-					end_date.setDate(start_date.getDate() + loans[i].span);
-					they_owe_me.append('<tr id="' + loans[i].id + '"><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><a href="#" class="finish-loan"><i class="fa fa-check"></i></a></td></tr>');
+					end_date.setDate(start_date.getDate() + loans[i].span * 7);
+					they_owe_me.append('<tr id="' + loans[i].id + '"><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td' + (end_date < new Date() ? ' class="w3-text-red"' : '') + '>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><a href="#" class="finish-loan"><i class="fa fa-check"></i></a></td></tr>');
 				}
 			}
-			$(".reject-loan").click(function(event) {
-				event.preventDefault();
-				var loan_id = $(event.target).closest("tr").attr("id")
-				console.log("rejecting loan");
-				$.ajax({
-					url: distlib.services.get_api_host() + "/loans/" + loan_id + "/reject",
-					type: "POST",
-					success: function() {
-						$(event.target).closest("tr").remove();
-					}
-				});
-			});
-			$(".accept-loan").click(function(event) {
-				event.preventDefault();
-				var loan_id = $(event.target).closest("tr").attr("id");
-				console.log("Accepting loan " + loan_id)
-				$.ajax({
-					url: distlib.services.get_api_host() + "/loans/" + loan_id + "/accept",
-					type: "POST",
-					success: function(loan) {
-						$(event.target).closest("tr").remove();
-						var start_date = new Date(loan.start);
-						var end_date = new Date(loan.start);
-						end_date.setDate(start_date.getDate() + loan.span);
-						they_owe_me.append('<tr id="' + loan.id + '"><td>' + loan.book.title + '</td><td>' + loan.recipient + '</td><td>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><a href="#" class="finish-loan"><i class="fa fa-check"></i></a></td></tr>');
-					}
-				});
-			});
-			$(".resolve-loan").click(function(event) {
-				event.preventDefault();
-				var loan_id = $(event.target).closest("tr").attr("id")
-				console.log("Resolving loan " + loan_id)
-			});
-			$(".finish-loan").click(function(event) {
-				event.preventDefault();
-				var loan_id = $(event.target).closest("tr").attr("id");
-				console.log("Finishing loan " + loan_id)
-				$.ajax({
-					url: distlib.services.get_api_host() + "/loans/" + loan_id + "/finish",
-					type: "POST",
-					success: function(data) {
-						$(event.target).closest("tr").remove();
-						console.log("loan has finished");
-					}
-				})
-			});
+			distlib.shell.set_loading(false);
+			$(".reject-loan").click();
+			$(".accept-loan").click(on_accept_loan);
+			$(".resolve-loan").click(on_resolve_loan);
+			$(".finish-loan").click(on_finish_loan);
+		});
+	};
+
+	var on_reject_loan = function(event) {
+		event.preventDefault();
+		var loan_id = $(event.target).closest("tr").attr("id")
+		console.log("rejecting loan");
+		distlib.shell.set_loading(true);
+		$.ajax({
+			url: distlib.services.get_api_host() + "/loans/" + loan_id + "/reject",
+			type: "POST",
+			success: function() {
+				$(event.target).closest("tr").remove();
+				distlib.shell.set_loading(false);
+			}
+		});
+	};
+
+	var on_accept_loan = function(event) {
+		event.preventDefault();
+		var loan_id = $(event.target).closest("tr").attr("id");
+		console.log("Accepting loan " + loan_id)
+		$.ajax({
+			url: distlib.services.get_api_host() + "/loans/" + loan_id + "/accept",
+			type: "POST",
+			success: function(loan) {
+				$(event.target).closest("tr").remove();
+				var start_date = new Date(loan.start);
+				var end_date = new Date(loan.start);
+				end_date.setDate(start_date.getDate() + loan.span * 7);
+				they_owe_me.append('<tr id="' + loan.id + '"><td>' + loan.book.title + '</td><td>' + loan.recipient + '</td><td>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><a href="#" class="finish-loan"><i class="fa fa-check"></i></a></td></tr>');
+			}
+		});
+	};
+
+	var on_resolve_loan  = function(event) {
+		event.preventDefault();
+		var loan_id = $(event.target).closest("tr").attr("id")
+		console.log("Resolving loan " + loan_id)
+	};
+
+	var on_finish_loan = function(event) {
+		event.preventDefault();
+		var loan_id = $(event.target).closest("tr").attr("id");
+		console.log("Finishing loan " + loan_id)
+		$.ajax({
+			url: distlib.services.get_api_host() + "/loans/" + loan_id + "/finish",
+			type: "POST",
+			success: function(data) {
+				$(event.target).closest("tr").remove();
+				console.log("loan has finished");
+			}
 		});
 	};
 

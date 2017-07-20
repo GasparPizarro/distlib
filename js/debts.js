@@ -27,8 +27,8 @@ distlib.debts = (function() {
 			for (var i = 0; i < debts.length; i = i + 1) {
 				var start_date = new Date(debts[i].start);
 				var end_date = new Date(debts[i].start);
-				end_date.setDate(start_date.getDate() + debts[i].span);
-				i_owe_them.append('<tr id="' + debts[i].id + '"><td>' + debts[i].book.title + '</td><td>' + debts[i].lender + '</td><td>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td></tr>');
+				end_date.setDate(start_date.getDate() + debts[i].span * 7);
+				i_owe_them.append('<tr id="' + debts[i].id + '"><td>' + debts[i].book.title + '</td><td>' + debts[i].lender + '</td><td' + (end_date < new Date() ? ' class="w3-text-red"' : '') + '>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td></tr>');
 			}
 		});
 	};

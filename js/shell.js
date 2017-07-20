@@ -111,6 +111,8 @@ distlib.shell = (function() {
 
 	var initModule = function($container) {
 		$(window).bind("hashchange", routing);
+		$(window).ajaxStart(function() {set_loading(true)});
+		$(window).ajaxComplete(function() {set_loading(false)});
 		window.onpopstate = function(event) {
 			$.gevent.publish('hashchange');
 		};

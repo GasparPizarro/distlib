@@ -11,6 +11,7 @@ distlib.books = (function() {
 		+ '<div id="module" class="w3-container">'
 			+ '<ul class="w3-ul" id="books-list">'
 			+ '</ul>'
+			+ '<div class="w3-center" id="book-pad" style="height: 75px"></div>'
 			+ '<button id="show-book-modal" class="w3-button w3-black w3-circle" style="padding: 20px; position: fixed; z-index: 1; right: 1em; bottom: 1em;"><i class="fa fa-plus fa-fw"></i></button>'
 		+ '</div>'
 		+ '<div id="book-modal" class="w3-modal w3-animate-opacity">'
@@ -32,15 +33,13 @@ distlib.books = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var more_books_button = $('<div class="w3-center" id="book-pad" style="height: 75px"><button id="more-books" type="button" class="w3-button w3-blue">Más</button></div>');
+	var more_books_button = '<button id="more-books" type="button" class="w3-button w3-blue">Más</button>';
 
 	var on_more_books = function(event) {
 		event.preventDefault();
 		$(event.target).prop("disabled", true);
-		distlib.shell.set_loading(true);
 		$.when(distlib.services.get_books(page_size, book_count)).then(function(books) {
 			$(event.target).prop("disabled", false);
-			distlib.shell.set_loading(false);
 			if (books.length != 0)
 				add_books_to_view($("#books-list"), books);
 			if (books.length < page_size)
@@ -51,9 +50,7 @@ distlib.books = (function() {
 
 	var on_add_book = function(event) {
 		event.preventDefault();
-		distlib.shell.set_loading(true);
 		$.when(distlib.services.add_book($("#add-book-form").serialize())).then(function(result) {
-			distlib.shell.set_loading(false);
 			$("#add-book-form")[0].reset()
 			set_display_book_modal(false);
 			if ($("#empty-books-list").length)
@@ -69,16 +66,15 @@ distlib.books = (function() {
 
 	var render = function($container) {
 		$container.html(main_html);
-		$("close-book-form").click(function(event) {$("close-book-modal").css("display", "none")});
-		distlib.shell.set_loading(true);
+		var books_list = $("#books-list");
+		var book_pad = $("#book-pad");
 		$.when(distlib.services.get_books()).then(function(books) {
-			distlib.shell.set_loading(false);
 			if (books.length == 0)
-				$("#books-list").replaceWith('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
+				books_list.replaceWith('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
 			else {
-				add_books_to_view($("#books-list"), books);
+				add_books_to_view(books_list, books);
 				if (books.length >= page_size)
-					$("#books-list").after(more_books_button.click(on_more_books));
+					book_pad.append($(more_books_button).click(on_more_books));
 			}
 		});
 		$("#show-book-modal").click(function(event) {set_display_book_modal(true)});

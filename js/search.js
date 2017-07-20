@@ -10,6 +10,7 @@ distlib.search = (function() {
 	var main_html = String()
 		+ '<div class="w3-container">'
 			+ '<input id="search-box" class="w3-input w3-margin-top" type="text">'
+			+ '<div class="w3-center" id="book-pad" style="height: 75px">'
 		+ '</div>';
 
 	var add_books_to_view = function($container, books) {
@@ -31,15 +32,13 @@ distlib.search = (function() {
 		}
 	};
 
-	var more_books_button = $('<div class="w3-center" id="book-pad" style="height: 75px"><button id="more-books" type="button" class="w3-button w3-blue">Más</button></div>');
+	var more_books_button = $('<button id="more-books" type="button" class="w3-button w3-blue">Más</button>');
 
 	var on_more_books = function(event) {
 		event.preventDefault();
-		$(event.target).addClass("w3-disabled");
-		distlib.shell.set_loading(true);
+		$(event.target).prop("disabled", true);
 		$.when(distlib.services.search($("#search-box").val(), page_size, book_count)).then(function(books) {
-			$(event.target).removeClass("w3-disabled");
-			distlib.shell.set_loading(false);
+			$(event.target).prop("disabled", false);
 			if (books.length != 0)
 				add_books_to_view($("#books-list"), books);
 			if (books.length < page_size)
@@ -66,17 +65,18 @@ distlib.search = (function() {
 
 	var search = function(query) {
 		history.pushState({}, null, window.location.hash + '?q=' + query);
-		distlib.shell.set_loading(true);
-		$("#search-box").nextAll().remove();
+		if ($("#books-list").length != 0)
+			$("#books-list").remove();
+		if ($("#more-books").length != 0)
+			$("#more-books").remove();
 		$.when(distlib.services.search(query)).then(function(books) {
-			distlib.shell.set_loading(false);
 			if (books.length == 0)
 				$("#search-box").after('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
 			else {
 				$("#search-box").after('<ul class="w3-ul" id="books-list"></ul>');
 				add_books_to_view($("#books-list"), books);
 				if (books.length >= page_size)
-					$("#books-list").after(more_books_button.click(on_more_books));
+					$("#book-pad").append(more_books_button.click(on_more_books));
 			}
 			if (books.length != 0) {
 				$(".search-result").click(function(event) {
