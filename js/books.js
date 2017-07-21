@@ -52,6 +52,7 @@ distlib.books = (function() {
 		event.preventDefault();
 		$.when(distlib.services.add_book($("#add-book-form").serialize())).then(function(result) {
 			$.gevent.publish("hashchange");
+			distlib.shell.toast("Se ha agregado el libro");
 		})
 	};
 

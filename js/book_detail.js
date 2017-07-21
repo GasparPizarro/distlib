@@ -35,7 +35,6 @@ distlib.book_detail = (function() {
 			+ '</div>'
 		+ '</div>';
 
-
 	var render = function($container, params) {
 		$container.html(main_html);
 		target_node = $container;
@@ -64,6 +63,7 @@ distlib.book_detail = (function() {
 				$("#delete-book").click(function(event) {
 					event.preventDefault();
 					$.when(distlib.services.delete_book(params.id)).then(function(result) {
+						distlib.shell.toast("Se ha eliminado el libro");
 						history.pushState({}, null, "mis_libros");
 						$(window).trigger('hashchange');
 					})
