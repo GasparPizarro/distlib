@@ -112,10 +112,9 @@ distlib.shell = (function() {
 	var initModule = function($container) {
 		$(window).bind("hashchange", routing);
 		$(window).ajaxStart(function() {set_loading(true)});
-		$(window).ajaxComplete(function() {set_loading(false)});
-		window.onpopstate = function(event) {
-			$.gevent.publish('hashchange');
-		};
+		$(window).ajaxStop(function() {set_loading(false)});
+		$(window).bind("popstate", function() {$.gevent.publish('hashchange')});
+		
 		$.gevent.subscribe($("#distlib"), "logout", function(event) {
 			$container.html(login_html);
 			$.gevent.subscribe($('#id01'), 'bad-login', function(event) {
