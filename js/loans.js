@@ -16,6 +16,8 @@ distlib.loans = (function() {
 								+ '<th></th>'
 							+ '</tr>'
 						+ '</thead>'
+						+ '<tbody>'
+						+ '</tbody>'
 					+ '</table>'
 				+ '</div>'
 				+ '<div class="w3-col l4">'
@@ -29,33 +31,47 @@ distlib.loans = (function() {
 								+ '<th></th>'
 							+ '</tr>'
 						+ '</thead>'
+						+ '<tbody>'
+						+ '</tbody>'
 					+ '</table>'
 				+ '</div>'
 			+ '</div>'
-		+ '</div>'
+		+ '</div>';
+
+	var they_owe_me;
+
+	var new_loans;
+
+	var clear_loans = function() {
+		new_loans.find("tbody tr").remove();
+		they_owe_me.find("tbody tr").remove();
+	}
+
+	var load_loans = function(loans) {
+		for (var i = 0; i < loans.length; i = i + 1) {
+			if (loans[i].status == 0)
+				new_loans.append('<tr id=' + loans[i].id + '><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td class="w3-center">' + loans[i].span + '</td><td><a href="#" class="accept-loan"><i class="fa fa-check"></i></a> <a href="#" class="reject-loan"><i class="fa fa-times"></i></a></td></tr>')
+			else {
+				var start_date = new Date(loans[i].start);
+				var end_date = new Date(loans[i].start);
+				end_date.setDate(start_date.getDate() + loans[i].span * 7);
+				they_owe_me.append('<tr id="' + loans[i].id + '"><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td' + (end_date < new Date() ? ' class="w3-text-red"' : '') + '>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><a href="#" class="finish-loan"><i class="fa fa-check"></i></a></td></tr>');
+			}
+		}
+		$(".reject-loan").click();
+		$(".accept-loan").click(on_accept_loan);
+		$(".resolve-loan").click(on_resolve_loan);
+		$(".finish-loan").click(on_finish_loan);
+	};
 	
 	var render = function($container) {
 		$container.html(main_html);
-		var they_owe_me = $("#they-owe-me");
-		var i_owe_them = $("#i-owe-them");
-		var new_loans = $("#new-loans");
-		distlib.shell.set_loading(true);
+		they_owe_me = $("#they-owe-me");
+		i_owe_them = $("#i-owe-them");
+		new_loans = $("#new-loans");
 		$.when(distlib.services.get_loans()).then(function(loans) {
-			for (var i = 0; i < loans.length; i = i + 1) {
-				if (loans[i].status == 0)
-					new_loans.append('<tr id=' + loans[i].id + '><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td class="w3-center">' + loans[i].span + '</td><td><a href="#" class="accept-loan"><i class="fa fa-check"></i></a> <a href="#" class="reject-loan"><i class="fa fa-times"></i></a></td></tr>')
-				else {
-					var start_date = new Date(loans[i].start);
-					var end_date = new Date(loans[i].start);
-					end_date.setDate(start_date.getDate() + loans[i].span * 7);
-					they_owe_me.append('<tr id="' + loans[i].id + '"><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td' + (end_date < new Date() ? ' class="w3-text-red"' : '') + '>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><a href="#" class="finish-loan"><i class="fa fa-check"></i></a></td></tr>');
-				}
-			}
-			distlib.shell.set_loading(false);
-			$(".reject-loan").click();
-			$(".accept-loan").click(on_accept_loan);
-			$(".resolve-loan").click(on_resolve_loan);
-			$(".finish-loan").click(on_finish_loan);
+			clear_loans();
+			load_loans(loans);
 		});
 	};
 
@@ -63,13 +79,11 @@ distlib.loans = (function() {
 		event.preventDefault();
 		var loan_id = $(event.target).closest("tr").attr("id")
 		console.log("rejecting loan");
-		distlib.shell.set_loading(true);
 		$.ajax({
 			url: distlib.services.get_api_host() + "/loans/" + loan_id + "/reject",
 			type: "POST",
 			success: function() {
 				$(event.target).closest("tr").remove();
-				distlib.shell.set_loading(false);
 			}
 		});
 	};

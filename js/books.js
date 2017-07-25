@@ -35,6 +35,10 @@ distlib.books = (function() {
 
 	var more_books_button = '<button id="more-books" type="button" class="w3-button w3-blue">Más</button>';
 
+	var book_pad;
+
+	var books_list;
+
 	var on_more_books = function(event) {
 		event.preventDefault();
 		$(event.target).prop("disabled", true);
@@ -61,22 +65,32 @@ distlib.books = (function() {
 		$("#book-modal").css("display", status ? "block" : "none");
 	};
 
-	var render = function($container) {
-		$container.html(main_html);
-		var books_list = $("#books-list");
-		var book_pad = $("#book-pad");
-		$.when(distlib.services.get_books()).then(function(books) {
-			if (books.length == 0)
-				books_list.replaceWith('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
-			else {
-				add_books_to_view(books_list, books);
-				if (books.length >= page_size)
-					book_pad.append($(more_books_button).click(on_more_books));
-			}
-		});
+	var load_books = function(books) {
+		if (books.length == 0)
+			books_list.replaceWith('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
+		else {
+			add_books_to_view(books_list, books);
+			if (books.length >= page_size)
+				book_pad.append($(more_books_button).click(on_more_books));
+		}
 		$("#show-book-modal").click(function(event) {set_display_book_modal(true)});
 		$("#close-book-modal").click(function(event) {set_display_book_modal(false)});
 		$("#add-book").click(on_add_book);
+	}
+	
+	var clear_books = function() {
+		books_list.empty();
+		$("#more-books").remove();
+	}
+
+	var render = function($container) {
+		$container.html(main_html);
+		books_list = $("#books-list");
+		book_pad = $("#book-pad");
+		$.when(distlib.services.get_books()).then(function(books) {
+			clear_books();
+			load_books(books);
+		});
 	};
 
 	var add_books_to_view = function($container, books) {
@@ -84,7 +98,7 @@ distlib.books = (function() {
 		for (var i = 0; i < books.length; i = i + 1) {
 			var element = $('<li/>').append(
 				$('<p/>').append(
-					$('<a href="/libros?id=' + books[i].id + '"/>').text(books[i].title).click(function(event) {
+					$('<a href="/libros/' + books[i].id + '"/>').text(books[i].title).click(function(event) {
 						event.preventDefault();
 						console.log(event.target.getAttribute("href"));
 						history.pushState({}, null, event.target.getAttribute("href"));

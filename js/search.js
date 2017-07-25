@@ -18,7 +18,7 @@ distlib.search = (function() {
 		for (var i = 0; i < books.length; i = i + 1) {
 			var element = $('<li/>').append(
 				$('<p/>').append(
-					$('<a href="/libros?id=' + books[i].id + '"/>').text(books[i].title).click(function(event) {
+					$('<a href="/libros/' + books[i].id + '"/>').text(books[i].title).click(function(event) {
 						event.preventDefault();
 						console.log(event.target.getAttribute("href"));
 						history.pushState({}, null, event.target.getAttribute("href"));
@@ -47,12 +47,12 @@ distlib.search = (function() {
 		);
 	}
 
-	var render = function($container, params) {
-		console.log(params);
+	var render = function($container, path_parameters, query_parameters) {
+		var query = query_parameters.q;
 		$container.html(main_html);
-		if (params.q || params.q == "") {
-			$("#search-box").val(params.q);
-			search(params.q);
+		if (query || query == "") {
+			$("#search-box").val(query);
+			search(query);
 		}
 		$("#search-box").keyup(
 			function (event) {

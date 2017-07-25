@@ -35,12 +35,13 @@ distlib.book_detail = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var render = function($container, params) {
+	var render = function($container, path_parameters, query_parameters) {
+		var book_id = path_parameters[0];
 		$container.html(main_html);
 		target_node = $container;
-		if (!params.id)
+		if (!book_id)
 			return;
-		$.when(distlib.services.get_book(params.id)).then(function(book) {
+		$.when(distlib.services.get_book(book_id)).then(function(book) {
 			var is_mine = book.owner == distlib.user.get_username();
 			$("#book-title").html(book.title);
 			$("#book-author").html(book.author);
@@ -62,9 +63,9 @@ distlib.book_detail = (function() {
 				});
 				$("#delete-book").click(function(event) {
 					event.preventDefault();
-					$.when(distlib.services.delete_book(params.id)).then(function(result) {
+					$.when(distlib.services.delete_book(book_id)).then(function(result) {
 						distlib.shell.toast("Se ha eliminado el libro");
-						history.pushState({}, null, "mis_libros");
+						history.pushState({}, null, "/libros");
 						$(window).trigger('hashchange');
 					})
 				});

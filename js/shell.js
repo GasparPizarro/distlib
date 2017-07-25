@@ -1,33 +1,33 @@
 distlib.shell = (function() {
 	'use strict';
 
-	var router = (function() {
+	var router = {
 
-		var get_query_parameters = function(query) {
+		routes: [],
+
+		get_query_parameters: function(query) {
 			if (query)
 				return query.replace(/(^\?)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
 			else
 				return {};
-		};
+		},
 
-		var get_path_parameters = function(path) {
+		get_path_parameters: function(path) {},
 
-		}
-
-		var match_route = function(routes, path) {
-			for (var i = 0; i < routes.length; i = i + 1) {
-				var route = routes[i];
-				if (path == route.path)
-					return route.module;
+		match_route: function(path) {
+			for (var i = 0; i < this.routes.length; i = i + 1) {
+				var route = this.routes[i];
+				var match = route.path.exec(path);
+				if (match != null) {
+					return {
+						module: route.module,
+						path_parameters: match.slice(1)
+					}
+				}
 			}
 			return null;
-		};
-
-		return {
-			get_query_parameters: get_query_parameters,
-			match_route: match_route
-		};
-	})();
+		}
+	};
 
 	var set_loading = function(status) {
 		if (status)
@@ -61,22 +61,23 @@ distlib.shell = (function() {
 	};
 
 	var routes = [
-		{path: "/", module: base_module},
-		{path: "/busqueda", module: distlib.search},
-		{path: "/ajustes", module: distlib.settings},
-		{path: "/mis_libros", module: distlib.books},
-		{path: "/prestamos", module: distlib.loans},
-		{path: "/libros", module: distlib.book_detail},
-		{path: "/deudas", module: distlib.debts}
+		{path: /\/$/, module: base_module},
+		{path: /\/busqueda$/, module: distlib.search},
+		{path: /\/ajustes$/, module: distlib.settings},
+		{path: /\/prestamos$/, module: distlib.loans},
+		{path: /\/libros$/, module: distlib.books},
+		{path: /\/libros\/(\w+)$/, module: distlib.book_detail},
+		{path: /\/deudas$/, module: distlib.debts}
 	];
 
 	var routing = function(event) {
 		var path = window.location.pathname;
 		var query_parameters = router.get_query_parameters(window.location.search);
-		var index = router.match_route(path);
-		var module = router.match_route(routes, path);
-		if (module) {
-			module.render($('#main'), query_parameters);
+		var resolution = router.match_route(path);
+		if (resolution) {
+			var module = resolution.module;
+			var path_parameters = resolution.path_parameters;
+			module.render($('#main'), path_parameters, query_parameters);
 			$('#mod_title').text(module.title);
 		}
 		else
@@ -110,6 +111,7 @@ distlib.shell = (function() {
 		+ '</div>';
 
 	var initModule = function($container) {
+		router.routes = routes;
 		$(window).bind("hashchange", routing);
 		$(window).ajaxStart(function() {set_loading(true)});
 		$(window).ajaxStop(function() {set_loading(false)});
