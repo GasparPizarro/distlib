@@ -39,6 +39,16 @@ distlib.books = (function() {
 
 	var books_list;
 
+	var render = function($container) {
+		$container.html(main_html);
+		books_list = $("#books-list");
+		book_pad = $("#book-pad");
+		$.when(distlib.services.get_books()).then(function(books) {
+			clear_books();
+			load_books(books);
+		});
+	};
+
 	var on_more_books = function(event) {
 		event.preventDefault();
 		$(event.target).prop("disabled", true);
@@ -82,16 +92,6 @@ distlib.books = (function() {
 		books_list.empty();
 		$("#more-books").remove();
 	}
-
-	var render = function($container) {
-		$container.html(main_html);
-		books_list = $("#books-list");
-		book_pad = $("#book-pad");
-		$.when(distlib.services.get_books()).then(function(books) {
-			clear_books();
-			load_books(books);
-		});
-	};
 
 	var add_books_to_view = function($container, books) {
 		book_count = book_count + books.length;
