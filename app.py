@@ -200,6 +200,42 @@ def loan(loan_id):
 		"status": loan[5]
 	})
 
+@app.route("/profile", methods=['GET'])
+@environment_user
+@login_required
+def get_profile():
+	profile = query_db("select username, first_name, last_name from user where username = ?", (g.user,), one=True)
+	if profile is not None:
+		username, first_name, last_name = profile
+	return jsonify({
+		"username": username,
+		"first_name": first_name,
+		"last_name": last_name
+	})
+
+@app.route("/profile", methods=['POST'])
+@environment_user
+@login_required
+def update_profile():
+	old_password = request.form.get("old-password", None)
+	new_password1 = request.form.get("new-password1", None)
+	new_password2 = request.form.get("new-password2", None)
+	if request.form.get("first-name", None):
+		query_db("update user set first_name = ? where username = ?", (request.form["first-name"], g.user))
+	if request.form.get("last-name", None):
+		query_db("update user set last_name = ? where username = ?", (request.form["last-name"], g.user))
+	hashed_password = query_db("select password from user where username = ?", (g.user,), one=True)
+	if old_password is not None and bcrypt.checkpw(old_password.encode("utf-8"), hashed_password[0].encode("utf-8")) and new_password1 == new_password1:
+		query_db("update user set password = ? where username = ?", (bcrypt.hashpw(new_password2.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"), g.user))
+	profile = query_db("select username, first_name, last_name from user where username = ?", (g.user,), one=True)
+	if profile is not None:
+		username, first_name, last_name = profile
+	return jsonify({
+		"username": username,
+		"first_name": first_name,
+		"last_name": last_name
+	})
+
 
 @app.route("/token", methods=['POST'])
 def get_token():
