@@ -74,7 +74,6 @@ distlib.book_detail = (function() {
 				action_button.click(function(event) {
 					event.preventDefault();
 					$.when(distlib.services.ask_for_book(book.id)).then(function(data) {
-						console.log(data)
 						distlib.shell.toast("Se ha envíado un correo a el dueño del libro");
 						action_button.text("Solicitado");
 						action_button.addClass("w3-disabled");

@@ -65,13 +65,12 @@ distlib.books = (function() {
 	var on_add_book = function(event) {
 		event.preventDefault();
 		$.when(distlib.services.add_book($("#add-book-form").serialize())).then(function(result) {
-			$.gevent.publish("hashchange");
+			$(document).trigger("hashchange");
 			distlib.shell.toast("Se ha agregado el libro");
 		})
 	};
 
 	var set_display_book_modal = function(status) {
-		console.log(status);
 		$("#book-modal").css("display", status ? "block" : "none");
 	};
 
@@ -98,12 +97,7 @@ distlib.books = (function() {
 		for (var i = 0; i < books.length; i = i + 1) {
 			var element = $('<li/>').append(
 				$('<p/>').append(
-					$('<a href="/libros/' + books[i].id + '"/>').text(books[i].title).click(function(event) {
-						event.preventDefault();
-						console.log(event.target.getAttribute("href"));
-						history.pushState({}, null, event.target.getAttribute("href"));
-						$(window).trigger("hashchange");
-					})).append(
+					$('<a href="/libros/' + books[i].id + '"/>').text(books[i].title)).append(
 					$('<span class="w3-right"/>').text(books[i].year))
 				).append(
 				$('<p/>').text(books[i].author).append(

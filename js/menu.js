@@ -8,16 +8,16 @@ distlib.menu = (function(){
 					+ '<img src="/img/avatar2.png" class="w3-circle w3-margin-right" style="width:46px">'
 				+ '</div>'
 				+ '<div class="w3-col">'
-					+ '<span><strong id="menu-username"></strong></span>'
+					+ '<a href="/perfil"><span><strong id="menu-username"></strong></span></a>'
 				+ '</div>'
 			+ '</div>'
 			+ '<br>'
 			+ '<div class="w3-bar-block" id="actions">'
-				+ '<a href="busqueda" class="w3-bar-item w3-button w3-padding"><i class="fa fa-search fa-fw"></i> Busqueda</a>'
-				+ '<a href="libros" class="w3-bar-item w3-button w3-padding"><i class="fa fa-book fa-fw"></i> Mis libros</a>'
-				+ '<a href="prestamos" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i> Préstamos</a>'
-				+ '<a href="deudas" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw "></i> Deudas</a>'
-				+ '<a id="logout" href="logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i> Salir</a>'
+				+ '<a href="/busqueda" class="w3-bar-item w3-button w3-padding"><i class="fa fa-search fa-fw"></i> Busqueda</a>'
+				+ '<a href="/libros" class="w3-bar-item w3-button w3-padding"><i class="fa fa-book fa-fw"></i> Mis libros</a>'
+				+ '<a href="/prestamos" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i> Préstamos</a>'
+				+ '<a href="/deudas" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw "></i> Deudas</a>'
+				+ '<a href="/logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i> Salir</a>'
 			+ '</div>'
 		+ '</nav>'
 		+ '<div class="w3-overlay w3-hide-large w3-animate-opacity" style="cursor: pointer; display: none;" title="close side menu" id="myOverlay"></div>'
@@ -29,12 +29,6 @@ distlib.menu = (function(){
 			else
 				$(menu[i]).addClass("w3-blue");
 		}
-	};
-
-	var onClickMenu = function(event) {
-		event.preventDefault();
-		history.pushState({}, null, '/' + event.target.getAttribute("href"));
-		$.gevent.publish("hashchange");
 	};
 
 	var onClickSandwich = function($event) {
@@ -60,16 +54,11 @@ distlib.menu = (function(){
 	var initModule = function($container) {
 		$container.html(main_html);
 		$("#menu-username").text(distlib.user.get_username());
-		$("#actions").click(onClickMenu);
 		$('#the-button').click(onClickSandwich);
 		$('#myOverlay').click(onClickOverlay);
-		$.gevent.subscribe($("#mySidebar"), 'hashchange', function() {
+		$(document).on('hashchange', function() {
 			activate($("#actions").children(), location.pathname.substring(1));
 			onClickOverlay();
-		})
-		$('#logout').click(function(event) {
-			event.preventDefault();
-			distlib.user.logout();
 		});
 	}
 

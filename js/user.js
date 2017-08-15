@@ -8,14 +8,14 @@ distlib.user = (function() {
 		username = localStorage.getItem("username");
 		token = localStorage.getItem("token");
 		if (username == null || token == null)
-			$.gevent.publish("logout");
+			$(document).trigger("logout");
 		else {
 			$.ajaxSetup({
 				headers: {
 					Authorization: ('Token ' + token)
 				}
 			});
-			$.gevent.publish("login");
+			$(document).trigger("login");
 		}
 	};
 
@@ -34,10 +34,10 @@ distlib.user = (function() {
 						Authorization: ('Token ' + data.token)
 					}
 				});
-				$.gevent.publish("login");
+				$(document).trigger("login");
 			},
 			error: function() {
-				$.gevent.publish("bad-login");
+				$(document).trigger("bad-login");
 			}
 		});
 	}
@@ -49,7 +49,7 @@ distlib.user = (function() {
 	var logout = function() {
 		localStorage.removeItem("token");
 		localStorage.removeItem("username");
-		$.gevent.publish("logout");
+		$(document).trigger("logout");
 	}
 
 	return {

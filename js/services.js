@@ -33,7 +33,7 @@ distlib.services = (function() {
 
 	var set_settings = function(the_settings) {
 		settings = the_settings;
-		console.log(settings);
+
 	};
 
 	var get_book = function(book_id) {

@@ -13,17 +13,17 @@ distlib.search = (function() {
 			+ '<div class="w3-center" id="book-pad" style="height: 75px">'
 		+ '</div>';
 
+	var clear_books = function() {
+		if ($("#books_list").length)
+			$("#books-list").empty();
+	};
+
 	var add_books_to_view = function($container, books) {
 		book_count = book_count + books.length;
 		for (var i = 0; i < books.length; i = i + 1) {
 			var element = $('<li/>').append(
 				$('<p/>').append(
-					$('<a href="/libros/' + books[i].id + '"/>').text(books[i].title).click(function(event) {
-						event.preventDefault();
-						console.log(event.target.getAttribute("href"));
-						history.pushState({}, null, event.target.getAttribute("href"));
-						$(window).trigger("hashchange");
-					})).append(
+					$('<a href="/libros/' + books[i].id + '"/>').text(books[i].title)).append(
 					$('<span class="w3-right"/>').text(books[i].year))
 				).append(
 				$('<p/>').text(books[i].author).append('<span class="w3-tag w3-right">' + books[i].owner + '</span>')
@@ -61,6 +61,12 @@ distlib.search = (function() {
 				search($("#search-box").val());
 			}
 		);
+		$(document).on("click", 'a', function(event) {
+			event.preventDefault();
+
+			history.pushState({}, null, $(this).attr("href"));
+			$(document).trigger("hashchange");
+		});
 	}
 
 	var search = function(query) {
@@ -73,18 +79,13 @@ distlib.search = (function() {
 			if (books.length == 0)
 				$("#search-box").after('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
 			else {
-				$("#search-box").after('<ul class="w3-ul" id="books-list"></ul>');
+				if ($("#books-list").length == 0)
+					$("#search-box").after('<ul class="w3-ul" id="books-list"></ul>');
+				else
+					$("#books-list").empty();
 				add_books_to_view($("#books-list"), books);
 				if (books.length >= page_size)
 					$("#book-pad").append(more_books_button.click(on_more_books));
-			}
-			if (books.length != 0) {
-				$(".search-result").click(function(event) {
-					event.preventDefault();
-					console.log(event.target.getAttribute("href"));
-					history.pushState({}, null, event.target.getAttribute("href"));
-					$(window).trigger("hashchange");
-				});
 			}
 			$("#search-box").blur();
 		});

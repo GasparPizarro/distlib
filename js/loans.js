@@ -78,7 +78,7 @@ distlib.loans = (function() {
 	var on_reject_loan = function(event) {
 		event.preventDefault();
 		var loan_id = $(event.target).closest("tr").attr("id")
-		console.log("rejecting loan");
+
 		$.ajax({
 			url: distlib.services.get_api_host() + "/loans/" + loan_id + "/reject",
 			type: "POST",
@@ -91,7 +91,6 @@ distlib.loans = (function() {
 	var on_accept_loan = function(event) {
 		event.preventDefault();
 		var loan_id = $(event.target).closest("tr").attr("id");
-		console.log("Accepting loan " + loan_id)
 		$.ajax({
 			url: distlib.services.get_api_host() + "/loans/" + loan_id + "/accept",
 			type: "POST",
@@ -107,20 +106,18 @@ distlib.loans = (function() {
 
 	var on_resolve_loan  = function(event) {
 		event.preventDefault();
-		var loan_id = $(event.target).closest("tr").attr("id")
-		console.log("Resolving loan " + loan_id)
+		var loan_id = $(event.target).closest("tr").attr("id");
 	};
 
 	var on_finish_loan = function(event) {
 		event.preventDefault();
 		var loan_id = $(event.target).closest("tr").attr("id");
-		console.log("Finishing loan " + loan_id)
 		$.ajax({
 			url: distlib.services.get_api_host() + "/loans/" + loan_id + "/finish",
 			type: "POST",
 			success: function(data) {
 				$(event.target).closest("tr").remove();
-				console.log("loan has finished");
+
 			}
 		});
 	};
