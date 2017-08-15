@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import g, request
+from flask import g, request, jsonify
 import sqlite3
 
 DATABASE = './data.db'

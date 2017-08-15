@@ -2,6 +2,8 @@ pragma foreign_keys = on;
 
 CREATE TABLE user (
 	username varchar(30) primary key,
+	first_name varchar(30),
+	last_name varchar(30),
 	password text
 );
 
@@ -31,9 +33,9 @@ CREATE TABLE loan (
 	foreign key(book) references book(id)
 );
 
-insert into user (username, password) values ("user1", "$2b$12$AZZFDm2pUiQ8lp1zdsKTj.oEoGSU7sd7rUfiAbkSB4w.19e.oKVHy");
-insert into user (username, password) values ("user2", "$2b$12$QQuwB7MfnTtwZjY9fS/FqOBFxDrH1vkc6wm/xvaL0APehaXecOfOG");
-insert into user (username, password) values ("user3", "$2b$12$gKNdbHhVsKph53tppvGhAenIhrPAbvCvSrxtnvgwJwrtwcBvLWGkq");
+insert into user (username, first_name, last_name, password) values ("user1", "user", "one", "$2b$12$AZZFDm2pUiQ8lp1zdsKTj.oEoGSU7sd7rUfiAbkSB4w.19e.oKVHy");
+insert into user (username, first_name, last_name, password) values ("user2", "user", "two", "$2b$12$QQuwB7MfnTtwZjY9fS/FqOBFxDrH1vkc6wm/xvaL0APehaXecOfOG");
+insert into user (username, first_name, last_name, password) values ("user3", "user", "three", "$2b$12$gKNdbHhVsKph53tppvGhAenIhrPAbvCvSrxtnvgwJwrtwcBvLWGkq");
 
 
 insert into book (owner, title, author, year) values ("user1", "Animal Farm", "George Orwell", 1945);
