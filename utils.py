@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import g, request, jsonify
 import sqlite3
+import time
 
 DATABASE = './data.db'
 
@@ -53,7 +54,6 @@ def cors(response):
 	response.headers["Access-Control-Allow-Credentials"] = True
 	response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, DELETE"
 	response.headers["Access-Control-Max-Age"] = "1209600"
-	import time; time.sleep(1)
 	return response
 
 def catch_all(path):

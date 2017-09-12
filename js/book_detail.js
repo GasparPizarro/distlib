@@ -15,7 +15,7 @@ distlib.book_detail = (function() {
 				+ '<dt>Dueño</dt>'
 				+ '<dd id="book-owner"></dd>'
 			+ '</dl> '
-			+ '<a id="action-button" class="w3-button"></a>'
+			+ '<button id="action-button" class="w3-button"></button>'
 		+ '</div>'
 		+ '<div id="modal" class="w3-modal">'
 			+ '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
@@ -66,7 +66,7 @@ distlib.book_detail = (function() {
 					$.when(distlib.services.delete_book(book_id)).then(function(result) {
 						distlib.shell.toast("Se ha eliminado el libro");
 						history.pushState({}, null, "/libros");
-						$(window).trigger('hashchange');
+						$(document).trigger('hashchange');
 					})
 				});
 			}

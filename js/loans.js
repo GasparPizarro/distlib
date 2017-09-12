@@ -50,12 +50,12 @@ distlib.loans = (function() {
 	var load_loans = function(loans) {
 		for (var i = 0; i < loans.length; i = i + 1) {
 			if (loans[i].status == 0)
-				new_loans.append('<tr id=' + loans[i].id + '><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td class="w3-center">' + loans[i].span + '</td><td><a href="#" class="accept-loan"><i class="fa fa-check"></i></a> <a href="#" class="reject-loan"><i class="fa fa-times"></i></a></td></tr>')
+				new_loans.append('<tr id=' + loans[i].id + '><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td class="w3-center">' + loans[i].span + '</td><td><button class="w3-button accept-loan"><i class="fa fa-check"></i></button> <button class="w3-button reject-loan"><i class="fa fa-times"></i></button></td></tr>')
 			else {
 				var start_date = new Date(loans[i].start);
 				var end_date = new Date(loans[i].start);
 				end_date.setDate(start_date.getDate() + loans[i].span * 7);
-				they_owe_me.append('<tr id="' + loans[i].id + '"><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td' + (end_date < new Date() ? ' class="w3-text-red"' : '') + '>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><a href="#" class="finish-loan"><i class="fa fa-check"></i></a></td></tr>');
+				they_owe_me.append('<tr id="' + loans[i].id + '"><td>' + loans[i].book.title + '</td><td>' + loans[i].recipient + '</td><td' + (end_date < new Date() ? ' class="w3-text-red"' : '') + '>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><button class="w3-button finish-loan"><i class="fa fa-check"></i></button></td></tr>');
 			}
 		}
 		$(".reject-loan").click();
@@ -99,7 +99,7 @@ distlib.loans = (function() {
 				var start_date = new Date(loan.start);
 				var end_date = new Date(loan.start);
 				end_date.setDate(start_date.getDate() + loan.span * 7);
-				they_owe_me.append('<tr id="' + loan.id + '"><td>' + loan.book.title + '</td><td>' + loan.recipient + '</td><td>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><a href="#" class="finish-loan"><i class="fa fa-check"></i></a></td></tr>');
+				they_owe_me.append('<tr id="' + loan.id + '"><td>' + loan.book.title + '</td><td>' + loan.recipient + '</td><td>' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear() + '</td><td><button class="w3-button finish-loan"><i class="fa fa-check"></i></button></td></tr>');
 			}
 		});
 	};

@@ -27,14 +27,12 @@ distlib.shell = (function() {
 		}
 	};
 
-	var loading_html = '<i class="fa fa-spin fa-spinner"></i>';
-
 	var set_loading = function(status) {
 		if (status)
-			$("#loading").html(loading_html);
+			loading_modal.css("display", "block");
 		else
-			$("#loading").empty();
-	};
+			loading_modal.css("display", "none");
+	};	
 
 	var main_html = String()
 		+ '<div class="w3-bar w3-top w3-black w3-large w3-center" style="z-index:4">'
@@ -46,7 +44,28 @@ distlib.shell = (function() {
 		+ '</div>'
 		+ '<div id="main" class="w3-main" style="margin-left:250px;margin-top:43px;">'
 		+ '</div>'
-		+ '<div id="toast" class="w3-center w3-black"></div>';
+		+ '<div id="toast" class="w3-center w3-black"></div>'
+		+ '<div id="loading-modal" class="w3-modal" style="z-index:4">'
+			+ '<div class="w3-modal-content w3-center" style="max-width:20px">'
+				+ '<i class="fa fa-spin fa-spinner"></i>'
+			+ '</div>'
+		+ '</div>'
+		+ '<div id="login-modal" class="w3-modal w3-animate-opacity">'
+			+ '<div class="w3-modal-content" style="max-width:300px">'
+				+ '<div class="w3-container">'
+					+ '<form id="login-form" class="w3-container">'
+						+ '<div class="w3-section">'
+							+ '<label>Usuario</label>'
+							+ '<input class="w3-input w3-margin-bottom" type="text" name="username" required>'
+							+ '<label>Contraseña</label>'
+							+ '<input class="w3-input w3-margin-bottom" type="password" name="password" required>'
+							+ '<div id="login-status" class="w3-center"></div>'
+							+ '<button class="w3-button w3-block w3-green" type="submit" id="login">Ingresar</button>'
+						+ '</div>'
+					+ '</form>'
+				+ '</div>'
+			+ '</div>'
+		+ '</div>';
 	
 	var wrong_url_html = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
@@ -64,7 +83,6 @@ distlib.shell = (function() {
 		render: function(container) {
 			distlib.user.logout();
 			history.pushState({}, null, '/');
-			$(document).trigger('hashchange');
 		}
 	}
 
@@ -103,42 +121,21 @@ distlib.shell = (function() {
 		}, 3000);
 	}
 
-	var login_html = String()
-		+ '<div id="id01" class="w3-modal w3-animate-opacity" style="display: block;">'
-			+ '<div class="w3-modal-content" style="max-width:300px">'
-				+ '<div class="w3-container">'
-					+ '<form id="login-form" class="w3-container">'
-						+ '<div class="w3-section">'
-							+ '<label>Usuario</label>'
-							+ '<input class="w3-input w3-margin-bottom" type="text" name="username" required>'
-							+ '<label>Contraseña</label>'
-							+ '<input class="w3-input w3-margin-bottom" type="password" name="password" required>'
-							+ '<div id="login-status" class="w3-center"></div>'
-							+ '<button class="w3-button w3-block w3-green" type="submit" id="login">Ingresar</button>'
-						+ '</div>'
-					+ '</form>'
-				+ '</div>'
-			+ '</div>'
-		+ '</div>';
-
 	var container;
 
+	var loading_modal;
+
 	var on_logout = function(event) {
-		container.html(login_html);
-		$(document).on('bad-login', function(event) {
-			if (!$("#bad-login").length)
-				$("#login-status").html('<p id="bad-login" class="w3-text-red">Credenciales incorrectas</p>');
-		});
-		$("#login").click(function(event) {
-			event.preventDefault();
-			$("#login-status").html('<p id="loading-login">' + loading_html + '</p>');
-			distlib.user.login($("#login-form [name=username]").val(), $("#login-form [name=password]").val());
-		});
+		$("#login-modal").css("display", "block");
+		$("#mod_title").html("BibDist");
+		$("#menu-username").empty();
+		$("#main").empty();
 	};
 
 	var on_login = function(event) {
-		container.html(main_html);
-		distlib.menu.initModule($('#menu'));
+		$("#login-modal").css("display", "none");
+		$("#menu-username").text(distlib.user.get_username());
+		$("#login-form")[0].reset()
 		$(document).trigger('hashchange');
 	}
 
@@ -151,6 +148,9 @@ distlib.shell = (function() {
 	var initModule = function($container) {
 		router.routes = routes;
 		container = $container;
+		container.html(main_html);
+		loading_modal = $("#loading-modal");
+		distlib.menu.initModule($('#menu'));
 		$(document).bind("hashchange", routing);
 		$(document).ajaxStart(function() {set_loading(true)});
 		$(document).ajaxStop(function() {set_loading(false)});
@@ -158,6 +158,14 @@ distlib.shell = (function() {
 		$(document).on("logout", on_logout);
 		$(document).on('login', on_login);
 		$(document).on('click', "a", on_click_link);
+		$(document).on('bad-login', function(event) {
+			if (!$("#bad-login").length)
+				$("#login-status").html('<p id="bad-login" class="w3-text-red">Credenciales incorrectas</p>');
+		});
+		$("#login").click(function(event) {
+			event.preventDefault();
+			distlib.user.login($("#login-form [name=username]").val(), $("#login-form [name=password]").val());
+		});
 	};
 
 	return {

@@ -53,11 +53,10 @@ distlib.menu = (function(){
 
 	var initModule = function($container) {
 		$container.html(main_html);
-		$("#menu-username").text(distlib.user.get_username());
 		$('#the-button').click(onClickSandwich);
 		$('#myOverlay').click(onClickOverlay);
 		$(document).on('hashchange', function() {
-			activate($("#actions").children(), location.pathname.substring(1));
+			activate($("#actions").children(), '/' + location.pathname.substring(1));
 			onClickOverlay();
 		});
 	}
