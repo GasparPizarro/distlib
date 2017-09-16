@@ -37,7 +37,7 @@ distlib.shell = (function() {
 	var main_html = String()
 		+ '<div class="w3-bar w3-top w3-black w3-large w3-center" style="z-index:4">'
 			+ '<button id="the-button" class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey"><i class="fa fa-bars"></i></button>'
-			+ '<div id="mod_title" class="w3-bar-item">BibDist</div>'
+			+ '<div id="mod_title" class="w3-bar-item">The Distributed Library</div>'
 			+ '<div id="loading" class="w3-bar-item w3-right"></div>'
 		+ '</div>'
 		+ '<div id="menu">'
@@ -55,9 +55,9 @@ distlib.shell = (function() {
 				+ '<div class="w3-container">'
 					+ '<form id="login-form" class="w3-container">'
 						+ '<div class="w3-section">'
-							+ '<label>Usuario</label>'
+							+ '<label>Username</label>'
 							+ '<input class="w3-input w3-margin-bottom" type="text" name="username" required>'
-							+ '<label>Contraseña</label>'
+							+ '<label>Password</label>'
 							+ '<input class="w3-input w3-margin-bottom" type="password" name="password" required>'
 							+ '<div id="login-status" class="w3-center"></div>'
 							+ '<button class="w3-button w3-block w3-green" type="submit" id="login">Ingresar</button>'
@@ -74,7 +74,7 @@ distlib.shell = (function() {
 
 	var base_module = {
 		render: function(container) {
-			history.pushState({}, null, '/busqueda');
+			history.pushState({}, null, '/search');
 			$(document).trigger('hashchange');
 		}
 	};
@@ -88,13 +88,13 @@ distlib.shell = (function() {
 
 	var routes = [
 		{path: /\/$/, module: base_module},
-		{path: /\/busqueda$/, module: distlib.search},
-		{path: /\/ajustes$/, module: distlib.settings},
-		{path: /\/prestamos$/, module: distlib.loans},
-		{path: /\/libros$/, module: distlib.books},
-		{path: /\/libros\/(\w+)$/, module: distlib.book_detail},
-		{path: /\/deudas$/, module: distlib.debts},
-		{path: /\/perfil$/, module: distlib.profile},
+		{path: /\/search$/, module: distlib.search},
+		{path: /\/settings$/, module: distlib.settings},
+		{path: /\/loans$/, module: distlib.loans},
+		{path: /\/books$/, module: distlib.books},
+		{path: /\/books\/(\w+)$/, module: distlib.book_detail},
+		{path: /\/debts$/, module: distlib.debts},
+		{path: /\/profile$/, module: distlib.profile},
 		{path: /\/logout$/, module: logout_module},
 	];
 
@@ -127,7 +127,7 @@ distlib.shell = (function() {
 
 	var on_logout = function(event) {
 		$("#login-modal").css("display", "block");
-		$("#mod_title").html("BibDist");
+		$("#mod_title").html("The Distributed Library");
 		$("#menu-username").empty();
 		$("#main").empty();
 	};
@@ -160,7 +160,7 @@ distlib.shell = (function() {
 		$(document).on('click', "a", on_click_link);
 		$(document).on('bad-login', function(event) {
 			if (!$("#bad-login").length)
-				$("#login-status").html('<p id="bad-login" class="w3-text-red">Credenciales incorrectas</p>');
+				$("#login-status").html('<p id="bad-login" class="w3-text-red">Wrong credentials</p>');
 		});
 		$("#login").click(function(event) {
 			event.preventDefault();

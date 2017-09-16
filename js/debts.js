@@ -1,7 +1,7 @@
 distlib.debts = (function() {
 	'use strict';
 
-	var title = "Deudas";
+	var title = "Debts";
 
 	var main_html = String()
 		+ '<div class="w3-container">'
@@ -10,9 +10,9 @@ distlib.debts = (function() {
 					+ '<table id="i-owe-them" class="w3-table">'
 						+ '<thead>'
 							+ '<tr>'
-								+ '<th>Título</th>'
-								+ '<th>Dueño</th>'
-								+ '<th>Expiración</th>'
+								+ '<th>Title</th>'
+								+ '<th>Owner</th>'
+								+ '<th>Expiration</th>'
 							+ '</tr>'
 						+ '</thead>'
 						+ '<tbody>'

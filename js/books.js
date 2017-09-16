@@ -1,7 +1,7 @@
 distlib.books = (function() {
 	'use strict';
 
-	var title = "Mis libros";
+	var title = "My books";
 
 	var book_count = 0;
 
@@ -18,22 +18,23 @@ distlib.books = (function() {
 			+ '<div class="w3-modal-content" style="max-width:300px">'
 				+ '<div class="w3-container">'
 					+ '<span id="close-book-modal" class="w3-button w3-display-topright">&times;</span>'
+					+ '<h3 class="w3-center">New book</h3>'
 					+ '<form id="add-book-form"class="w3-container">'
 						+ '<div class="w3-section">'
-							+ '<label>Título</label>'
+							+ '<label>Title</label>'
 							+ '<input class="w3-input w3-margin-bottom" type="text" name="title" required>'
-							+ '<label>Autor</label>'
+							+ '<label>Author</label>'
 							+ '<input class="w3-input w3-margin-bottom" name="author" required>'
-							+ '<label>Año</label>'
+							+ '<label>Year</label>'
 							+ '<input class="w3-input w3-margin-bottom" type="number" name="year" required>'
-							+ '<button class="w3-button w3-block w3-green" type="submit" id="add-book">Agregar libro</button>'
+							+ '<button class="w3-button w3-block w3-green" type="submit" id="add-book">Add book</button>'
 						+ '</div>'
 					+ '</form>'
 				+ '</div>'
 			+ '</div>'
 		+ '</div>';
 
-	var more_books_button = '<button id="more-books" type="button" class="w3-button w3-blue">Más</button>';
+	var more_books_button = '<button id="more-books" type="button" class="w3-button w3-blue">More</button>';
 
 	var book_pad;
 
@@ -66,7 +67,7 @@ distlib.books = (function() {
 		event.preventDefault();
 		$.when(distlib.services.add_book($("#add-book-form").serialize())).then(function(result) {
 			$(document).trigger("hashchange");
-			distlib.shell.toast("Se ha agregado el libro");
+			distlib.shell.toast("The book has been added");
 		})
 	};
 
@@ -76,7 +77,7 @@ distlib.books = (function() {
 
 	var load_books = function(books) {
 		if (books.length == 0)
-			books_list.replaceWith('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
+			books_list.replaceWith('<p id="empty-books-list" class="w3-disabled">There are no books</p>');
 		else {
 			add_books_to_view(books_list, books);
 			if (books.length >= page_size)
@@ -101,7 +102,7 @@ distlib.books = (function() {
 					$('<span class="w3-right"/>').text(books[i].year))
 				).append(
 				$('<p/>').text(books[i].author).append(
-					books[i].bearer ? $('<span class="w3-tag w3-right"/>').text('Prestado a ' + books[i].bearer) : null
+					books[i].bearer ? $('<span class="w3-tag w3-right"/>').text('Lent to ' + books[i].bearer) : null
 				)
 			);
 			$container.append(element);

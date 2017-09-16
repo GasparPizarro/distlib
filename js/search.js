@@ -1,7 +1,7 @@
 distlib.search = (function() {
 	'use strict';
 
-	var title = "Buscar libros";
+	var title = "Book search";
 
 	var book_count = 0;
 
@@ -78,7 +78,7 @@ distlib.search = (function() {
 		clear_result();
 		$.when(distlib.services.search(query)).then(function(books) {
 			if (books.length == 0)
-				books_result.html('<p id="empty-books-list" class="w3-disabled">No hay libros</p>');
+				books_result.html('<p id="empty-books-list" class="w3-disabled">No results</p>');
 			else {
 				books_result.html('<ul class="w3-ul" id="books-list"></ul>');
 				add_books_to_view($("#books-list"), books);

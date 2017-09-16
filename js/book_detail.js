@@ -1,6 +1,6 @@
 distlib.book_detail = (function() {
 
-	var title = "Mis libros";
+	var title = "My books";
 
 	var main_html = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
@@ -8,11 +8,11 @@ distlib.book_detail = (function() {
 		+ '</header>'
 		+ '<div class="w3-container" id="book_detail">'
 			+ '<dl>'
-				+ '<dt>Autor</dt>'
+				+ '<dt>Author</dt>'
 				+ '<dd id="book-author"></dd>'
-				+ '<dt>Año</dt>'
+				+ '<dt>Year</dt>'
 				+ '<dd id="book-year"></dd>'
-				+ '<dt>Dueño</dt>'
+				+ '<dt>Owner</dt>'
 				+ '<dd id="book-owner"></dd>'
 			+ '</dl> '
 			+ '<button id="action-button" class="w3-button"></button>'
@@ -24,11 +24,11 @@ distlib.book_detail = (function() {
 				+ '</div>'
 				+ '<div class="w3-container">'
 					+ '<div class="w3-section">'
-						+ '<h3 class="w3-center">¿Está seguro?</h3>'
+						+ '<h3 class="w3-center">¿Are you sure?</h3>'
 						+ '<div class="w3-center">'
-							+ '<button id="delete-book" class="w3-button w3-red" type="submit">Eliminar</button>'
+							+ '<button id="delete-book" class="w3-button w3-red" type="submit">Delete</button>'
 							+ ' '
-							+ '<button onclick="document.getElementById(\'modal\').style.display=\'none\'" class="w3-button w3-green" type="submit">Cancelar</button>'
+							+ '<button onclick="document.getElementById(\'modal\').style.display=\'none\'" class="w3-button w3-green" type="submit">Cancel</button>'
 						+ '</div>'
 					+ '</div>'
 				+ '</div>'
@@ -64,8 +64,8 @@ distlib.book_detail = (function() {
 				$("#delete-book").click(function(event) {
 					event.preventDefault();
 					$.when(distlib.services.delete_book(book_id)).then(function(result) {
-						distlib.shell.toast("Se ha eliminado el libro");
-						history.pushState({}, null, "/libros");
+						distlib.shell.toast("The book has been deleted");
+						history.pushState({}, null, "/books");
 						$(document).trigger('hashchange');
 					})
 				});
@@ -74,8 +74,8 @@ distlib.book_detail = (function() {
 				action_button.click(function(event) {
 					event.preventDefault();
 					$.when(distlib.services.ask_for_book(book.id)).then(function(data) {
-						distlib.shell.toast("Se ha envíado un correo a el dueño del libro");
-						action_button.text("Solicitado");
+						distlib.shell.toast("An email has been sent to the book's owner");
+						action_button.text("Taken");
 						action_button.addClass("w3-disabled");
 					});
 				});

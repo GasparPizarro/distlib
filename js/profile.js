@@ -1,7 +1,7 @@
 distlib.profile = (function() {
 	"use strict";
 
-	var title = "Perfil";
+	var title = "Profile";
 
 	var main_html = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
@@ -16,7 +16,7 @@ distlib.profile = (function() {
 				+ '<label class="w3-text">Last Name</label>'
 				+ '<input id="last-name" name="last-name" class="w3-input" type="text"/>'
 			+ '</p>'
-			+ '<button id="update-profile-button" type="button" class="w3-button w3-green">Actualizar</button>'
+			+ '<button id="update-profile-button" type="button" class="w3-button w3-green">Update data</button>'
 		+ '</form>'
 
 	var username;
@@ -32,7 +32,7 @@ distlib.profile = (function() {
 			type: "POST",
 			data: $("#profile-form").serialize(),
 			success: function() {
-				distlib.shell.toast("Perfil actualizado");
+				distlib.shell.toast("Profile has been updated");
 			}
 		});
 	};
