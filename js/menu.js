@@ -8,7 +8,7 @@ distlib.menu = (function(){
 					+ '<img src="/img/avatar2.png" class="w3-circle w3-margin-right" style="width:46px">'
 				+ '</div>'
 				+ '<div class="w3-col">'
-					+ '<a href="/perfil"><span><strong id="menu-username"></strong></span></a>'
+					+ '<a href="/profile"><span><strong id="menu-username"></strong></span></a>'
 				+ '</div>'
 			+ '</div>'
 			+ '<br>'

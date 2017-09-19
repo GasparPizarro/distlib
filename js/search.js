@@ -14,6 +14,11 @@ distlib.search = (function() {
 			+ '<div class="w3-center" id="book-pad" style="height: 75px">'
 		+ '</div>';
 
+	var book_html = String()
+		+ '<p><a href="/books/%d">%s</p>'
+		+ '<span class="w3-right">%d</span>'
+		+ '<p>%s</p><span class="w3-tag w3-right">%s</span>'
+
 	var search_box;
 
 	var books_result;
@@ -49,16 +54,16 @@ distlib.search = (function() {
 		for (var i = 0; i < books.length; i = i + 1) {
 			var element = $('<li/>').append(
 				$('<p/>').append(
-					$('<a href="/libros/' + books[i].id + '"/>').text(books[i].title)).append(
+					$('<a href="/books/' + books[i].id + '"/>').text(books[i].title)).append(
 					$('<span class="w3-right"/>').text(books[i].year))
 				).append(
-				$('<p/>').text(books[i].author).append('<span class="w3-tag w3-right">' + books[i].owner + '</span>')
-			);
+					$('<p/>').text(books[i].author).append('<span class="w3-tag w3-right">' + books[i].owner + '</span>')
+				);
 			$container.append(element);
 		}
 	};
 
-	var more_books_button = $('<button id="more-books" type="button" class="w3-button w3-blue">Más</button>');
+	var more_books_button = $('<button id="more-books" type="button" class="w3-button w3-blue">More</button>');
 
 	var on_more_books = function(event) {
 		event.preventDefault();

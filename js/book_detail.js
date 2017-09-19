@@ -49,9 +49,9 @@ distlib.book_detail = (function() {
 			$("#book-owner").html(book.owner);
 			action_button = $("#action-button");
 			if (is_mine)
-				action_button.addClass("action-delete").addClass("w3-red").text("Eliminar libro");
+				action_button.addClass("action-delete").addClass("w3-red").text("Delete book");
 			else
-				action_button.addClass("action-ask").addClass("w3-blue").text("Solicitar libro");
+				action_button.addClass("action-ask").addClass("w3-blue").text("Ask for book");
 
 			if (action_button.hasClass("action-delete")) {
 				if (action_button.hasClass("w3-disabled"))

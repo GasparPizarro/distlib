@@ -8,7 +8,7 @@ distlib.books = (function() {
 	var page_size = 10;
 
 	var main_html = String()
-		+ '<div id="module" class="w3-container">'
+		+ '<div class="w3-container">'
 			+ '<ul class="w3-ul" id="books-list">'
 			+ '</ul>'
 			+ '<div class="w3-center" id="book-pad" style="height: 75px"></div>'
@@ -98,7 +98,7 @@ distlib.books = (function() {
 		for (var i = 0; i < books.length; i = i + 1) {
 			var element = $('<li/>').append(
 				$('<p/>').append(
-					$('<a href="/libros/' + books[i].id + '"/>').text(books[i].title)).append(
+					$('<a href="/books/' + books[i].id + '"/>').text(books[i].title)).append(
 					$('<span class="w3-right"/>').text(books[i].year))
 				).append(
 				$('<p/>').text(books[i].author).append(
