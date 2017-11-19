@@ -16,10 +16,11 @@ app = Flask(__name__)
 @environment_user
 @login_required
 def books():
-	limit = request.args.get("limit", 10)
-	offset = request.args.get("offset", 0)
-	books = query_db("select id, title, author, year from book where owner = ? order by title collate nocase limit ? offset ?", (g.user, limit, offset))
-	return jsonify([{
+	page = int(request.args.get("page", 0))
+	size = int(request.args.get("size", 10))
+	book_count = int(query_db("select count(*) from book where owner = ?", (g.user,), one=True)[0])
+	books = query_db("select id, title, author, year from book where owner = ? order by title collate nocase limit ? offset ?", (g.user, size, page * size))
+	response = jsonify([{
 		"id": id,
 		"title": title,
 		"owner": g.user,
@@ -27,6 +28,8 @@ def books():
 		"year": year,
 		"bearer": query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0] if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None,
 	} for (id, title, author, year) in books])
+	response.headers["page-count"] = book_count // size
+	return response
 
 @app.route("/books", methods=['POST'])
 @environment_user

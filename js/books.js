@@ -3,15 +3,13 @@ distlib.books = (function() {
 
 	var title = "My books";
 
-	var book_count = 0;
 
-	var page_size = 10;
+	var page;
 
 	var main_html = String()
 		+ '<div class="w3-container">'
 			+ '<ul class="w3-ul" id="books-list">'
 			+ '</ul>'
-			+ '<div class="w3-center" id="book-pad" style="height: 75px"></div>'
 			+ '<button id="show-book-modal" class="w3-button w3-black w3-circle" style="padding: 20px; position: fixed; z-index: 1; right: 1em; bottom: 1em;"><i class="fa fa-plus fa-fw"></i></button>'
 		+ '</div>'
 		+ '<div id="book-modal" class="w3-modal w3-animate-opacity">'
@@ -34,34 +32,30 @@ distlib.books = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var more_books_button = '<button id="more-books" type="button" class="w3-button w3-blue">More</button>';
-
-	var book_pad;
-
 	var books_list;
 
-	var render = function($container) {
+	var render = function($container, _, query_parameters) {
 		$container.html(main_html);
+		page = query_parameters.page ? parseInt(query_parameters.page) - 1 : 1;
 		books_list = $("#books-list");
-		book_pad = $("#book-pad");
-		$.when(distlib.services.get_books()).then(function(books) {
+		$.when(distlib.services.get_books(page)).then(function(books, _, xhr) {
+			var page_count = parseInt(xhr.getResponseHeader("page-count"));
 			clear_books();
 			load_books(books);
+			if (page_count > 0) {
+				var pagination_buttons = String()
+				+ '<div class="w3-center">'
+					+ '<div class="w3-bar">'
+				if (page > 0)
+					pagination_buttons = pagination_buttons + '<a href="?page=' + page + '" class="w3-bar-item w3-button">&laquo;</a>';
+				for (var i = 1; i < page_count + 1; i = i + 1)
+					pagination_buttons = pagination_buttons + '<a href="?page=' + i + '" class="w3-button' + (i == page + 1 ? ' w3-blue' : '') + '">' + i + '</a>';
+				if (page < page_count - 1)
+					pagination_buttons = pagination_buttons + '<a href="?page=' + (page + 2) + '" class="w3-button">&raquo;</a></div>';
+				books_list.after(pagination_buttons);
+			}
 		});
 	};
-
-	var on_more_books = function(event) {
-		event.preventDefault();
-		$(event.target).prop("disabled", true);
-		$.when(distlib.services.get_books(page_size, book_count)).then(function(books) {
-			$(event.target).prop("disabled", false);
-			if (books.length != 0)
-				add_books_to_view($("#books-list"), books);
-			if (books.length < page_size)
-				$("#more-books").remove();
-			}
-		);
-	}
 
 	var on_add_book = function(event) {
 		event.preventDefault();
@@ -78,11 +72,8 @@ distlib.books = (function() {
 	var load_books = function(books) {
 		if (books.length == 0)
 			books_list.replaceWith('<p id="empty-books-list" class="w3-disabled">There are no books</p>');
-		else {
+		else
 			add_books_to_view(books_list, books);
-			if (books.length >= page_size)
-				book_pad.append($(more_books_button).click(on_more_books));
-		}
 		$("#show-book-modal").click(function(event) {set_display_book_modal(true)});
 		$("#close-book-modal").click(function(event) {set_display_book_modal(false)});
 		$("#add-book").click(on_add_book);
@@ -94,7 +85,6 @@ distlib.books = (function() {
 	}
 
 	var add_books_to_view = function($container, books) {
-		book_count = book_count + books.length;
 		for (var i = 0; i < books.length; i = i + 1) {
 			var element = $('<li/>').append(
 				$('<p/>').append(

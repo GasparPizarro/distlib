@@ -44,13 +44,13 @@ distlib.services = (function() {
 	};
 
 
-	var get_books = function(limit = 10, offset = 0) {
+	var get_books = function(page = 0, size = 10) {
 		return $.ajax({
 			url: api_host + "/books",
 			type: "GET",
 			data: {
-				"limit": limit,
-				"offset": offset
+				"page": page,
+				"size": size
 			}
 		});
 	};
