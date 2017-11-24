@@ -10,14 +10,14 @@ distlib.services = (function() {
 		return api_host;
 	}
 
-	var search = function(query, limit = 10, offset = 0) {
+	var search = function(query, page = 0, size = 10) {
 		return $.ajax({
 			url: api_host + "/books/search",
 			type: "GET",
 			data: {
 				"q": query,
-				"limit": limit,
-				"offset": offset
+				"page": page,
+				"size": size
 			}
 		});
 	};

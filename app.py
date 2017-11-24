@@ -74,10 +74,12 @@ def delete_book(book_id):
 @login_required
 def book_search():
 	query = request.args["q"]
-	limit = request.args.get("limit", 10)
-	offset = request.args.get("offset", 0)
-	books = query_db("select id, owner, title, author, year from book where title like ? or author like ? group by title limit ? offset ?", ("%" + query + "%", "%" + query + "%", limit, offset))
-	return jsonify([{
+	page = int(request.args.get("page", 0))
+	size = int(request.args.get("size", 10))
+	book_count = int(query_db("select count(*) from book where title like ? or author like ?", ("%" + query + "%", "%" + query + "%"), one=True)[0])
+	print(book_count)
+	books = query_db("select id, owner, title, author, year from book where title like ? or author like ? group by title limit ? offset ?", ("%" + query + "%", "%" + query + "%", size, page * size))
+	response = jsonify([{
 		"id": id,
 		"owner": owner,
 		"title": title,
@@ -85,6 +87,8 @@ def book_search():
 		"year": year
 	} 
 	for (id, owner, title, author, year) in books])
+	response.headers["page-count"] = book_count // size
+	return response
 
 
 @app.route("/debts", methods=['GET'])

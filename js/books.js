@@ -3,7 +3,6 @@ distlib.books = (function() {
 
 	var title = "My books";
 
-
 	var page;
 
 	var main_html = String()
@@ -36,9 +35,10 @@ distlib.books = (function() {
 
 	var render = function($container, _, query_parameters) {
 		$container.html(main_html);
-		page = query_parameters.page ? parseInt(query_parameters.page) - 1 : 1;
+		page = query_parameters.page ? parseInt(query_parameters.page) : 1;
+		var backend_page = page - 1;
 		books_list = $("#books-list");
-		$.when(distlib.services.get_books(page)).then(function(books, _, xhr) {
+		$.when(distlib.services.get_books(backend_page)).then(function(books, _, xhr) {
 			var page_count = parseInt(xhr.getResponseHeader("page-count"));
 			clear_books();
 			load_books(books);
@@ -46,12 +46,11 @@ distlib.books = (function() {
 				var pagination_buttons = String()
 				+ '<div class="w3-center">'
 					+ '<div class="w3-bar">'
-				if (page > 0)
-					pagination_buttons = pagination_buttons + '<a href="?page=' + page + '" class="w3-bar-item w3-button">&laquo;</a>';
-				for (var i = 1; i < page_count + 1; i = i + 1)
-					pagination_buttons = pagination_buttons + '<a href="?page=' + i + '" class="w3-button' + (i == page + 1 ? ' w3-blue' : '') + '">' + i + '</a>';
-				if (page < page_count - 1)
-					pagination_buttons = pagination_buttons + '<a href="?page=' + (page + 2) + '" class="w3-button">&raquo;</a></div>';
+				if (page > 1)
+					pagination_buttons = pagination_buttons + '<a href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>';
+				if (page <= page_count)
+					pagination_buttons = pagination_buttons + '<a href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a></div>';
+				pagination_buttons = pagination_buttons + '</div></div>';
 				books_list.after(pagination_buttons);
 			}
 		});
