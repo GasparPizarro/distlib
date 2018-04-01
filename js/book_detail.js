@@ -1,4 +1,5 @@
 distlib.book_detail = (function() {
+	'use strict';
 
 	var title = "My books";
 
@@ -35,10 +36,14 @@ distlib.book_detail = (function() {
 			+ '</div>'
 		+ '</div>';
 
+	var book_id;
+
+	var action_button;
+
 	var render = function($container, path_parameters, query_parameters) {
-		var book_id = path_parameters[0];
+		book_id = path_parameters[0];
 		$container.html(main_html);
-		target_node = $container;
+		var target_node = $container;
 		if (!book_id)
 			return;
 		$.when(distlib.services.get_book(book_id)).then(function(book) {
@@ -71,17 +76,19 @@ distlib.book_detail = (function() {
 				});
 			}
 			if (action_button.hasClass("action-ask")) {
-				action_button.click(function(event) {
-					event.preventDefault();
-					$.when(distlib.services.ask_for_book(book.id)).then(function(data) {
-						distlib.shell.toast("An email has been sent to the book's owner");
-						action_button.text("Taken");
-						action_button.addClass("w3-disabled");
-					});
-				});
+				action_button.click(ask_for_book);
 			}
 		})
 	};
+
+	var ask_for_book = function(event) {
+		event.preventDefault();
+		$.when(distlib.services.ask_for_book(book_id)).then(function(data) {
+			distlib.shell.toast("An email has been sent to the book's owner");
+			action_button.text("Taken");
+			action_button.addClass("w3-disabled");
+		});
+	}
 
 	return {
 		render: render,

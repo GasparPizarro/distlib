@@ -77,7 +77,7 @@ distlib.books = (function() {
 		$("#close-book-modal").click(function(event) {set_display_book_modal(false)});
 		$("#add-book").click(on_add_book);
 	}
-	
+
 	var clear_books = function() {
 		books_list.empty();
 		$("#more-books").remove();

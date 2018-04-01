@@ -108,7 +108,6 @@ distlib.loans = (function() {
 			type: "POST",
 			success: function(data) {
 				$(event.target).closest("li").remove();
-
 			}
 		});
 	};

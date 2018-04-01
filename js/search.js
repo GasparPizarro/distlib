@@ -59,26 +59,10 @@ distlib.search = (function() {
 		}
 	};
 
-	var more_books_button = $('<button id="more-books" type="button" class="w3-button w3-blue">More</button>');
-
-	var on_more_books = function(event) {
-		event.preventDefault();
-		$(event.target).prop("disabled", true);
-		$.when(distlib.services.search(search_box.val(), page_size, book_count)).then(function(books) {
-			$(event.target).prop("disabled", false);
-			if (books.length != 0)
-				add_books_to_view($("#books-list"), books);
-			if (books.length < page_size)
-				$("#more-books").remove();
-			}
-		);
-	}
-
 	var search = function(query, page) {
 		clear_result();
 		$.when(distlib.services.search(query, page - 1)).then(function(books, status, xhr) {
 			var page_count = xhr.getResponseHeader("page-count");
-			console.log(page_count);
 			if (books.length == 0)
 				books_result.html('<p id="empty-books-list" class="w3-disabled">No results</p>');
 			else {

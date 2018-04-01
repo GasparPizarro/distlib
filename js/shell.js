@@ -7,7 +7,7 @@ distlib.shell = (function() {
 
 		get_query_parameters: function(query) {
 			if (query)
-				return query.replace(/(^\?)/, '').split("&").map(function(n){return n = n.split("="), this[n[0]] = n[1], this}.bind({}))[0];
+				return query.replace(/(^\?)/, '').split("&").map(function(n){return n = n.split("="), this[n[0]] = decodeURI(n[1]), this}.bind({}))[0];
 			else
 				return {};
 		},
@@ -113,7 +113,7 @@ distlib.shell = (function() {
 	};
 
 	var toast = function(message) {
-		var element = $('#toast')
+		var element = $(document.getElementById("toast"));
 		element.text(message);
 		element.fadeIn();
 		setTimeout(function() {
@@ -126,16 +126,16 @@ distlib.shell = (function() {
 	var loading_modal;
 
 	var on_logout = function(event) {
-		$("#login-modal").css("display", "block");
-		$("#mod_title").html("The Distributed Library");
-		$("#menu-username").empty();
-		$("#main").empty();
+		document.getElementById("login-modal").style.display = "block";
+		document.getElementById("mod_title").textContent = "The Distributed Library";
+		document.getElementById("menu-username").innerHTML = "";
+		document.getElementById("main").innerHTML = "";
 	};
 
 	var on_login = function(event) {
-		$("#login-modal").css("display", "none");
-		$("#menu-username").text(distlib.user.get_username());
-		$("#login-form")[0].reset()
+		document.getElementById("login-modal").style.display = "none";
+		document.getElementById("menu-username").textContent = distlib.user.get_username();
+		document.getElementById("login-form").reset();
 		$(document).trigger('hashchange');
 	}
 

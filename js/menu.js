@@ -1,5 +1,6 @@
 distlib.menu = (function(){
 	'use strict';
+
 	var main_html = String()
 		+ '<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index: 3; width: 250px; display: none;" id="mySidebar">'
 			+ '<br>'

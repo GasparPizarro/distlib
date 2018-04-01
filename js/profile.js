@@ -24,7 +24,6 @@ distlib.profile = (function() {
 	var last_name;
 	var update_profile_button;
 
-
 	var on_click_update = function(event) {
 		event.preventDefault();
 		$.ajax({
@@ -36,7 +35,6 @@ distlib.profile = (function() {
 			}
 		});
 	};
-
 
 	var render = function(container, path_parameters, query_parameters) {
 		container.html(main_html);

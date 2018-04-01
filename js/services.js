@@ -43,7 +43,6 @@ distlib.services = (function() {
 		});
 	};
 
-
 	var get_books = function(page = 0, size = 10) {
 		return $.ajax({
 			url: api_host + "/books",
