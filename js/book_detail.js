@@ -1,21 +1,29 @@
 distlib.book_detail = (function() {
 	'use strict';
 
-	var title = "My books";
+	var title = "Book detail";
 
 	var main_html = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
-			+ '<h5 id="book-title"></h5>'
+			+ '<h5>Book detail</h5>'
 		+ '</header>'
-		+ '<div class="w3-container" id="book_detail">'
-			+ '<dl>'
-				+ '<dt>Author</dt>'
-				+ '<dd id="book-author"></dd>'
-				+ '<dt>Year</dt>'
-				+ '<dd id="book-year"></dd>'
-				+ '<dt>Owner</dt>'
-				+ '<dd id="book-owner"></dd>'
-			+ '</dl> '
+		+ '<form id="book-detail" class="w3-container">'
+			+ '<p>'
+				+ '<label class="w3-label">Title</label>'
+				+ '<input id="book-title" name="title" class="w3-input" type="text"/>'
+			+ '</p>'
+			+ '<p>'
+				+ '<label class="w3-label">Author</label>'
+				+ '<input id="book-author" name="author" class="w3-input" type="text"/>'
+			+ '</p>'
+			+ '<p>'
+				+ '<label class="w3-label">Year</label>'
+				+ '<input id="book-year" name="year" class="w3-input" type="number"/>'
+			+ '</p>'
+			+ '<p>'
+				+ '<label class="w3-label">Owner</label>'
+				+ '<input id="book-owner" class="w3-input" type="text" readonly/>'
+			+ '</p>'
 			+ '<button id="action-button" class="w3-button"></button>'
 		+ '</div>'
 		+ '<div id="modal" class="w3-modal">'
@@ -48,15 +56,22 @@ distlib.book_detail = (function() {
 			return;
 		$.when(distlib.services.get_book(book_id)).then(function(book) {
 			var is_mine = book.owner == distlib.user.get_username();
-			$("#book-title").html(book.title);
-			$("#book-author").html(book.author);
-			$("#book-year").html(book.year);
-			$("#book-owner").html(book.owner);
+			$("#book-title").val(book.title);
+			$("#book-author").val(book.author);
+			$("#book-year").val(book.year);
+			$("#book-owner").val(book.owner);
 			action_button = $("#action-button");
-			if (is_mine)
+			if (is_mine) {
+				$("#book-detail").append(' ').append('<button id="action-button" class="w3-button w3-green">Update book</button>').click(update_book);
 				action_button.addClass("action-delete").addClass("w3-red").text("Delete book");
-			else
+			}
+			else {
+				$("#book-title").prop("readonly", true);
+				$("#book-author").prop("readonly", true);
+				$("#book-year").prop("readonly", true);
+				$("#book-owner").prop("readonly", true);
 				action_button.addClass("action-ask").addClass("w3-blue").text("Ask for book");
+			}
 
 			if (action_button.hasClass("action-delete")) {
 				if (action_button.hasClass("w3-disabled"))
@@ -79,6 +94,11 @@ distlib.book_detail = (function() {
 				action_button.click(ask_for_book);
 			}
 		})
+	};
+
+	var update_book = function() {
+		console.log($("#book-detail").serialize());
+		return false;
 	};
 
 	var ask_for_book = function(event) {
