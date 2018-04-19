@@ -96,6 +96,15 @@ distlib.services = (function() {
 		});
 	};
 
+	var update_book = function(book_id, data) {
+		return $.ajax({
+			url: api_host + "/books/" + book_id,
+			type: "PUT",
+			data: data
+		});
+	};
+
+
 	var get_username = function() {
 		return settings.username;
 	};
@@ -113,6 +122,7 @@ distlib.services = (function() {
 		add_book: add_book,
 		get_loans: get_loans,
 		delete_book: delete_book,
+		update_book: update_book,
 		get_username: get_username
 	}
 

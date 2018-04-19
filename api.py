@@ -69,6 +69,19 @@ def delete_book(book_id):
 	query_db("delete from book where id = ?", (book_id,))
 	return  ('', 204)
 
+@app.route("/books/<int:book_id>", methods=['PUT'])
+@environment_user
+@login_required
+def update_book(book_id):
+	updatable_fields = ["title", "author", "year"]
+	title = request.form.get("title", None)
+	author = request.form.get("author", None)
+	year = request.form.get("year", None)
+	query = "update book set " + (", ".join(["%s = ?" % (field,) for (field, value) in request.form.items() if field in updatable_fields and value])) + " where id = ?"
+	print(query)
+	data = query_db(query, [value for (field, value) in request.form.items() if field in updatable_fields and value] + [book_id])
+	return book_detail(book_id)
+
 @app.route("/books/search", methods=['GET'])
 @environment_user
 @login_required

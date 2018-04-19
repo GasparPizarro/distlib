@@ -22,7 +22,7 @@ distlib.book_detail = (function() {
 			+ '</p>'
 			+ '<p>'
 				+ '<label class="w3-label">Owner</label>'
-				+ '<input id="book-owner" class="w3-input" type="text" readonly/>'
+				+ '<input id="book-owner" class="w3-input" type="text" disabled/>'
 			+ '</p>'
 			+ '<button id="action-button" class="w3-button"></button>'
 		+ '</div>'
@@ -62,14 +62,16 @@ distlib.book_detail = (function() {
 			$("#book-owner").val(book.owner);
 			action_button = $("#action-button");
 			if (is_mine) {
-				$("#book-detail").append(' ').append('<button id="action-button" class="w3-button w3-green">Update book</button>').click(update_book);
+				var button = $('<button class="w3-button w3-green">Update book</button>');
+				button.click(update_book);
+				$("#book-detail").append(' ').append(button);
 				action_button.addClass("action-delete").addClass("w3-red").text("Delete book");
 			}
 			else {
-				$("#book-title").prop("readonly", true);
-				$("#book-author").prop("readonly", true);
-				$("#book-year").prop("readonly", true);
-				$("#book-owner").prop("readonly", true);
+				$("#book-title").prop("disabled", true);
+				$("#book-author").prop("disabled", true);
+				$("#book-year").prop("disabled", true);
+				$("#book-owner").prop("disabled", true);
 				action_button.addClass("action-ask").addClass("w3-blue").text("Ask for book");
 			}
 
@@ -97,7 +99,14 @@ distlib.book_detail = (function() {
 	};
 
 	var update_book = function() {
-		console.log($("#book-detail").serialize());
+		var data = {
+			"title": $("#book-title").val(),
+			"author": $("#book-author").val(),
+			"year": $("#book-year").val()
+		}
+		$.when(distlib.services.update_book(book_id, data)).then(function(result) {
+			console.log("updated book");
+		})
 		return false;
 	};
 
