@@ -7,7 +7,7 @@ distlib.book_detail = (function() {
 		+ '<header class="w3-container" style="padding-top:22px">'
 			+ '<h5>Book detail</h5>'
 		+ '</header>'
-		+ '<form id="book-detail" class="w3-container">'
+		+ '<div id="book-detail" class="w3-container">'
 			+ '<p>'
 				+ '<label class="w3-label">Title</label>'
 				+ '<input id="book-title" name="title" class="w3-input" type="text"/>'
@@ -105,7 +105,7 @@ distlib.book_detail = (function() {
 			"year": $("#book-year").val()
 		}
 		$.when(distlib.services.update_book(book_id, data)).then(function(result) {
-			console.log("updated book");
+			distlib.shell.toast("The book has been updated");
 		})
 		return false;
 	};
