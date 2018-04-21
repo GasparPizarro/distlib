@@ -28,16 +28,13 @@ distlib.book_detail = (function() {
 		+ '</div>'
 		+ '<div id="modal" class="w3-modal">'
 			+ '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
-				+ '<div class="w3-center"><br>'
-					+ '<span onclick="document.getElementById(\'modal\').style.display=\'none\'" class="w3-button w3-display-topright" title="Close Modal">&times;</span>'
-				+ '</div>'
 				+ '<div class="w3-container">'
 					+ '<div class="w3-section">'
 						+ '<h3 class="w3-center">¿Are you sure?</h3>'
 						+ '<div class="w3-center">'
 							+ '<button id="delete-book" class="w3-button w3-red" type="submit">Delete</button>'
 							+ ' '
-							+ '<button onclick="document.getElementById(\'modal\').style.display=\'none\'" class="w3-button w3-green" type="submit">Cancel</button>'
+							+ '<button id="cancel-modal" class="w3-button w3-green" type="submit">Cancel</button>'
 						+ '</div>'
 					+ '</div>'
 				+ '</div>'
@@ -78,11 +75,7 @@ distlib.book_detail = (function() {
 			if (action_button.hasClass("action-delete")) {
 				if (action_button.hasClass("w3-disabled"))
 					return;
-				action_button.click(function(event) {
-					event.preventDefault();
-					var modal = document.getElementById('modal');
-					modal.style.display = "block";
-				});
+				action_button.click(show_modal);
 				$("#delete-book").click(function(event) {
 					event.preventDefault();
 					$.when(distlib.services.delete_book(book_id)).then(function(result) {
@@ -97,6 +90,21 @@ distlib.book_detail = (function() {
 			}
 		})
 	};
+
+	var show_modal = function() {
+		var modal = document.getElementById('modal');
+		modal.style.display = "block";
+		$("#cancel-modal").click(hide_modal);
+		$(document).click(hide_modal);
+		return false;
+	};
+
+	var hide_modal = function() {
+		var modal = document.getElementById('modal');
+		modal.style.display = "none";
+		$(document).unbind("click", hide_modal);
+		return false;
+	}
 
 	var update_book = function() {
 		var data = {
