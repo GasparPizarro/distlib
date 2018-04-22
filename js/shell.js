@@ -32,7 +32,7 @@ distlib.shell = (function() {
 			loading_modal.css("display", "block");
 		else
 			loading_modal.css("display", "none");
-	};	
+	};
 
 	var main_html = String()
 		+ '<div class="w3-bar w3-top w3-black w3-large w3-center" style="z-index:4">'
@@ -66,7 +66,7 @@ distlib.shell = (function() {
 				+ '</div>'
 			+ '</div>'
 		+ '</div>';
-	
+
 	var wrong_url_html = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
 			+ '<h5>Url errónea</h5>'
@@ -139,12 +139,6 @@ distlib.shell = (function() {
 		$(document).trigger('hashchange');
 	}
 
-	var on_click_link = function(event) {
-		event.preventDefault();
-		history.pushState({}, null, $(this).attr("href"));
-		$(document).trigger("hashchange");
-	};
-
 	var initModule = function($container) {
 		router.routes = routes;
 		container = $container;
@@ -157,7 +151,6 @@ distlib.shell = (function() {
 		$(window).bind("popstate", function() {$(document).trigger('hashchange')});
 		$(document).on("logout", on_logout);
 		$(document).on('login', on_login);
-		$(document).on('click', "a", on_click_link);
 		$(document).on('bad-login', function(event) {
 			if (!$("#bad-login").length)
 				$("#login-status").html('<p id="bad-login" class="w3-text-red">Wrong credentials</p>');

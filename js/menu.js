@@ -52,10 +52,17 @@ distlib.menu = (function(){
 		overlayBg.css('display', 'none');
 	}
 
+	var onClickLink = function() {
+		history.pushState({}, null, $(this).attr("href"));
+		$(document).trigger("hashchange");
+		return false;
+	}
+
 	var initModule = function($container) {
 		$container.html(main_html);
 		$('#the-button').click(onClickSandwich);
 		$('#myOverlay').click(onClickOverlay);
+		$('#actions a').click(onClickLink);
 		$(document).on('hashchange', function() {
 			activate($("#actions").children(), '/' + location.pathname.substring(1));
 			onClickOverlay();

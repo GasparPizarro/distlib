@@ -16,15 +16,17 @@ distlib.debts = (function() {
 			var start_date = new Date(debts[i].start);
 			var end_date = new Date(debts[i].start);
 			end_date.setDate(start_date.getDate() + debts[i].span * 7);
-			debts_list.append('<li id="' + debts[i].id + '">'
-				+ '<p>'
-					+ debts[i].book.title
-					+ '<span class="w3-right">' + debts[i].lender + '</span>'
-				+ '</p>'
-				+ '<p>'
-					+ 'Due on ' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear()
-				+ '</p>'
-			+ '</li>');
+			var debt = String()
+				+ '<li id="' + debts[i].id + '">'
+					+ '<p>'
+						+ debts[i].book.title
+						+ '<span class="w3-right">' + debts[i].lender + '</span>'
+					+ '</p>'
+					+ '<p>'
+						+ 'Due on ' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear()
+					+ '</p>'
+				+ '</li>'
+			debts_list.append(debt);
 		}
 	}
 

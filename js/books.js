@@ -31,6 +31,8 @@ distlib.books = (function() {
 			+ '</div>'
 		+ '</div>';
 
+	var no_books_html = '<p id="empty-books-list" class="w3-disabled">There are no books</p>';
+
 	var books_list;
 
 	var render = function($container, _, query_parameters) {
@@ -38,22 +40,33 @@ distlib.books = (function() {
 		page = query_parameters.page ? parseInt(query_parameters.page) : 1;
 		var backend_page = page - 1;
 		books_list = $("#books-list");
-		$.when(distlib.services.get_books(backend_page)).then(function(books, _, xhr) {
-			var page_count = parseInt(xhr.getResponseHeader("page-count"));
+		var page_count = 0;
+		distlib.services.get_books(backend_page)
+		.then(function(response) {
+			page_count = response.headers.get("page-count");
+			return response.json()
+		})
+		.then(function(books) {
 			clear_books();
 			load_books(books);
 			if (page_count > 0) {
 				var pagination_buttons = String()
-				+ '<div class="w3-center">'
-					+ '<div class="w3-bar">'
-				if (page > 1)
-					pagination_buttons = pagination_buttons + '<a href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>';
-				if (page <= page_count)
-					pagination_buttons = pagination_buttons + '<a href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a></div>';
-				pagination_buttons = pagination_buttons + '</div></div>';
+					+ '<div id="pagination-buttons" class="w3-center">'
+						+ '<div class="w3-bar">'
+							+ (page > 1 ? '<a href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
+							+ (page <= page_count ? '<a href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
+						+ '</div>'
+					+ '</div>';
 				books_list.after(pagination_buttons);
+				$("#pagination-buttons a").click(onClickLink);
 			}
 		});
+	};
+
+	var onClickLink = function() {
+		history.pushState({}, null, $(this).attr("href"));
+		$(document).trigger("hashchange");
+		return false;
 	};
 
 	var on_add_book = function(event) {
@@ -64,18 +77,29 @@ distlib.books = (function() {
 		})
 	};
 
-	var set_display_book_modal = function(status) {
-		$("#book-modal").css("display", status ? "block" : "none");
+	var show_modal = function() {
+		var modal = document.getElementById('book-modal');
+		$("#close-book-modal").click(hide_modal);
+		modal.style.display = "block";
+		$(document).click(hide_modal);
+		return false;
 	};
+
+	var hide_modal = function() {
+		var modal = document.getElementById('book-modal');
+		modal.style.display = "none";
+		$(document).unbind("click", hide_modal);
+		return false;
+	}
 
 	var load_books = function(books) {
 		if (books.length == 0)
-			books_list.replaceWith('<p id="empty-books-list" class="w3-disabled">There are no books</p>');
+			books_list.replaceWith(no_books_html);
 		else
 			add_books_to_view(books_list, books);
-		$("#show-book-modal").click(function(event) {set_display_book_modal(true)});
-		$("#close-book-modal").click(function(event) {set_display_book_modal(false)});
+		$("#show-book-modal").click(show_modal);
 		$("#add-book").click(on_add_book);
+		$("#books-list a").click(onClickLink);
 	}
 
 	var clear_books = function() {
@@ -83,17 +107,25 @@ distlib.books = (function() {
 		$("#more-books").remove();
 	}
 
+	var onClickLink = function() {
+		history.pushState({}, null, $(this).attr("href"));
+		$(document).trigger("hashchange");
+		return false;
+	}
+
 	var add_books_to_view = function($container, books) {
 		for (var i = 0; i < books.length; i = i + 1) {
-			var element = $('<li/>').append(
-				$('<p/>').append(
-					$('<a href="/books/' + books[i].id + '"/>').text(books[i].title)).append(
-					$('<span class="w3-right"/>').text(books[i].year))
-				).append(
-				$('<p/>').text(books[i].author).append(
-					books[i].bearer ? $('<span class="w3-tag w3-right"/>').text('Lent to ' + books[i].bearer) : null
-				)
-			);
+			var element = String()
+				+ '<li>'
+					+ '<p>'
+						+ '<a href="/books/36">' + books[i].title + '</a>'
+						+ '<span class="w3-right">' + books[i].year + '</span>'
+					+ '</p>'
+					+ '<p>'
+						+ books[i].author
+						+ (books[i].bearer != null ? '<span class="w3-tag w3-right">' + 'Lent to ' + books[i].bearer + '</span>' : '')
+					+ '</p>'
+				+ '</li>'
 			$container.append(element);
 		}
 	}

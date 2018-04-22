@@ -41,6 +41,8 @@ distlib.book_detail = (function() {
 			+ '</div>'
 		+ '</div>';
 
+	var update_button = $('<button class="w3-button w3-green">Update book</button>');
+
 	var book_id;
 
 	var action_button;
@@ -48,10 +50,10 @@ distlib.book_detail = (function() {
 	var render = function($container, path_parameters, query_parameters) {
 		book_id = path_parameters[0];
 		$container.html(main_html);
-		var target_node = $container;
 		if (!book_id)
 			return;
-		$.when(distlib.services.get_book(book_id)).then(function(book) {
+		distlib.services.get_book(book_id).then(function(book) {
+			console.log(book);
 			var is_mine = book.owner == distlib.user.get_username();
 			$("#book-title").val(book.title);
 			$("#book-author").val(book.author);
@@ -59,7 +61,7 @@ distlib.book_detail = (function() {
 			$("#book-owner").val(book.owner);
 			action_button = $("#action-button");
 			if (is_mine) {
-				var button = $('<button class="w3-button w3-green">Update book</button>');
+				var button = $(update_button);
 				button.click(update_book);
 				$("#book-detail").append(' ').append(button);
 				action_button.addClass("action-delete").addClass("w3-red").text("Delete book");
@@ -76,20 +78,22 @@ distlib.book_detail = (function() {
 				if (action_button.hasClass("w3-disabled"))
 					return;
 				action_button.click(show_modal);
-				$("#delete-book").click(function(event) {
-					event.preventDefault();
-					$.when(distlib.services.delete_book(book_id)).then(function(result) {
-						distlib.shell.toast("The book has been deleted");
-						history.pushState({}, null, "/books");
-						$(document).trigger('hashchange');
-					})
-				});
+				$("#delete-book").click(delete_book);
 			}
 			if (action_button.hasClass("action-ask")) {
 				action_button.click(ask_for_book);
 			}
 		})
 	};
+
+	var delete_book = function() {
+		$.when(distlib.services.delete_book(book_id)).then(function() {
+			distlib.shell.toast("The book has been deleted");
+			history.pushState({}, null, "/books");
+			$(document).trigger('hashchange');
+		});
+		return false;
+	}
 
 	var show_modal = function() {
 		var modal = document.getElementById('modal');
@@ -104,7 +108,7 @@ distlib.book_detail = (function() {
 		modal.style.display = "none";
 		$(document).unbind("click", hide_modal);
 		return false;
-	}
+	};
 
 	var update_book = function() {
 		var data = {
@@ -119,12 +123,12 @@ distlib.book_detail = (function() {
 	};
 
 	var ask_for_book = function(event) {
-		event.preventDefault();
 		$.when(distlib.services.ask_for_book(book_id)).then(function(data) {
 			distlib.shell.toast("An email has been sent to the book's owner");
 			action_button.text("Taken");
 			action_button.addClass("w3-disabled");
 		});
+		return false;
 	}
 
 	return {

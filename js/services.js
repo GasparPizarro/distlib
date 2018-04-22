@@ -37,19 +37,18 @@ distlib.services = (function() {
 	};
 
 	var get_book = function(book_id) {
-		return $.ajax({
-			url: api_host + "/books/" + book_id,
-			type: "GET"
-		});
+		return fetch(api_host + "/books/" + book_id, {headers: {"Authorization": "Token " + distlib.user.get_token()}}).then(response => response.json());
 	};
 
 	var get_books = function(page = 0, size = 10) {
-		return $.ajax({
-			url: api_host + "/books",
-			type: "GET",
+		return fetch(api_host + "/books", {
+			method: "GET",
 			data: {
 				"page": page,
 				"size": size
+			},
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
 			}
 		});
 	};

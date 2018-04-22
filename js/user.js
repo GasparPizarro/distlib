@@ -46,6 +46,10 @@ distlib.user = (function() {
 		return username;
 	};
 
+	var get_token = function() {
+		return token;
+	}
+
 	var logout = function() {
 		localStorage.removeItem("token");
 		localStorage.removeItem("username");
@@ -54,6 +58,7 @@ distlib.user = (function() {
 
 	return {
 		get_username: get_username,
+		get_token: get_token,
 		initModule: initModule,
 		login: login,
 		logout: logout
