@@ -40,13 +40,9 @@ distlib.books = (function() {
 		page = query_parameters.page ? parseInt(query_parameters.page) : 1;
 		var backend_page = page - 1;
 		books_list = $("#books-list");
-		var page_count = 0;
-		distlib.services.get_books(backend_page)
-		.then(function(response) {
-			page_count = response.headers.get("page-count");
-			return response.json()
-		})
-		.then(function(books) {
+		distlib.services.get_books(backend_page).then(function(data) {
+			var books = data.books;
+			var page_count = data.page_count;
 			clear_books();
 			load_books(books);
 			if (page_count > 0) {
@@ -60,7 +56,7 @@ distlib.books = (function() {
 				books_list.after(pagination_buttons);
 				$("#pagination-buttons a").click(onClickLink);
 			}
-		});
+		})
 	};
 
 	var onClickLink = function() {
@@ -69,12 +65,17 @@ distlib.books = (function() {
 		return false;
 	};
 
-	var on_add_book = function(event) {
-		event.preventDefault();
-		$.when(distlib.services.add_book($("#add-book-form").serialize())).then(function(result) {
+	var on_add_book = function() {
+		var book = {
+			title: $("#add-book-form [name=title]").val(),
+			author: $("#add-book-form [name=author]").val(),
+			year: $("#add-book-form [name=year]").val(),
+		}
+		distlib.services.add_book(book).then(function(result) {
 			$(document).trigger("hashchange");
 			distlib.shell.toast("The book has been added");
 		})
+		return false;
 	};
 
 	var show_modal = function() {
@@ -85,10 +86,12 @@ distlib.books = (function() {
 		return false;
 	};
 
-	var hide_modal = function() {
+	var hide_modal = function(event) {
 		var modal = document.getElementById('book-modal');
-		modal.style.display = "none";
-		$(document).unbind("click", hide_modal);
+		if (!$.contains(modal, event.target)) {
+			modal.style.display = "none";
+			$(document).unbind("click", hide_modal);
+		}
 		return false;
 	}
 
@@ -118,14 +121,14 @@ distlib.books = (function() {
 			var element = String()
 				+ '<li>'
 					+ '<p>'
-						+ '<a href="/books/36">' + books[i].title + '</a>'
+						+ '<a href="/books/' + (books[i].id) + '">' + books[i].title + '</a>'
 						+ '<span class="w3-right">' + books[i].year + '</span>'
 					+ '</p>'
 					+ '<p>'
 						+ books[i].author
 						+ (books[i].bearer != null ? '<span class="w3-tag w3-right">' + 'Lent to ' + books[i].bearer + '</span>' : '')
 					+ '</p>'
-				+ '</li>'
+				+ '</li>';
 			$container.append(element);
 		}
 	}

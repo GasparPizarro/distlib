@@ -14,6 +14,8 @@ distlib.search = (function() {
 			+ '<div class="w3-center" id="book-pad" style="height: 75px">'
 		+ '</div>';
 
+	var no_results_html = '<p id="empty-books-list" class="w3-disabled">No results</p>';
+
 	var search_box;
 
 	var books_result;
@@ -61,10 +63,11 @@ distlib.search = (function() {
 
 	var search = function(query, page) {
 		clear_result();
-		$.when(distlib.services.search(query, page - 1)).then(function(books, status, xhr) {
-			var page_count = xhr.getResponseHeader("page-count");
+		$.when(distlib.services.search(query, page - 1)).then(function(data) {
+			var books = data.books;
+			var page_count = data.page_count;
 			if (books.length == 0)
-				books_result.html('<p id="empty-books-list" class="w3-disabled">No results</p>');
+				books_result.html(no_results_html);
 			else {
 				books_result.html('<ul class="w3-ul" id="books-list"></ul>');
 				add_books_to_view($("#books-list"), books);

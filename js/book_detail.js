@@ -53,7 +53,6 @@ distlib.book_detail = (function() {
 		if (!book_id)
 			return;
 		distlib.services.get_book(book_id).then(function(book) {
-			console.log(book);
 			var is_mine = book.owner == distlib.user.get_username();
 			$("#book-title").val(book.title);
 			$("#book-author").val(book.author);
@@ -87,7 +86,7 @@ distlib.book_detail = (function() {
 	};
 
 	var delete_book = function() {
-		$.when(distlib.services.delete_book(book_id)).then(function() {
+		distlib.services.delete_book(book_id).then(function() {
 			distlib.shell.toast("The book has been deleted");
 			history.pushState({}, null, "/books");
 			$(document).trigger('hashchange');
@@ -116,7 +115,7 @@ distlib.book_detail = (function() {
 			"author": $("#book-author").val(),
 			"year": $("#book-year").val()
 		}
-		$.when(distlib.services.update_book(book_id, data)).then(function(result) {
+		distlib.services.update_book(book_id, data).then(function() {
 			distlib.shell.toast("The book has been updated");
 		})
 		return false;

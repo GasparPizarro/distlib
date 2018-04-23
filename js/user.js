@@ -20,26 +20,25 @@ distlib.user = (function() {
 	};
 
 	var login = function(the_username, the_password) {
-		$.ajax({
-			url: distlib.services.get_api_host() + "/token",
-			type: "POST",
-			data: 'username=' + the_username + '&password=' + the_password,
-			success: function(data, textStatus, jqXHR) {
-				username = the_username;
-				token = data.token;
-				localStorage.setItem("token", data.token);
-				localStorage.setItem("username", the_username);
-				$.ajaxSetup({
-					headers: {
-						Authorization: ('Token ' + data.token)
-					}
-				});
-				$(document).trigger("login");
-			},
-			error: function() {
-				$(document).trigger("bad-login");
+		var form = new FormData();
+		form.append("username", the_username);
+		form.append("password", the_password);
+		fetch(distlib.services.get_api_host() + "/token", {
+			method: "POST",
+			body: form,
+		}).then(function(response) {
+			if (response.status == 200) {
+				return response.json().then(function(data) {
+					username = the_username;
+					token = data.token;
+					localStorage.setItem("token", data.token);
+					localStorage.setItem("username", the_username);
+					$(document).trigger("login");
+				})
 			}
-		});
+			else
+				$(document).trigger("bad-login")
+		}).catch(function() {$(document).trigger("bad-login")});
 	}
 
 	var get_username = function() {

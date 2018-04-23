@@ -37,7 +37,7 @@ distlib.debts = (function() {
 	var render = function(container) {
 		container.html(main_html);
 		debts_list = $("#debts-list");
-		$.when(distlib.services.get_debts()).then(function(debts) {
+		distlib.services.get_debts().then(function(debts) {
 			clear_debts();
 			load_debts(debts);
 		});

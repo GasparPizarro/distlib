@@ -11,15 +11,18 @@ distlib.services = (function() {
 	}
 
 	var search = function(query, page = 0, size = 10) {
-		return $.ajax({
-			url: api_host + "/books/search",
-			type: "GET",
-			data: {
-				"q": query,
-				"page": page,
-				"size": size
-			}
+		var url = new URL(api_host + "/books/search");
+		url.search = new URLSearchParams({
+			"q": query,
+			"page": page,
+			"size": size
 		});
+		return fetch(url, {
+			type: "GET",
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
+			}
+		}).then(response => response.json().then(json => ({books: json, page_count: response.headers.get("page-count")})));
 	};
 
 	var settings = {
@@ -50,56 +53,76 @@ distlib.services = (function() {
 			headers: {
 				"Authorization": "Token " + distlib.user.get_token()
 			}
-		});
+		}).then(response => response.json().then(json => ({books: json, page_count: response.headers.get("page-count")})));
 	};
 
 	var get_loans = function() {
-		return $.ajax({
-			url: api_host + "/loans",
-			type: "GET"
-		});
+		return fetch(api_host + "/loans", {
+			method: "GET",
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
+			}
+		}).then(response => response.json());
 	};
 
 	var get_debts = function() {
-		return $.ajax({
-			url: api_host + "/debts",
-			type: "GET"
-		});
+		return fetch(api_host + "/debts", {
+			method: "GET",
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
+			}
+		}).then(response => response.json());
 	};
 
 
 	var ask_for_book = function(book_id) {
-		return $.ajax({
-			url: api_host + "/loans",
-			type: "POST",
-			data: {
-				"book_id": book_id,
-				"recipient": distlib.user.get_username(),
-				"time_range": 1
+		form = new FormData();
+		form.append("book_id", book_id);
+		form.append("recipient", distlib.user.get_username());
+		form.append("time_range", 1);
+		return fetch(api_host + "/loans", {
+			method: "POST",
+			body: form,
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
 			}
 		})
 	};
 
 	var add_book = function(book) {
-		return $.ajax({
-			url: api_host + "/books",
-			type: "POST",
-			data: book
+		form = new FormData();
+		form.append("title", book.title);
+		form.append("author", book.author);
+		form.append("year", book.year);
+		return fetch(api_host + "/books", {
+			method: "POST",
+			body: form,
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
+			}
 		});
 	};
 
 	var delete_book = function(book_id) {
-		return $.ajax({
-			url: api_host + "/books/" + book_id,
-			type: "DELETE"
+		return fetch(api_host + "/books/" + book_id, {
+			method: "DELETE",
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
+			}
 		});
 	};
 
 	var update_book = function(book_id, data) {
-		return $.ajax({
-			url: api_host + "/books/" + book_id,
-			type: "PUT",
-			data: data
+		var form = new FormData();
+		form.append("title", data.title);
+		form.append("author", data.author);
+		form.append("year", data.year);
+		return fetch(api_host + "/books/" + book_id, {
+			method: "PUT",
+			body: form,
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
+			}
 		});
 	};
 
