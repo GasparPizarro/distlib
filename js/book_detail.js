@@ -54,10 +54,10 @@ distlib.book_detail = (function() {
 			return;
 		distlib.services.get_book(book_id).then(function(book) {
 			var is_mine = book.owner == distlib.user.get_username();
-			$("#book-title").val(book.title);
-			$("#book-author").val(book.author);
-			$("#book-year").val(book.year);
-			$("#book-owner").val(book.owner);
+			document.getElementById("book-title").value = book.title;
+			document.getElementById("book-author").value = book.author;
+			document.getElementById("book-year").value = book.year;
+			document.getElementById("book-owner").value = book.owner;
 			action_button = $("#action-button");
 			if (is_mine) {
 				var button = $(update_button);
@@ -122,7 +122,7 @@ distlib.book_detail = (function() {
 	};
 
 	var ask_for_book = function(event) {
-		$.when(distlib.services.ask_for_book(book_id)).then(function(data) {
+		distlib.services.ask_for_book(book_id).then(function(data) {
 			distlib.shell.toast("An email has been sent to the book's owner");
 			action_button.text("Taken");
 			action_button.addClass("w3-disabled");

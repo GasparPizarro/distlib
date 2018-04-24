@@ -33,7 +33,7 @@ distlib.debts = (function() {
 	var clear_debts = function() {
 		debts_list.empty();
 	}
-
+ 	
 	var render = function(container) {
 		container.html(main_html);
 		debts_list = $("#debts-list");

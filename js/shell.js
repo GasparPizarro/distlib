@@ -1,3 +1,4 @@
+
 distlib.shell = (function() {
 	'use strict';
 
@@ -29,9 +30,9 @@ distlib.shell = (function() {
 
 	var set_loading = function(status) {
 		if (status)
-			loading_modal.css("display", "block");
+			loading_modal.style.display = "block";
 		else
-			loading_modal.css("display", "none");
+			loading_modal.style.display = "none";
 	};
 
 	var main_html = String()
@@ -143,7 +144,7 @@ distlib.shell = (function() {
 		router.routes = routes;
 		container = $container;
 		container.html(main_html);
-		loading_modal = $("#loading-modal");
+		loading_modal = document.getElementById("loading-modal");
 		distlib.menu.initModule($('#menu'));
 		$(document).bind("hashchange", routing);
 		$(document).ajaxStart(function() {set_loading(true)});
@@ -152,12 +153,14 @@ distlib.shell = (function() {
 		$(document).on("logout", on_logout);
 		$(document).on('login', on_login);
 		$(document).on('bad-login', function(event) {
-			if (!$("#bad-login").length)
-				$("#login-status").html('<p id="bad-login" class="w3-text-red">Wrong credentials</p>');
+			if (!document.getElementById("bad-login"))
+				document.getElementById("login-status").innerHTML = '<p id="bad-login" class="w3-text-red">Wrong credentials</p>';
 		});
 		$("#login").click(function(event) {
-			event.preventDefault();
-			distlib.user.login($("#login-form [name=username]").val(), $("#login-form [name=password]").val());
+			var username = document.querySelector("#login-form [name=username]").value;
+			var password = document.querySelector("#login-form [name=password]").value;
+			distlib.user.login(username, password);
+			return false;
 		});
 	};
 

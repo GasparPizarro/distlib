@@ -39,21 +39,22 @@ distlib.books = (function() {
 		$container.html(main_html);
 		page = query_parameters.page ? parseInt(query_parameters.page) : 1;
 		var backend_page = page - 1;
-		books_list = $("#books-list");
+		books_list = document.getElementById("books-list");
 		distlib.services.get_books(backend_page).then(function(data) {
 			var books = data.books;
 			var page_count = data.page_count;
 			clear_books();
 			load_books(books);
 			if (page_count > 0) {
-				var pagination_buttons = String()
-					+ '<div id="pagination-buttons" class="w3-center">'
-						+ '<div class="w3-bar">'
-							+ (page > 1 ? '<a href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
-							+ (page <= page_count ? '<a href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
-						+ '</div>'
-					+ '</div>';
+				var pagination_buttons = document.createElement("div");
+				pagination_buttons.setAttribute("id", "pagination-buttons");
+				pagination_buttons.setAttribute("class", "w3-center");
 				books_list.after(pagination_buttons);
+				pagination_buttons.innerHTML = String()
+					+ '<div class="w3-bar">'
+						+ (page > 1 ? '<a href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
+						+ (page <= page_count ? '<a href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
+					+ '</div>';
 				$("#pagination-buttons a").click(onClickLink);
 			}
 		})
@@ -67,9 +68,9 @@ distlib.books = (function() {
 
 	var on_add_book = function() {
 		var book = {
-			title: $("#add-book-form [name=title]").val(),
-			author: $("#add-book-form [name=author]").val(),
-			year: $("#add-book-form [name=year]").val(),
+			title: document.querySelector("#add-book-form [name=title]").value,
+			author: document.querySelector("#add-book-form [name=author]").value,
+			year: document.querySelector("#add-book-form [name=year]").value,
 		}
 		distlib.services.add_book(book).then(function(result) {
 			$(document).trigger("hashchange");
@@ -88,7 +89,7 @@ distlib.books = (function() {
 
 	var hide_modal = function(event) {
 		var modal = document.getElementById('book-modal');
-		if (!$.contains(modal, event.target)) {
+		if (modal == event.target) {
 			modal.style.display = "none";
 			$(document).unbind("click", hide_modal);
 		}
@@ -101,13 +102,12 @@ distlib.books = (function() {
 		else
 			add_books_to_view(books_list, books);
 		$("#show-book-modal").click(show_modal);
-		$("#add-book").click(on_add_book);
+		document.getElementById("add-book").onclick = on_add_book;
 		$("#books-list a").click(onClickLink);
 	}
 
 	var clear_books = function() {
-		books_list.empty();
-		$("#more-books").remove();
+		books_list.innerHTML = "";
 	}
 
 	var onClickLink = function() {
@@ -118,18 +118,17 @@ distlib.books = (function() {
 
 	var add_books_to_view = function($container, books) {
 		for (var i = 0; i < books.length; i = i + 1) {
-			var element = String()
-				+ '<li>'
-					+ '<p>'
-						+ '<a href="/books/' + (books[i].id) + '">' + books[i].title + '</a>'
-						+ '<span class="w3-right">' + books[i].year + '</span>'
-					+ '</p>'
-					+ '<p>'
-						+ books[i].author
-						+ (books[i].bearer != null ? '<span class="w3-tag w3-right">' + 'Lent to ' + books[i].bearer + '</span>' : '')
-					+ '</p>'
-				+ '</li>';
-			$container.append(element);
+			var li = document.createElement("li");
+			li.innerHTML = String()
+				+ '<p>'
+					+ '<a href="/books/' + (books[i].id) + '">' + books[i].title + '</a>'
+					+ '<span class="w3-right">' + books[i].year + '</span>'
+				+ '</p>'
+				+ '<p>'
+					+ books[i].author
+					+ (books[i].bearer != null ? '<span class="w3-tag w3-right">' + 'Lent to ' + books[i].bearer + '</span>' : '')
+				+ '</p>'
+			$container.append(li);
 		}
 	}
 

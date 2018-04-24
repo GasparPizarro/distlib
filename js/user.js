@@ -9,14 +9,8 @@ distlib.user = (function() {
 		token = localStorage.getItem("token");
 		if (username == null || token == null)
 			$(document).trigger("logout");
-		else {
-			$.ajaxSetup({
-				headers: {
-					Authorization: ('Token ' + token)
-				}
-			});
+		else
 			$(document).trigger("login");
-		}
 	};
 
 	var login = function(the_username, the_password) {
