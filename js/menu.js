@@ -33,23 +33,23 @@ distlib.menu = (function(){
 	};
 
 	var onClickSandwich = function($event) {
-		var mySidebar = $('#mySidebar');
-		var overlayBg = $('#myOverlay');
-		if (mySidebar.css('display') === 'block') {
-			mySidebar.css('display', 'none');
-			overlayBg.css('display', 'none');
+		var mySidebar = document.getElementById('#mySidebar');
+		var overlayBg = document.getElementById('#myOverlay');
+		if (mySidebar.style.display == 'block') {
+			mySidebar.style.display = 'none';
+			overlayBg.style.display = 'none';
 		}
 		else {
-			mySidebar.css('display', 'block');
-			overlayBg.css('display', 'block');
+			mySidebar.style.display = 'block';
+			overlayBg.style.display = 'block';
 		}
 	}
 
 	var onClickOverlay = function(event) {
-		var mySidebar = $('#mySidebar');
-		var overlayBg = $('#myOverlay');
-		mySidebar.css('display', 'none');
-		overlayBg.css('display', 'none');
+		var mySidebar = document.getElementById('mySidebar');
+		var overlayBg = document.getElementById('myOverlay');
+		mySidebar.style.display = 'none';
+		overlayBg.style.display = 'none';
 	}
 
 	var onClickLink = function() {

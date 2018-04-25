@@ -107,10 +107,11 @@ distlib.shell = (function() {
 			var module = resolution.module;
 			var path_parameters = resolution.path_parameters;
 			module.render($('#main'), path_parameters, query_parameters);
-			$('#mod_title').text(module.title);
+			if (module.title)
+				document.getElementById('mod_title').textContent = module.title;
 		}
 		else
-			$('#main').html(wrong_url_html);
+			document.getElementById("main").innerHTML = wrong_url_html;
 	};
 
 	var toast = function(message) {
