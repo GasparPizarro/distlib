@@ -27,7 +27,7 @@ distlib.search = (function() {
 		query = query_parameters.q;
 		page = query_parameters.page ? parseInt(query_parameters.page) : 1;
 		search_box = $("#search-box");
-		book_pad = $("#book-pad")
+		book_pad = document.getElementById("book-pad");
 		books_result = $("#books-result");
 		if (query || query == "") {
 			search_box.val(query);
@@ -45,7 +45,7 @@ distlib.search = (function() {
 
 	var clear_result = function() {
 		books_result.empty();
-		book_pad.empty();
+		book_pad.innerHTML = "";
 	};
 
 	var add_books_to_view = function($container, books) {

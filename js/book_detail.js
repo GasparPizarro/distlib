@@ -66,10 +66,10 @@ distlib.book_detail = (function() {
 				action_button.addClass("action-delete").addClass("w3-red").text("Delete book");
 			}
 			else {
-				$("#book-title").prop("disabled", true);
-				$("#book-author").prop("disabled", true);
-				$("#book-year").prop("disabled", true);
-				$("#book-owner").prop("disabled", true);
+				document.getElementById("book-title").disabled = true;
+				document.getElementById("book-author").disabled = true;
+				document.getElementById("book-year").disabled = true;
+				document.getElementById("book-owner").disabled = true;
 				action_button.addClass("action-ask").addClass("w3-blue").text("Ask for book");
 			}
 
@@ -111,9 +111,9 @@ distlib.book_detail = (function() {
 
 	var update_book = function() {
 		var data = {
-			"title": $("#book-title").val(),
-			"author": $("#book-author").val(),
-			"year": $("#book-year").val()
+			"title": document.getElementById("book-title").value,
+			"author": document.getElementById("book-author").value,
+			"year": document.getElementById("book-year").value
 		}
 		distlib.services.update_book(book_id, data).then(function() {
 			distlib.shell.toast("The book has been updated");
