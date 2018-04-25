@@ -102,7 +102,7 @@ distlib.books = (function() {
 		else
 			add_books_to_view(books_list, books);
 		$("#show-book-modal").click(show_modal);
-		document.getElementById("add-book").onclick = on_add_book;
+		$("#add-book").click(on_add_book);
 		$("#books-list a").click(onClickLink);
 	}
 
