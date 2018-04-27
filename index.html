@@ -20,7 +20,7 @@
 		<link rel="stylesheet" href="/css/css.css">
 		<link rel="stylesheet" href="/css/font-awesome.css">
 		<script>
-			$(function() {distlib.main($('#distlib'));});
+			window.onload = function() {distlib.main(document.getElementById('distlib'));};
 		</script>
 		<style>
 			#toast {

@@ -36,7 +36,7 @@ distlib.books = (function() {
 	var books_list;
 
 	var render = function($container, _, query_parameters) {
-		$container.html(main_html);
+		$container.innerHTML = main_html;
 		page = query_parameters.page ? parseInt(query_parameters.page) : 1;
 		var backend_page = page - 1;
 		books_list = document.getElementById("books-list");
@@ -110,10 +110,10 @@ distlib.books = (function() {
 		books_list.innerHTML = "";
 	}
 
-	var onClickLink = function() {
+	var onClickLink = function(event) {
+		event.preventDefault();
 		history.pushState({}, null, $(this).attr("href"));
 		$(document).trigger("hashchange");
-		return false;
 	}
 
 	var add_books_to_view = function($container, books) {
@@ -128,7 +128,7 @@ distlib.books = (function() {
 					+ books[i].author
 					+ (books[i].bearer != null ? '<span class="w3-tag w3-right">' + 'Lent to ' + books[i].bearer + '</span>' : '')
 				+ '</p>'
-			$container.append(li);
+			$container.appendChild(li);
 		}
 	}
 

@@ -27,7 +27,7 @@ distlib.profile = (function() {
 	var on_click_update = function(event) {
 		event.preventDefault();
 		$.ajax({
-			url: distlib.services.get_api_host() + "/profile",
+			url: distlib.services.api_host + "/profile",
 			type: "POST",
 			data: $("#profile-form").serialize(),
 			success: function() {
@@ -44,7 +44,7 @@ distlib.profile = (function() {
 		update_profile_button = $("#update-profile-button");
 		username.text(distlib.user.get_username());
 		$.ajax({
-			url: distlib.services.get_api_host() + "/profile",
+			url: distlib.services.api_host + "/profile",
 			type: "GET",
 			success: function(profile) {
 				first_name.val(profile.first_name);

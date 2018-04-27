@@ -106,7 +106,7 @@ distlib.shell = (function() {
 		if (resolution) {
 			var module = resolution.module;
 			var path_parameters = resolution.path_parameters;
-			module.render($('#main'), path_parameters, query_parameters);
+			module.render(document.getElementById('main'), path_parameters, query_parameters);
 			if (module.title)
 				document.getElementById('mod_title').textContent = module.title;
 		}
@@ -144,9 +144,9 @@ distlib.shell = (function() {
 	var initModule = function($container) {
 		router.routes = routes;
 		container = $container;
-		container.html(main_html);
+		container.innerHTML = main_html;
 		loading_modal = document.getElementById("loading-modal");
-		distlib.menu.initModule($('#menu'));
+		distlib.menu.initModule(document.getElementById('menu'));
 		$(document).bind("hashchange", routing);
 		$(document).ajaxStart(function() {set_loading(true)});
 		$(document).ajaxStop(function() {set_loading(false)});
@@ -157,12 +157,12 @@ distlib.shell = (function() {
 			if (!document.getElementById("bad-login"))
 				document.getElementById("login-status").innerHTML = '<p id="bad-login" class="w3-text-red">Wrong credentials</p>';
 		});
-		$("#login").click(function(event) {
+		document.getElementById("login-form").onsubmit = function(event) {
 			var username = document.querySelector("#login-form [name=username]").value;
 			var password = document.querySelector("#login-form [name=password]").value;
 			distlib.user.login(username, password);
 			return false;
-		});
+		};
 	};
 
 	return {

@@ -1,6 +1,9 @@
 distlib.menu = (function(){
 	'use strict';
 
+	var mySidebar;
+	var overlayBg;
+
 	var main_html = String()
 		+ '<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index: 3; width: 250px; display: none;" id="mySidebar">'
 			+ '<br>'
@@ -25,16 +28,14 @@ distlib.menu = (function(){
 
 	var activate = function(menu, path) {
 		for (var i = 0; i < menu.length; i = i + 1) {
-			if (menu[i].getAttribute('href') != path)
-				$(menu[i]).removeClass("w3-blue");
+			if (menu[i].getAttribute('href') == path)
+				menu[i].classList.add("w3-blue");
 			else
-				$(menu[i]).addClass("w3-blue");
+				menu[i].classList.remove("w3-blue");
 		}
 	};
 
 	var onClickSandwich = function($event) {
-		var mySidebar = document.getElementById('#mySidebar');
-		var overlayBg = document.getElementById('#myOverlay');
 		if (mySidebar.style.display == 'block') {
 			mySidebar.style.display = 'none';
 			overlayBg.style.display = 'none';
@@ -46,25 +47,26 @@ distlib.menu = (function(){
 	}
 
 	var onClickOverlay = function(event) {
-		var mySidebar = document.getElementById('mySidebar');
-		var overlayBg = document.getElementById('myOverlay');
 		mySidebar.style.display = 'none';
 		overlayBg.style.display = 'none';
 	}
 
-	var onClickLink = function() {
+	var onClickLink = function(event) {
+		event.preventDefault();
 		history.pushState({}, null, $(this).attr("href"));
 		$(document).trigger("hashchange");
 		return false;
 	}
 
 	var initModule = function($container) {
-		$container.html(main_html);
-		$('#the-button').click(onClickSandwich);
-		$('#myOverlay').click(onClickOverlay);
-		$('#actions a').click(onClickLink);
+		$container.innerHTML = main_html;
+		mySidebar = document.getElementById('mySidebar');
+		overlayBg = document.getElementById('myOverlay');
+		document.getElementById('the-button').addEventListener("click", onClickSandwich);
+		document.getElementById('myOverlay').addEventListener("click", onClickOverlay);
+		document.querySelectorAll('#actions a').forEach(function(element) {element.addEventListener("click", onClickLink)});
 		$(document).on('hashchange', function() {
-			activate($("#actions").children(), '/' + location.pathname.substring(1));
+			activate(document.getElementById("actions").childNodes, '/' + location.pathname.substring(1));
 			onClickOverlay();
 		});
 	}

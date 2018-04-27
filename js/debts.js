@@ -16,27 +16,27 @@ distlib.debts = (function() {
 			var start_date = new Date(debts[i].start);
 			var end_date = new Date(debts[i].start);
 			end_date.setDate(start_date.getDate() + debts[i].span * 7);
-			var debt = String()
-				+ '<li id="' + debts[i].id + '">'
-					+ '<p>'
-						+ debts[i].book.title
-						+ '<span class="w3-right">' + debts[i].lender + '</span>'
-					+ '</p>'
-					+ '<p>'
-						+ 'Due on ' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear()
-					+ '</p>'
-				+ '</li>'
-			debts_list.append(debt);
+			var debt = document.createElement("li");
+			debt.id = debts[i].id;
+			debt.innerHTML = String()
+				+ '<p>'
+					+ debts[i].book.title
+					+ '<span class="w3-right">' + debts[i].lender + '</span>'
+				+ '</p>'
+				+ '<p>'
+					+ 'Due on ' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear()
+				+ '</p>';
+			debts_list.appendChild(debt);
 		}
 	}
 
 	var clear_debts = function() {
-		debts_list.empty();
+		debts_list.innerHTML = "";
 	}
- 	
+
 	var render = function(container) {
-		container.html(main_html);
-		debts_list = $("#debts-list");
+		container.innerHTML = main_html;
+		debts_list = document.getElementById("debts-list");
 		distlib.services.get_debts().then(function(debts) {
 			clear_debts();
 			load_debts(debts);

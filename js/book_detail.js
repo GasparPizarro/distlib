@@ -49,7 +49,7 @@ distlib.book_detail = (function() {
 
 	var render = function($container, path_parameters, query_parameters) {
 		book_id = path_parameters[0];
-		$container.html(main_html);
+		$container.innerHTML = main_html;
 		if (!book_id)
 			return;
 		distlib.services.get_book(book_id).then(function(book) {

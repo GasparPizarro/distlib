@@ -17,7 +17,7 @@ distlib.user = (function() {
 		var form = new FormData();
 		form.append("username", the_username);
 		form.append("password", the_password);
-		fetch(distlib.services.get_api_host() + "/token", {
+		fetch(distlib.services.api_host + "/token", {
 			method: "POST",
 			body: form,
 		}).then(function(response) {
