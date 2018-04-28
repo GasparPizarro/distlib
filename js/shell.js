@@ -141,6 +141,13 @@ distlib.shell = (function() {
 		$(document).trigger('hashchange');
 	}
 
+	var onClickLink = function(event) {
+		event.preventDefault();
+		history.pushState({}, null, event.target.getAttribute("href"));
+		$(document).trigger("hashchange");
+		return false;
+	}
+
 	var initModule = function($container) {
 		router.routes = routes;
 		container = $container;
@@ -150,7 +157,7 @@ distlib.shell = (function() {
 		$(document).bind("hashchange", routing);
 		$(document).ajaxStart(function() {set_loading(true)});
 		$(document).ajaxStop(function() {set_loading(false)});
-		$(window).bind("popstate", function() {$(document).trigger('hashchange')});
+		$(window).bind("popstate", function() {$(document).trigger('hashchange')})
 		$(document).on("logout", on_logout);
 		$(document).on('login', on_login);
 		$(document).on('bad-login', function(event) {
@@ -168,6 +175,7 @@ distlib.shell = (function() {
 	return {
 		initModule: initModule,
 		toast: toast,
-		set_loading: set_loading
+		set_loading: set_loading,
+		onClickLink: onClickLink
 	};
 }());

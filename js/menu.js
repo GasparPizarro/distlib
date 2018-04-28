@@ -51,20 +51,13 @@ distlib.menu = (function(){
 		overlayBg.style.display = 'none';
 	}
 
-	var onClickLink = function(event) {
-		event.preventDefault();
-		history.pushState({}, null, $(this).attr("href"));
-		$(document).trigger("hashchange");
-		return false;
-	}
-
 	var initModule = function($container) {
 		$container.innerHTML = main_html;
 		mySidebar = document.getElementById('mySidebar');
 		overlayBg = document.getElementById('myOverlay');
 		document.getElementById('the-button').addEventListener("click", onClickSandwich);
 		document.getElementById('myOverlay').addEventListener("click", onClickOverlay);
-		document.querySelectorAll('#actions a').forEach(function(element) {element.addEventListener("click", onClickLink)});
+		document.querySelectorAll('#actions a').forEach(function(element) {element.addEventListener("click", distlib.shell.onClickLink)});
 		$(document).on('hashchange', function() {
 			activate(document.getElementById("actions").childNodes, '/' + location.pathname.substring(1));
 			onClickOverlay();
