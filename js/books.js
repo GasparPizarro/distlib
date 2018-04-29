@@ -59,7 +59,9 @@ distlib.books = (function() {
 		})
 	};
 
-	var on_add_book = function() {
+	var on_add_book = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
 		var book = {
 			title: document.querySelector("#add-book-form [name=title]").value,
 			author: document.querySelector("#add-book-form [name=author]").value,
