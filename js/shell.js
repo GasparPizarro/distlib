@@ -154,7 +154,7 @@ distlib.shell = (function() {
 		container.innerHTML = main_html;
 		loading_modal = document.getElementById("loading-modal");
 		distlib.menu.initModule(document.getElementById('menu'));
-		window.onhashchange = routing;
+		window.addEventListener("hashchange", routing);
 		window.addEventListener("popstate", function() {window.dispatchEvent(new HashChangeEvent("hashchange"));});
 		window.addEventListener("logout", on_logout);
 		window.addEventListener('login', on_login);

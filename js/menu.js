@@ -58,10 +58,10 @@ distlib.menu = (function(){
 		document.getElementById('the-button').addEventListener("click", onClickSandwich);
 		document.getElementById('myOverlay').addEventListener("click", onClickOverlay);
 		document.querySelectorAll('#actions a').forEach(function(element) {element.addEventListener("click", distlib.shell.onClickLink)});
-		window.onhashchange = function() {
+		window.addEventListener("hashchange", function() {
 			activate(document.getElementById("actions").childNodes, '/' + location.pathname.substring(1));
 			onClickOverlay();
-		};
+		}, false);
 	}
 
 	return {initModule: initModule}
