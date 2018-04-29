@@ -1,8 +1,8 @@
 distlib = (function() {
 	'use strict';
 
-	var main = function($container) {
-		distlib.shell.initModule($container);
+	var main = function(container) {
+		distlib.shell.initModule(container);
 		distlib.user.initModule();
 	};
 

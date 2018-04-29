@@ -22,8 +22,8 @@ distlib.search = (function() {
 
 	var book_pad;
 
-	var render = function($container, path_parameters, query_parameters) {
-		$container.innerHTML = main_html;
+	var render = function(container, path_parameters, query_parameters) {
+		container.innerHTML = main_html;
 		query = query_parameters.q;
 		page = query_parameters.page ? parseInt(query_parameters.page) : 1;
 		search_box = document.getElementById("search-box");
@@ -37,7 +37,7 @@ distlib.search = (function() {
 				if (event.keyCode != 13)
 					return;
 				history.pushState({}, null, window.location.hash + '?q=' + search_box.value);
-				$(document).trigger("hashchange");
+				window.dispatchEvent(new HashChangeEvent("hashchange"));
 			}
 		);
 	};
@@ -47,7 +47,7 @@ distlib.search = (function() {
 		book_pad.innerHTML = "";
 	};
 
-	var add_books_to_view = function($container, books) {
+	var add_books_to_view = function(container, books) {
 		for (var i = 0; i < books.length; i = i + 1) {
 			var element = document.createElement("li");
 			element.innerHTML = String()
@@ -61,7 +61,7 @@ distlib.search = (function() {
 					+ books[i].author
 					+ '<span class="w3-tag w3-right">' + books[i].owner + '</span>'
 				+ '</p>'
-			$container.append(element);
+			container.append(element);
 		}
 	};
 
@@ -71,7 +71,7 @@ distlib.search = (function() {
 			var books = data.books;
 			var page_count = data.page_count;
 			if (books.length == 0)
-				books_result.html(no_results_html);
+				books_result.innerHTML = no_results_html;
 			else {
 				books_result.innerHTML = '<ul class="w3-ul" id="books-list"></ul>';
 				add_books_to_view(document.getElementById("books-list"), books);

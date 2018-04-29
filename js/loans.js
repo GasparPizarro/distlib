@@ -50,8 +50,8 @@ distlib.loans = (function() {
 		document.querySelectorAll(".finish-loan").forEach(function(element){element.addEventListener("click", on_finish_loan)});
 	};
 
-	var render = function($container) {
-		$container.innerHTML = main_html;
+	var render = function(container) {
+		container.innerHTML = main_html;
 		loans_list = document.getElementById("loans-list");
 		distlib.services.get_loans().then(function(loans) {
 			clear_loans();
@@ -71,7 +71,7 @@ distlib.loans = (function() {
 		event.preventDefault();
 		var loan_id = event.target.closest("li").getAttribute("id");
 		distlib.services.accept_loan(loan_id).then(function(loan) {
-			$(event.target).closest("li").remove();
+			event.target.closest("li").remove();
 			var start_date = new Date(loan.start);
 			var end_date = new Date(loan.start);
 			end_date.setDate(start_date.getDate() + loan.span * 7);
@@ -93,14 +93,14 @@ distlib.loans = (function() {
 
 	var on_resolve_loan  = function(event) {
 		event.preventDefault();
-		var loan_id = $(event.target).closest("li").attr("id");
+		var loan_id = event.target.closest("li").getAttribute("id");
 	};
 
 	var on_finish_loan = function(event) {
 		event.preventDefault();
-		var loan_id = $(event.target).closest("li").attr("id");
+		var loan_id = event.target.closest("li").getAttribute("id");
 		distlib.services.finish_loan(loan_id).then(function() {
-			$(event.target).closest("li").remove();
+			event.target.closest("li").remove();
 		});
 	};
 

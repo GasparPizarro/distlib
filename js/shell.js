@@ -76,7 +76,7 @@ distlib.shell = (function() {
 	var base_module = {
 		render: function(container) {
 			history.pushState({}, null, '/search');
-			$(document).trigger('hashchange');
+			window.dispatchEvent(new HashChangeEvent("hashchange"));
 		}
 	};
 
@@ -115,11 +115,11 @@ distlib.shell = (function() {
 	};
 
 	var toast = function(message) {
-		var element = $(document.getElementById("toast"));
-		element.text(message);
-		element.fadeIn();
+		var element = document.getElementById("toast");
+		element.textContent = message;
+		element.style.display = "block";
 		setTimeout(function() {
-			element.fadeOut();
+			element.style.display = "none";
 		}, 3000);
 	}
 
@@ -138,29 +138,27 @@ distlib.shell = (function() {
 		document.getElementById("login-modal").style.display = "none";
 		document.getElementById("menu-username").textContent = distlib.user.get_username();
 		document.getElementById("login-form").reset();
-		$(document).trigger('hashchange');
+		window.dispatchEvent(new HashChangeEvent("hashchange"));
 	}
 
 	var onClickLink = function(event) {
 		event.preventDefault();
 		history.pushState({}, null, event.target.getAttribute("href"));
-		$(document).trigger("hashchange");
+		window.dispatchEvent(new HashChangeEvent("hashchange"));
 		return false;
 	}
 
-	var initModule = function($container) {
+	var initModule = function(the_container) {
 		router.routes = routes;
-		container = $container;
+		container = the_container;
 		container.innerHTML = main_html;
 		loading_modal = document.getElementById("loading-modal");
 		distlib.menu.initModule(document.getElementById('menu'));
-		$(document).bind("hashchange", routing);
-		$(document).ajaxStart(function() {set_loading(true)});
-		$(document).ajaxStop(function() {set_loading(false)});
-		$(window).bind("popstate", function() {$(document).trigger('hashchange')})
-		$(document).on("logout", on_logout);
-		$(document).on('login', on_login);
-		$(document).on('bad-login', function(event) {
+		window.onhashchange = routing;
+		window.addEventListener("popstate", function() {window.dispatchEvent(new HashChangeEvent("hashchange"));});
+		window.addEventListener("logout", on_logout);
+		window.addEventListener('login', on_login);
+		window.addEventListener('bad-login', function(event) {
 			if (!document.getElementById("bad-login"))
 				document.getElementById("login-status").innerHTML = '<p id="bad-login" class="w3-text-red">Wrong credentials</p>';
 		});

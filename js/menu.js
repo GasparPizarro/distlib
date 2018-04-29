@@ -35,7 +35,7 @@ distlib.menu = (function(){
 		}
 	};
 
-	var onClickSandwich = function($event) {
+	var onClickSandwich = function() {
 		if (mySidebar.style.display == 'block') {
 			mySidebar.style.display = 'none';
 			overlayBg.style.display = 'none';
@@ -51,17 +51,17 @@ distlib.menu = (function(){
 		overlayBg.style.display = 'none';
 	}
 
-	var initModule = function($container) {
-		$container.innerHTML = main_html;
+	var initModule = function(container) {
+		container.innerHTML = main_html;
 		mySidebar = document.getElementById('mySidebar');
 		overlayBg = document.getElementById('myOverlay');
 		document.getElementById('the-button').addEventListener("click", onClickSandwich);
 		document.getElementById('myOverlay').addEventListener("click", onClickOverlay);
 		document.querySelectorAll('#actions a').forEach(function(element) {element.addEventListener("click", distlib.shell.onClickLink)});
-		$(document).on('hashchange', function() {
+		window.onhashchange = function() {
 			activate(document.getElementById("actions").childNodes, '/' + location.pathname.substring(1));
 			onClickOverlay();
-		});
+		};
 	}
 
 	return {initModule: initModule}

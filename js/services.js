@@ -132,5 +132,24 @@ distlib.services = {
 				"Authorization": "Token " + distlib.user.get_token()
 			}
 		}).then(response => response.json());
+	},
+
+	get_profile: function() {
+		return fetch(this.api_host + "/profile", {
+			method: "GET",
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
+			}
+		}).then(response => response.json());
+	},
+
+	update_profile: function() {
+		return fetch(this.api_host + "/profile", {
+			method: "POST",
+			headers: {
+				"Authorization": "Token " + distlib.user.get_token()
+			},
+			body: new FormData(document.getElementById("profile-form"))
+		})
 	}
 };

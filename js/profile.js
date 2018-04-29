@@ -26,34 +26,25 @@ distlib.profile = (function() {
 
 	var on_click_update = function(event) {
 		event.preventDefault();
-		$.ajax({
-			url: distlib.services.api_host + "/profile",
-			type: "POST",
-			data: $("#profile-form").serialize(),
-			success: function() {
-				distlib.shell.toast("Profile has been updated");
-			}
+		distlib.services.update_profile().then(function() {
+			distlib.shell.toast("Profile has been updated");
 		});
 	};
 
 	var render = function(container, path_parameters, query_parameters) {
-		container.html(main_html);
-		username = $("#username");
-		first_name = $("#first-name");
-		last_name = $("#last-name");
-		update_profile_button = $("#update-profile-button");
-		username.text(distlib.user.get_username());
-		$.ajax({
-			url: distlib.services.api_host + "/profile",
-			type: "GET",
-			success: function(profile) {
-				first_name.val(profile.first_name);
-				last_name.val(profile.last_name);
-			}
-		});
-		update_profile_button.click(on_click_update);
-		$("#profile-form").keyup(
-			function(event) {
+		container.innerHTML = main_html;
+		username = document.getElementById("username");
+		first_name = document.getElementById("first-name");
+		last_name = document.getElementById("last-name");
+		update_profile_button = document.getElementById("update-profile-button");
+		username.textContent = distlib.user.get_username();
+		distlib.services.get_profile().then(function(profile) {
+			console.log(profile)
+			first_name.value = profile.first_name;
+			last_name.value = profile.last_name;
+		})
+		update_profile_button.addEventListener("click", on_click_update);
+		document.getElementById("profile-form").addEventListener("keypress", function(event) {
 				if (event.keyCode != 13)
 					return;
 				on_click_update(event);

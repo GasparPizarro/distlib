@@ -8,9 +8,9 @@ distlib.user = (function() {
 		username = localStorage.getItem("username");
 		token = localStorage.getItem("token");
 		if (username == null || token == null)
-			$(document).trigger("logout");
+			window.dispatchEvent(new CustomEvent("logout"));
 		else
-			$(document).trigger("login");
+			window.dispatchEvent(new CustomEvent("login"));
 	};
 
 	var login = function(the_username, the_password) {
@@ -27,12 +27,12 @@ distlib.user = (function() {
 					token = data.token;
 					localStorage.setItem("token", data.token);
 					localStorage.setItem("username", the_username);
-					$(document).trigger("login");
+					window.dispatchEvent(new CustomEvent("login"));
 				})
 			}
 			else
-				$(document).trigger("bad-login")
-		}).catch(function() {$(document).trigger("bad-login")});
+				window.dispatchEvent(new CustomEvent("bad-login"));
+		}).catch(function() {window.dispatchEvent(new CustomEvent("bad-login"));});
 	}
 
 	var get_username = function() {
@@ -46,7 +46,7 @@ distlib.user = (function() {
 	var logout = function() {
 		localStorage.removeItem("token");
 		localStorage.removeItem("username");
-		$(document).trigger("logout");
+		window.dispatchEvent(new CustomEvent("logout"));
 	}
 
 	return {

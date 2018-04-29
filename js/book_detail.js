@@ -41,15 +41,13 @@ distlib.book_detail = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var update_button = $('<button class="w3-button w3-green">Update book</button>');
-
 	var book_id;
 
 	var action_button;
 
-	var render = function($container, path_parameters, query_parameters) {
+	var render = function(container, path_parameters, query_parameters) {
 		book_id = path_parameters[0];
-		$container.innerHTML = main_html;
+		container.innerHTML = main_html;
 		if (!book_id)
 			return;
 		distlib.services.get_book(book_id).then(function(book) {
@@ -58,29 +56,36 @@ distlib.book_detail = (function() {
 			document.getElementById("book-author").value = book.author;
 			document.getElementById("book-year").value = book.year;
 			document.getElementById("book-owner").value = book.owner;
-			action_button = $("#action-button");
+			action_button = document.getElementById("action-button");
 			if (is_mine) {
-				var button = $(update_button);
-				button.click(update_book);
-				$("#book-detail").append(' ').append(button);
-				action_button.addClass("action-delete").addClass("w3-red").text("Delete book");
+				var button = document.createElement("button");
+				button.classList.add("w3-button", "w3-green");
+				button.textContent = "Update book";
+				button.addEventListener("click", update_book);
+				document.getElementById("book-detail").appendChild(document.createTextNode(" "));
+				document.getElementById("book-detail").appendChild(button);
+				action_button.classList.add("action-delete");
+				action_button.classList.add("w3-red");
+				action_button.textContent = "Delete book";
 			}
 			else {
 				document.getElementById("book-title").disabled = true;
 				document.getElementById("book-author").disabled = true;
 				document.getElementById("book-year").disabled = true;
 				document.getElementById("book-owner").disabled = true;
-				action_button.addClass("action-ask").addClass("w3-blue").text("Ask for book");
+				action_button.classList.add("action-ask");
+				action_button.classList.add("w3-blue");
+				action_button.textContent = "Ask for book";
 			}
 
-			if (action_button.hasClass("action-delete")) {
-				if (action_button.hasClass("w3-disabled"))
+			if (action_button.classList.contains("action-delete")) {
+				if (action_button.classList.contains("w3-disabled"))
 					return;
-				action_button.click(show_modal);
-				$("#delete-book").click(delete_book);
+				action_button.addEventListener("click", show_modal);
+				document.getElementById("delete-book").addEventListener("click", delete_book);
 			}
-			if (action_button.hasClass("action-ask")) {
-				action_button.click(ask_for_book);
+			if (action_button.classList.contains("action-ask")) {
+				action_button.addEventListner("click", ask_for_book);
 			}
 		})
 	};
@@ -89,23 +94,25 @@ distlib.book_detail = (function() {
 		distlib.services.delete_book(book_id).then(function() {
 			distlib.shell.toast("The book has been deleted");
 			history.pushState({}, null, "/books");
-			$(document).trigger('hashchange');
+			window.dispatchEvent(new HashChangeEvent("hashchange"));
 		});
 		return false;
 	}
 
-	var show_modal = function() {
+	var show_modal = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
 		var modal = document.getElementById('modal');
 		modal.style.display = "block";
-		$("#cancel-modal").click(hide_modal);
-		$(document).click(hide_modal);
+		modal.addEventListener("click", hide_modal);
 		return false;
 	};
 
-	var hide_modal = function() {
+	var hide_modal = function(event) {
 		var modal = document.getElementById('modal');
-		modal.style.display = "none";
-		$(document).unbind("click", hide_modal);
+		var cancel_modal = document.getElementById("cancel-modal");
+		if (event.target == modal || event.target == cancel_modal)
+			modal.style.display = "none";
 		return false;
 	};
 
