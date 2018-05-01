@@ -22,12 +22,13 @@ distlib.services = {
 	},
 
 	get_books: function(page = 0, size = 10) {
-		return fetch(this.api_host + "/books", {
-			method: "GET",
-			data: {
-				"page": page,
-				"size": size
-			},
+		var url = new URL(this.api_host + "/books");
+		url.search = new URLSearchParams({
+			"page": page,
+			"size": size
+		})
+		return fetch(url, {
+			type: "GET",
 			headers: {
 				"Authorization": "Token " + distlib.user.get_token()
 			}

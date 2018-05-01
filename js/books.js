@@ -51,13 +51,60 @@ distlib.books = (function() {
 				books_list.after(pagination_buttons);
 				pagination_buttons.innerHTML = String()
 					+ '<div class="w3-bar">'
-						+ (page > 1 ? '<a href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
-						+ (page <= page_count ? '<a href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
+						+ (page > 1 ? '<a id="previous-page" href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
+						+ (page <= page_count ? '<a id="next-page" href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
 					+ '</div>';
-				document.querySelectorAll("#pagination-buttons a").forEach(function(element)(element.addEventListener("click", distlib.shell.onClickLink)));
+				var previous_page_button = document.getElementById("previous-page");
+				var next_page_button = document.getElementById("next-page");
+				if (previous_page_button != null)
+					previous_page_button.addEventListener("click", goToPreviousPage);
+				if (next_page_button != null)
+					next_page_button.addEventListener("click", goToNextPage);
 			}
 		})
 	};
+
+	var goToPage = function(page) {
+		history.pushState(null, null, "/books?page=" + page);
+		clear_books();
+		var backend_page = page - 1;
+		distlib.services.get_books(backend_page).then(function(data) {
+			load_books(data.books);
+			if (document.getElementById("pagination-buttons") != null)
+				document.getElementById("pagination-buttons").remove();
+			if (data.page_count > 0) {
+				var pagination_buttons = document.createElement("div");
+				pagination_buttons.setAttribute("id", "pagination-buttons");
+				pagination_buttons.setAttribute("class", "w3-center");
+				books_list.after(pagination_buttons);
+				pagination_buttons.innerHTML = String()
+					+ '<div class="w3-bar">'
+						+ (page > 1 ? '<a id="previous-page" href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
+						+ (page < data.page_count ? '<a id="next-page" href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
+					+ '</div>';
+				var previous_page_button = document.getElementById("previous-page");
+				var next_page_button = document.getElementById("next-page");
+				if (previous_page_button != null)
+					previous_page_button.addEventListener("click", goToPreviousPage);
+				if (next_page_button != null)
+					next_page_button.addEventListener("click", goToNextPage);
+			}
+		});
+	};
+
+	var goToNextPage = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		page = page + 1;
+		goToPage(page);
+	};
+
+	var goToPreviousPage = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		page = page - 1;
+		goToPage(page);
+	}
 
 	var on_add_book = function(event) {
 		event.preventDefault();
@@ -80,8 +127,14 @@ distlib.books = (function() {
 		var modal = document.getElementById('book-modal');
 		modal.style.display = "block";
 		modal.addEventListener("click", hide_modal);
+		document.addEventListener("keydown", escapeFromModal);
 		return false;
 	};
+
+	var escapeFromModal = function(event) {
+		if (event.key == "Escape")
+			document.getElementById('book-modal').style.display = "none";
+	}
 
 	var hide_modal = function(event) {
 		var modal = document.getElementById('book-modal');
