@@ -12,7 +12,7 @@ distlib.menu = (function(){
 					+ '<img src="/img/avatar2.png" class="w3-circle w3-margin-right" style="width:46px">'
 				+ '</div>'
 				+ '<div class="w3-col">'
-					+ '<a href="/profile"><span><strong id="menu-username"></strong></span></a>'
+					+ '<span><a href="/profile" id="menu-username" style="font-weight: bold"></a></span>'
 				+ '</div>'
 			+ '</div>'
 			+ '<br>'
@@ -57,7 +57,7 @@ distlib.menu = (function(){
 		overlayBg = document.getElementById('myOverlay');
 		document.getElementById('the-button').addEventListener("click", onClickSandwich);
 		document.getElementById('myOverlay').addEventListener("click", onClickOverlay);
-		document.querySelectorAll('#actions a').forEach(function(element) {element.addEventListener("click", distlib.shell.onClickLink)});
+		mySidebar.querySelectorAll('a').forEach(function(element) {element.addEventListener("click", distlib.shell.onClickLink)});
 		window.addEventListener("hashchange", function() {
 			activate(document.getElementById("actions").childNodes, '/' + location.pathname.substring(1));
 			onClickOverlay();

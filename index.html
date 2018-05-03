@@ -32,6 +32,9 @@
 				left: 50%;
 				bottom: 30px;
 			}
+			ul:empty::after {
+				content: attr(placeholder);
+			}
 		</style>
 	</head>
 	<body class="w3-light-grey" id="distlib">

@@ -85,7 +85,7 @@ distlib.book_detail = (function() {
 				document.getElementById("delete-book").addEventListener("click", delete_book);
 			}
 			if (action_button.classList.contains("action-ask")) {
-				action_button.addEventListner("click", ask_for_book);
+				action_button.addEventListener("click", ask_for_book);
 			}
 		})
 	};
@@ -131,8 +131,8 @@ distlib.book_detail = (function() {
 	var ask_for_book = function(event) {
 		distlib.services.ask_for_book(book_id).then(function(data) {
 			distlib.shell.toast("An email has been sent to the book's owner");
-			action_button.text("Taken");
-			action_button.addClass("w3-disabled");
+			action_button.textContent = "Taken";
+			action_button.classList.add("w3-disabled");
 		});
 		return false;
 	}

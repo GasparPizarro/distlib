@@ -5,7 +5,7 @@ distlib.debts = (function() {
 
 	var main_html = String()
 		+ '<div class="w3-container">'
-			+ '<ul class="w3-ul" id="debts-list">'
+			+ '<ul class="w3-ul" id="debts-list" placeholder="There are no debts">'
 			+ '</ul>'
 		+ '</div>'
 

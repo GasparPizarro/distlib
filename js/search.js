@@ -62,6 +62,11 @@ distlib.search = (function() {
 					+ '<span class="w3-tag w3-right">' + books[i].owner + '</span>'
 				+ '</p>'
 			container.append(element);
+			element.querySelector("a").addEventListener("click", function(event) {
+				event.preventDefault();
+				history.pushState({}, null, event.target.getAttribute("href"));
+				window.dispatchEvent(new HashChangeEvent("hashchange"));
+			});
 		}
 	};
 
