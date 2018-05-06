@@ -95,7 +95,7 @@ distlib.books = (function() {
 			year: document.querySelector("#add-book-form [name=year]").value,
 		}
 		distlib.services.add_book(book).then(function(result) {
-			window.dispatchEvent(new HashChangeEvent("hashchange"));
+			window.dispatchEvent(new CustomEvent("routing"));
 			distlib.shell.toast("The book has been added");
 		})
 		return false;
@@ -147,7 +147,7 @@ distlib.books = (function() {
 	var goToBook = function(event) {
 		event.preventDefault();
 		history.pushState({}, null, event.target.getAttribute("href"));
-		window.dispatchEvent(new HashChangeEvent("hashchange"));
+		window.dispatchEvent(new CustomEvent("routing"));
 	}
 
 	return {

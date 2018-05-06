@@ -64,7 +64,7 @@ distlib.menu = (function(){
 		window.addEventListener("logout", function() {
 			document.getElementById("menu-username").innerHTML = "";
 		});
-		window.addEventListener("hashchange", function() {
+		window.addEventListener("routing", function() {
 			activate(document.getElementById("actions").childNodes, '/' + location.pathname.substring(1));
 			onClickOverlay();
 		}, false);

@@ -94,7 +94,7 @@ distlib.book_detail = (function() {
 		distlib.services.delete_book(book_id).then(function() {
 			distlib.shell.toast("The book has been deleted");
 			history.pushState({}, null, "/books");
-			window.dispatchEvent(new HashChangeEvent("hashchange"));
+			window.dispatchEvent(new CustomEvent("routing"));
 		});
 		return false;
 	}

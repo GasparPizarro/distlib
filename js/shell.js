@@ -62,7 +62,7 @@ distlib.shell = (function() {
 	var base_module = {
 		render: function(container) {
 			history.pushState({}, null, '/search');
-			window.dispatchEvent(new HashChangeEvent("hashchange"));
+			window.dispatchEvent(new CustomEvent("routing"));
 		}
 	};
 
@@ -116,7 +116,7 @@ distlib.shell = (function() {
 	var onClickLink = function(event) {
 		event.preventDefault();
 		history.pushState({}, null, event.target.getAttribute("href"));
-		window.dispatchEvent(new HashChangeEvent("hashchange"));
+		window.dispatchEvent(new CustomEvent("routing"));
 		return false;
 	}
 
@@ -126,12 +126,12 @@ distlib.shell = (function() {
 		container.innerHTML = main_html;
 		loading_modal = document.getElementById("loading-modal");
 		distlib.menu.init(document.getElementById('menu'));
-		window.addEventListener("hashchange", routing);
-		window.addEventListener("popstate", function() {window.dispatchEvent(new HashChangeEvent("hashchange"));});
+		window.addEventListener("routing", routing);
+		window.addEventListener("popstate", function() {window.dispatchEvent(new CustomEvent("routing"));});
 		window.addEventListener("logout", clearForLogin);
 		window.addEventListener("login", onLogin);
 		distlib.auth.init(document.getElementById("login-modal"));
-		window.dispatchEvent(new HashChangeEvent("hashchange"));
+		window.dispatchEvent(new CustomEvent("routing"));
 	};
 
 	var clearForLogin = function() {

@@ -37,7 +37,7 @@ distlib.search = (function() {
 				if (event.keyCode != 13)
 					return;
 				history.pushState({}, null, window.location.hash + '?q=' + search_box.value);
-				window.dispatchEvent(new HashChangeEvent("hashchange"));
+				window.dispatchEvent(new CustomEvent("routing"));
 			}
 		);
 	};
@@ -65,7 +65,7 @@ distlib.search = (function() {
 			element.querySelector("a").addEventListener("click", function(event) {
 				event.preventDefault();
 				history.pushState({}, null, event.target.getAttribute("href"));
-				window.dispatchEvent(new HashChangeEvent("hashchange"));
+				window.dispatchEvent(new CustomEvent("routing"));
 			});
 		}
 	};

@@ -22,7 +22,7 @@ distlib.auth = (function() {
 
 	var onLogin = function(event) {
 		document.getElementById("login-form").reset();
-		window.dispatchEvent(new HashChangeEvent("hashchange"));
+		window.dispatchEvent(new CustomEvent("routing"));
 	};
 
 	var login = function(the_username, the_password) {
