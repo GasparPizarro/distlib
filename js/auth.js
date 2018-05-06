@@ -17,8 +17,6 @@ distlib.auth = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var view = {};
-
 	var username = null;
 	var token = null;
 

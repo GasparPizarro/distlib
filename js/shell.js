@@ -131,6 +131,7 @@ distlib.shell = (function() {
 		window.addEventListener("logout", clearForLogin);
 		window.addEventListener("login", onLogin);
 		distlib.auth.init(document.getElementById("login-modal"));
+		window.dispatchEvent(new HashChangeEvent("hashchange"));
 	};
 
 	var clearForLogin = function() {
