@@ -51,7 +51,7 @@ distlib.book_detail = (function() {
 		if (!book_id)
 			return;
 		distlib.services.get_book(book_id).then(function(book) {
-			var is_mine = book.owner == distlib.user.get_username();
+			var is_mine = book.owner == distlib.auth.get_username();
 			document.getElementById("book-title").value = book.title;
 			document.getElementById("book-author").value = book.author;
 			document.getElementById("book-year").value = book.year;

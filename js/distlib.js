@@ -3,7 +3,6 @@ distlib = (function() {
 
 	var main = function(container) {
 		distlib.shell.initModule(container);
-		distlib.user.initModule();
 	};
 
 	return {

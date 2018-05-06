@@ -51,18 +51,24 @@ distlib.menu = (function(){
 		overlayBg.style.display = 'none';
 	}
 
-	var initModule = function(container) {
+	var init = function(container) {
 		container.innerHTML = main_html;
 		mySidebar = document.getElementById('mySidebar');
 		overlayBg = document.getElementById('myOverlay');
 		document.getElementById('the-button').addEventListener("click", onClickSandwich);
 		document.getElementById('myOverlay').addEventListener("click", onClickOverlay);
 		mySidebar.querySelectorAll('a').forEach(function(element) {element.addEventListener("click", distlib.shell.onClickLink)});
+		window.addEventListener("login", function() {
+			document.getElementById("menu-username").textContent = distlib.auth.get_username();
+		});
+		window.addEventListener("logout", function() {
+			document.getElementById("menu-username").innerHTML = "";
+		});
 		window.addEventListener("hashchange", function() {
 			activate(document.getElementById("actions").childNodes, '/' + location.pathname.substring(1));
 			onClickOverlay();
 		}, false);
 	}
 
-	return {initModule: initModule}
+	return {init: init}
 }());

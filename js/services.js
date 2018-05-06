@@ -12,13 +12,13 @@ distlib.services = {
 		return fetch(url, {
 			type: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		}).then(response => response.json().then(json => ({books: json, page_count: response.headers.get("page-count")})));
 	},
 
 	get_book: function(book_id) {
-		return fetch(this.api_host + "/books/" + book_id, {headers: {"Authorization": "Token " + distlib.user.get_token()}}).then(response => response.json());
+		return fetch(this.api_host + "/books/" + book_id, {headers: {"Authorization": "Token " + distlib.auth.get_token()}}).then(response => response.json());
 	},
 
 	get_books: function(page = 0, size = 10) {
@@ -30,7 +30,7 @@ distlib.services = {
 		return fetch(url, {
 			type: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		}).then(response => response.json().then(json => ({books: json, page_count: response.headers.get("page-count")})));
 	},
@@ -39,7 +39,7 @@ distlib.services = {
 		return fetch(this.api_host + "/loans", {
 			method: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		}).then(response => response.json());
 	},
@@ -48,7 +48,7 @@ distlib.services = {
 		return fetch(this.api_host + "/debts", {
 			method: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		}).then(response => response.json());
 	},
@@ -56,13 +56,13 @@ distlib.services = {
 	ask_for_book: function(book_id) {
 		form = new FormData();
 		form.append("book_id", book_id);
-		form.append("recipient", distlib.user.get_username());
+		form.append("recipient", distlib.auth.get_username());
 		form.append("time_range", 1);
 		return fetch(this.api_host + "/loans", {
 			method: "POST",
 			body: form,
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		})
 	},
@@ -76,7 +76,7 @@ distlib.services = {
 			method: "POST",
 			body: form,
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		});
 	},
@@ -85,7 +85,7 @@ distlib.services = {
 		return fetch(this.api_host + "/books/" + book_id, {
 			method: "DELETE",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		});
 	},
@@ -99,7 +99,7 @@ distlib.services = {
 			method: "PUT",
 			body: form,
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		});
 	},
@@ -112,7 +112,7 @@ distlib.services = {
 		return fetch(this.api_host + "/loans/" + loan_id + "/reject", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		});
 	},
@@ -121,7 +121,7 @@ distlib.services = {
 		return fetch(this.api_host + "/loans/" + loan_id + "/finish", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		});
 	},
@@ -130,7 +130,7 @@ distlib.services = {
 		return fetch(this.api_host + "/loans/" + loan_id + "/accept", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		}).then(response => response.json());
 	},
@@ -139,7 +139,7 @@ distlib.services = {
 		return fetch(this.api_host + "/profile", {
 			method: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			}
 		}).then(response => response.json());
 	},
@@ -148,7 +148,7 @@ distlib.services = {
 		return fetch(this.api_host + "/profile", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token " + distlib.user.get_token()
+				"Authorization": "Token " + distlib.auth.get_token()
 			},
 			body: new FormData(document.getElementById("profile-form"))
 		})

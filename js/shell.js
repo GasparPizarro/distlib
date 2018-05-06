@@ -1,4 +1,3 @@
-
 distlib.shell = (function() {
 	'use strict';
 
@@ -52,21 +51,8 @@ distlib.shell = (function() {
 			+ '</div>'
 		+ '</div>'
 		+ '<div id="login-modal" class="w3-modal w3-animate-opacity">'
-			+ '<div class="w3-modal-content" style="max-width:300px">'
-				+ '<div class="w3-container">'
-					+ '<form id="login-form" class="w3-container">'
-						+ '<div class="w3-section">'
-							+ '<label>Username</label>'
-							+ '<input class="w3-input w3-margin-bottom" type="text" name="username" required>'
-							+ '<label>Password</label>'
-							+ '<input class="w3-input w3-margin-bottom" type="password" name="password" required>'
-							+ '<div id="login-status" class="w3-center"></div>'
-							+ '<button class="w3-button w3-block w3-green" type="submit" id="login">Ingresar</button>'
-						+ '</div>'
-					+ '</form>'
-				+ '</div>'
-			+ '</div>'
-		+ '</div>';
+		+ '</div>'
+
 
 	var wrong_url_html = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
@@ -82,7 +68,7 @@ distlib.shell = (function() {
 
 	var logout_module = {
 		render: function(container) {
-			distlib.user.logout();
+			distlib.auth.logout();
 			history.pushState({}, null, '/');
 		}
 	}
@@ -127,20 +113,6 @@ distlib.shell = (function() {
 
 	var loading_modal;
 
-	var on_logout = function(event) {
-		document.getElementById("login-modal").style.display = "block";
-		document.getElementById("mod_title").textContent = "The Distributed Library";
-		document.getElementById("menu-username").innerHTML = "";
-		document.getElementById("main").innerHTML = "";
-	};
-
-	var on_login = function(event) {
-		document.getElementById("login-modal").style.display = "none";
-		document.getElementById("menu-username").textContent = distlib.user.get_username();
-		document.getElementById("login-form").reset();
-		window.dispatchEvent(new HashChangeEvent("hashchange"));
-	}
-
 	var onClickLink = function(event) {
 		event.preventDefault();
 		history.pushState({}, null, event.target.getAttribute("href"));
@@ -153,21 +125,22 @@ distlib.shell = (function() {
 		container = the_container;
 		container.innerHTML = main_html;
 		loading_modal = document.getElementById("loading-modal");
-		distlib.menu.initModule(document.getElementById('menu'));
+		distlib.menu.init(document.getElementById('menu'));
 		window.addEventListener("hashchange", routing);
 		window.addEventListener("popstate", function() {window.dispatchEvent(new HashChangeEvent("hashchange"));});
-		window.addEventListener("logout", on_logout);
-		window.addEventListener('login', on_login);
-		window.addEventListener('bad-login', function(event) {
-			if (!document.getElementById("bad-login"))
-				document.getElementById("login-status").innerHTML = '<p id="bad-login" class="w3-text-red">Wrong credentials</p>';
-		});
-		document.getElementById("login-form").onsubmit = function(event) {
-			var username = document.querySelector("#login-form [name=username]").value;
-			var password = document.querySelector("#login-form [name=password]").value;
-			distlib.user.login(username, password);
-			return false;
-		};
+		window.addEventListener("logout", clearForLogin);
+		window.addEventListener("login", onLogin);
+		distlib.auth.init(document.getElementById("login-modal"));
+	};
+
+	var clearForLogin = function() {
+		document.getElementById("login-modal").style.display = "block";
+		document.getElementById("mod_title").textContent = "The Distributed Library";
+		document.getElementById("main").innerHTML = "";
+	};
+
+	var onLogin = function() {
+		document.getElementById("login-modal").style.display = "none";
 	};
 
 	return {

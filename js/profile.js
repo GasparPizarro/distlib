@@ -37,7 +37,7 @@ distlib.profile = (function() {
 		first_name = document.getElementById("first-name");
 		last_name = document.getElementById("last-name");
 		update_profile_button = document.getElementById("update-profile-button");
-		username.textContent = distlib.user.get_username();
+		username.textContent = distlib.auth.get_username();
 		distlib.services.get_profile().then(function(profile) {
 			first_name.value = profile.first_name;
 			last_name.value = profile.last_name;
