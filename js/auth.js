@@ -59,8 +59,6 @@ distlib.auth = (function() {
 		window.dispatchEvent(new CustomEvent("logout"));
 	}
 
-
-
 	var init = function(container) {
 		container.innerHTML = main_html;
 		username = localStorage.getItem("username");
