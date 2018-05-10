@@ -28,7 +28,7 @@ distlib.menu = (function(){
 
 	var activate = function(menu, path) {
 		for (var i = 0; i < menu.length; i = i + 1) {
-			if (menu[i].getAttribute('href') == path)
+			if (path.startsWith(menu[i].getAttribute('href')))
 				menu[i].classList.add("w3-blue");
 			else
 				menu[i].classList.remove("w3-blue");
