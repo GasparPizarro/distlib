@@ -45,6 +45,8 @@ def environment_user(f):
 		username = query_db("select username from user_token where token = ?", (token,), one=True)
 		if username is not None:
 			g.user = username[0]
+		else:
+			return jsonify({"error": "Bad credentials"}), 400
 		return f(*args, **kwargs)
 	return decorated_function
 

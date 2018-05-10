@@ -69,7 +69,7 @@ distlib.shell = (function() {
 	var logout_module = {
 		render: function(container) {
 			distlib.auth.logout();
-			history.pushState({}, null, '/');
+			history.replaceState({}, null, '/');
 		}
 	}
 

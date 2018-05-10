@@ -21,7 +21,7 @@ distlib.menu = (function(){
 				+ '<a href="/books" class="w3-bar-item w3-button w3-padding"><i class="fa fa-book fa-fw"></i> My books</a>'
 				+ '<a href="/loans" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i> Loans</a>'
 				+ '<a href="/debts" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw "></i> Debts</a>'
-				+ '<a href="/logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i> Log out</a>'
+				+ '<a href="/logout" id="logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i> Log out</a>'
 			+ '</div>'
 		+ '</nav>'
 		+ '<div class="w3-overlay w3-hide-large w3-animate-opacity" style="cursor: pointer; display: none;" title="close side menu" id="myOverlay"></div>'
@@ -57,7 +57,11 @@ distlib.menu = (function(){
 		overlayBg = document.getElementById('myOverlay');
 		document.getElementById('the-button').addEventListener("click", onClickSandwich);
 		document.getElementById('myOverlay').addEventListener("click", onClickOverlay);
-		mySidebar.querySelectorAll('a').forEach(function(element) {element.addEventListener("click", distlib.shell.onClickLink)});
+		mySidebar.querySelectorAll('a:not(#logout)').forEach(function(element) {element.addEventListener("click", distlib.shell.onClickLink)});
+		document.getElementById("logout").addEventListener("click", function(event) {
+			event.preventDefault();
+			distlib.auth.logout();
+		});
 		window.addEventListener("login", function() {
 			document.getElementById("menu-username").textContent = distlib.auth.get_username();
 		});

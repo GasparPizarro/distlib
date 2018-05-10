@@ -56,6 +56,8 @@ distlib.auth = (function() {
 	var logout = function() {
 		localStorage.removeItem("token");
 		localStorage.removeItem("username");
+		username = null;
+		token = null;
 		window.dispatchEvent(new CustomEvent("logout"));
 	}
 
