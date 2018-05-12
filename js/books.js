@@ -140,7 +140,7 @@ distlib.books = (function() {
 					+ (books[i].bearer != null ? '<span class="w3-tag w3-right">' + 'Lent to ' + books[i].bearer + '</span>' : '')
 				+ '</p>';
 			container.appendChild(li);
-			li.querySelector("a").addEventListener("click", goToBook);
+			li.querySelector("p a").addEventListener("click", goToBook);
 		}
 	}
 
