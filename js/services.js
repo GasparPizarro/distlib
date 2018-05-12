@@ -18,7 +18,12 @@ distlib.services = {
 	},
 
 	get_book: function(book_id) {
-		return fetch(this.api_host + "/books/" + book_id, {headers: {"Authorization": "Token " + distlib.auth.get_token()}}).then(response => response.json());
+		return fetch(this.api_host + "/books/" + book_id, {headers: {"Authorization": "Token " + distlib.auth.get_token()}}).then(function(response) {
+			if (response.ok)
+				return response.json();
+			else
+				return null;
+		});
 	},
 
 	get_books: function(page = 0, size = 10) {

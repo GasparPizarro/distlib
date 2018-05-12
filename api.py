@@ -53,7 +53,10 @@ def add_book():
 @environment_user
 @login_required
 def book_detail(book_id):
-	id_, owner, title, author, year = query_db("select id, owner, title, author, year from book where id = ?", (book_id,), one=True)
+	try:
+		id_, owner, title, author, year = query_db("select id, owner, title, author, year from book where id = ?", (book_id,), one=True)
+	except TypeError:
+		return ('', 404)
 	return jsonify({
 		"id": id_,
 		"owner": owner,

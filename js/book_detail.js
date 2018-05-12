@@ -24,7 +24,7 @@ distlib.book_detail = (function() {
 				+ '<label class="w3-label">Owner</label>'
 				+ '<input id="book-owner" class="w3-input" type="text" disabled/>'
 			+ '</p>'
-			+ '<button id="action-button" class="w3-button"></button>'
+			+ '<div id="book_actions"></div>'
 		+ '</div>'
 		+ '<div id="modal" class="w3-modal">'
 			+ '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
@@ -32,14 +32,16 @@ distlib.book_detail = (function() {
 					+ '<div class="w3-section">'
 						+ '<h3 class="w3-center">¿Are you sure?</h3>'
 						+ '<div class="w3-center">'
-							+ '<button id="delete-book" class="w3-button w3-red" type="submit">Delete</button>'
+							+ '<button id="delete-book" class="w3-button w3-red" type="button">Delete</button>'
 							+ ' '
-							+ '<button id="cancel-modal" class="w3-button w3-green" type="submit">Cancel</button>'
+							+ '<button id="cancel-modal" class="w3-button w3-green" type="button">Cancel</button>'
 						+ '</div>'
 					+ '</div>'
 				+ '</div>'
 			+ '</div>'
 		+ '</div>';
+
+	var no_book_html = "Not found";
 
 	var book_id;
 
@@ -47,45 +49,44 @@ distlib.book_detail = (function() {
 
 	var render = function(container, path_parameters, query_parameters) {
 		book_id = path_parameters[0];
-		container.innerHTML = main_html;
 		if (!book_id)
 			return;
 		distlib.services.get_book(book_id).then(function(book) {
+			if (!book) {
+				container.innerHTML = no_book_html;
+				return;
+			}
+			container.innerHTML = main_html;
+			var book_actions = document.getElementById("book_actions");
 			var is_mine = book.owner == distlib.auth.get_username();
 			document.getElementById("book-title").value = book.title;
 			document.getElementById("book-author").value = book.author;
 			document.getElementById("book-year").value = book.year;
 			document.getElementById("book-owner").value = book.owner;
-			action_button = document.getElementById("action-button");
 			if (is_mine) {
-				var button = document.createElement("button");
-				button.classList.add("w3-button", "w3-green");
-				button.textContent = "Update book";
-				button.addEventListener("click", update_book);
-				document.getElementById("book-detail").appendChild(document.createTextNode(" "));
-				document.getElementById("book-detail").appendChild(button);
-				action_button.classList.add("action-delete");
-				action_button.classList.add("w3-red");
-				action_button.textContent = "Delete book";
+				var update_button = document.createElement("button");
+				update_button.classList.add("w3-button", "w3-green");
+				update_button.textContent = "Update book";
+				update_button.addEventListener("click", update_book);
+				book_actions.appendChild(update_button);
+				book_actions.appendChild(document.createTextNode(" "));
+				var delete_button = document.createElement("button");
+				delete_button.classList.add("w3-button", "w3-red");
+				delete_button.textContent = "Delete book";
+				delete_button.addEventListener("click", show_modal);
+				book_actions.appendChild(delete_button);
 			}
 			else {
 				document.getElementById("book-title").disabled = true;
 				document.getElementById("book-author").disabled = true;
 				document.getElementById("book-year").disabled = true;
 				document.getElementById("book-owner").disabled = true;
-				action_button.classList.add("action-ask");
-				action_button.classList.add("w3-blue");
-				action_button.textContent = "Ask for book";
-			}
-
-			if (action_button.classList.contains("action-delete")) {
-				if (action_button.classList.contains("w3-disabled"))
-					return;
-				action_button.addEventListener("click", show_modal);
-				document.getElementById("delete-book").addEventListener("click", delete_book);
-			}
-			if (action_button.classList.contains("action-ask")) {
-				action_button.addEventListener("click", ask_for_book);
+				var ask_button = document.createElement("button");
+				ask_button.classList.add("action-ask");
+				ask_button.classList.add("w3-button", "w3-blue");
+				ask_button.textContent = "Ask for book";
+				ask_button.addEventListener("click", ask_for_book);
+				book_actions.appendChild(ask_button);
 			}
 		})
 	};
