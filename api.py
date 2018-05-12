@@ -282,4 +282,5 @@ app.route('/<path:path>', endpoint=catch_all, methods=['OPTIONS'])
 app.teardown_appcontext(close_connection)
 
 if __name__ == "__main__":
+	app.config["ENV"] = "development"
 	app.run(debug=True, host="0.0.0.0")
