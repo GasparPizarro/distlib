@@ -3,7 +3,7 @@ distlib.profile = (function() {
 
 	var title = "Profile";
 
-	var main_html = String()
+	var mainHtml = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
 			+ '<h5 id="username">username</h5>'
 		+ '</header>'
@@ -20,33 +20,33 @@ distlib.profile = (function() {
 		+ '</form>'
 
 	var username;
-	var first_name;
-	var last_name;
-	var update_profile_button;
+	var firstName;
+	var lastName;
+	var updateProfileButton;
 
-	var on_click_update = function(event) {
+	var onClickUpdate = function(event) {
 		event.preventDefault();
-		distlib.services.update_profile().then(function() {
+		distlib.services.updateProfile().then(function() {
 			distlib.shell.toast("Profile has been updated");
 		});
 	};
 
-	var render = function(container, path_parameters, query_parameters) {
-		container.innerHTML = main_html;
+	var render = function(container, pathParameters, queryParameters) {
+		container.innerHTML = mainHtml;
 		username = document.getElementById("username");
-		first_name = document.getElementById("first-name");
-		last_name = document.getElementById("last-name");
-		update_profile_button = document.getElementById("update-profile-button");
-		username.textContent = distlib.auth.get_username();
-		distlib.services.get_profile().then(function(profile) {
-			first_name.value = profile.first_name;
-			last_name.value = profile.last_name;
+		firstName = document.getElementById("first-name");
+		lastName = document.getElementById("last-name");
+		updateProfileButton = document.getElementById("update-profile-button");
+		username.textContent = distlib.auth.getUsername();
+		distlib.services.getProfile().then(function(profile) {
+			firstName.value = profile.firstName;
+			lastName.value = profile.lastName;
 		})
-		update_profile_button.addEventListener("click", on_click_update);
+		updateProfileButton.addEventListener("click", onClickUpdate);
 		document.getElementById("profile-form").addEventListener("keypress", function(event) {
 				if (event.keyCode != 13)
 					return;
-				on_click_update(event);
+				onClickUpdate(event);
 			}
 		);
 	};

@@ -1,9 +1,9 @@
-distlib.book_detail = (function() {
+distlib.bookDetail = (function() {
 	'use strict';
 
 	var title = "Book detail";
 
-	var main_html = String()
+	var mainHtml = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
 			+ '<h5>Book detail</h5>'
 		+ '</header>'
@@ -24,7 +24,7 @@ distlib.book_detail = (function() {
 				+ '<label class="w3-label">Owner</label>'
 				+ '<input id="book-owner" class="w3-input" type="text" disabled/>'
 			+ '</p>'
-			+ '<div id="book_actions"></div>'
+			+ '<div id="bookActions"></div>'
 		+ '</div>'
 		+ '<div id="modal" class="w3-modal">'
 			+ '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
@@ -41,58 +41,58 @@ distlib.book_detail = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var no_book_html = "Not found";
+	var noBookHtml = "Not found";
 
-	var book_id;
+	var bookId;
 
-	var action_button;
+	var actionButton;
 
-	var render = function(container, path_parameters, query_parameters) {
-		book_id = path_parameters[0];
-		if (!book_id)
+	var render = function(container, pathParameters, queryParameters) {
+		bookId = pathParameters[0];
+		if (!bookId)
 			return;
-		distlib.services.get_book(book_id).then(function(book) {
+		distlib.services.getBook(bookId).then(function(book) {
 			if (!book) {
-				container.innerHTML = no_book_html;
+				container.innerHTML = noBookHtml;
 				return;
 			}
-			container.innerHTML = main_html;
-			var book_actions = document.getElementById("book_actions");
-			var is_mine = book.owner == distlib.auth.get_username();
+			container.innerHTML = mainHtml;
+			var bookActions = document.getElementById("bookActions");
+			var isMine = book.owner == distlib.auth.getUsername();
 			document.getElementById("book-title").value = book.title;
 			document.getElementById("book-author").value = book.author;
 			document.getElementById("book-year").value = book.year;
 			document.getElementById("book-owner").value = book.owner;
-			if (is_mine) {
-				var update_button = document.createElement("button");
-				update_button.classList.add("w3-button", "w3-green");
-				update_button.textContent = "Update book";
-				update_button.addEventListener("click", update_book);
-				book_actions.appendChild(update_button);
-				book_actions.appendChild(document.createTextNode(" "));
-				var delete_button = document.createElement("button");
-				delete_button.classList.add("w3-button", "w3-red");
-				delete_button.textContent = "Delete book";
-				delete_button.addEventListener("click", show_modal);
-				book_actions.appendChild(delete_button);
+			if (isMine) {
+				var updateButton = document.createElement("button");
+				updateButton.classList.add("w3-button", "w3-green");
+				updateButton.textContent = "Update book";
+				updateButton.addEventListener("click", updateBook);
+				bookActions.appendChild(updateButton);
+				bookActions.appendChild(document.createTextNode(" "));
+				var deleteButton = document.createElement("button");
+				deleteButton.classList.add("w3-button", "w3-red");
+				deleteButton.textContent = "Delete book";
+				deleteButton.addEventListener("click", showModal);
+				bookActions.appendChild(deleteButton);
 			}
 			else {
 				document.getElementById("book-title").disabled = true;
 				document.getElementById("book-author").disabled = true;
 				document.getElementById("book-year").disabled = true;
 				document.getElementById("book-owner").disabled = true;
-				var ask_button = document.createElement("button");
-				ask_button.classList.add("action-ask");
-				ask_button.classList.add("w3-button", "w3-blue");
-				ask_button.textContent = "Ask for book";
-				ask_button.addEventListener("click", ask_for_book);
-				book_actions.appendChild(ask_button);
+				var askButton = document.createElement("button");
+				askButton.classList.add("action-ask");
+				askButton.classList.add("w3-button", "w3-blue");
+				askButton.textContent = "Ask for book";
+				askButton.addEventListener("click", askForBook);
+				bookActions.appendChild(askButton);
 			}
 		})
 	};
 
-	var delete_book = function() {
-		distlib.services.delete_book(book_id).then(function() {
+	var deleteBook = function() {
+		distlib.services.deleteBook(bookId).then(function() {
 			distlib.shell.toast("The book has been deleted");
 			history.pushState({}, null, "/books");
 			window.dispatchEvent(new CustomEvent("routing"));
@@ -100,40 +100,40 @@ distlib.book_detail = (function() {
 		return false;
 	}
 
-	var show_modal = function(event) {
+	var showModal = function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 		var modal = document.getElementById('modal');
 		modal.style.display = "block";
-		modal.addEventListener("click", hide_modal);
+		modal.addEventListener("click", hideModal);
 		return false;
 	};
 
-	var hide_modal = function(event) {
+	var hideModal = function(event) {
 		var modal = document.getElementById('modal');
-		var cancel_modal = document.getElementById("cancel-modal");
-		if (event.target == modal || event.target == cancel_modal)
+		var cancelModal = document.getElementById("cancel-modal");
+		if (event.target == modal || event.target == cancelModal)
 			modal.style.display = "none";
 		return false;
 	};
 
-	var update_book = function() {
+	var updateBook = function() {
 		var data = {
 			"title": document.getElementById("book-title").value,
 			"author": document.getElementById("book-author").value,
 			"year": document.getElementById("book-year").value
 		}
-		distlib.services.update_book(book_id, data).then(function() {
+		distlib.services.updateBook(bookId, data).then(function() {
 			distlib.shell.toast("The book has been updated");
 		})
 		return false;
 	};
 
-	var ask_for_book = function(event) {
-		distlib.services.ask_for_book(book_id).then(function(data) {
+	var askForBook = function(event) {
+		distlib.services.askForBook(bookId).then(function(data) {
 			distlib.shell.toast("An email has been sent to the book's owner");
-			action_button.textContent = "Taken";
-			action_button.classList.add("w3-disabled");
+			actionButton.textContent = "Taken";
+			actionButton.classList.add("w3-disabled");
 		});
 		return false;
 	}

@@ -2,7 +2,7 @@ distlib = (function() {
 	'use strict';
 
 	var main = function(container) {
-		distlib.shell.initModule(container);
+		distlib.shell.init(container);
 	};
 
 	return {

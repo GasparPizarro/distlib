@@ -3,19 +3,19 @@ distlib.debts = (function() {
 
 	var title = "Debts";
 
-	var main_html = String()
+	var mainHtml = String()
 		+ '<div class="w3-container">'
 			+ '<ul class="w3-ul" id="debts-list" placeholder="There are no debts">'
 			+ '</ul>'
 		+ '</div>'
 
-	var debts_list;
+	var debtsList;
 
-	var load_debts = function(debts) {
+	var loadDebts = function(debts) {
 		for (var i = 0; i < debts.length; i = i + 1) {
-			var start_date = new Date(debts[i].start);
-			var end_date = new Date(debts[i].start);
-			end_date.setDate(start_date.getDate() + debts[i].span * 7);
+			var startDate = new Date(debts[i].start);
+			var endDate = new Date(debts[i].start);
+			endDate.setDate(startDate.getDate() + debts[i].span * 7);
 			var debt = document.createElement("li");
 			debt.id = debts[i].id;
 			debt.innerHTML = String()
@@ -24,22 +24,22 @@ distlib.debts = (function() {
 					+ '<span class="w3-right">' + debts[i].lender + '</span>'
 				+ '</p>'
 				+ '<p>'
-					+ 'Due on ' + end_date.getDate() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getFullYear()
+					+ 'Due on ' + endDate.getDate() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getFullYear()
 				+ '</p>';
-			debts_list.appendChild(debt);
+			debtsList.appendChild(debt);
 		}
 	}
 
-	var clear_debts = function() {
-		debts_list.innerHTML = "";
+	var clearDebts = function() {
+		debtsList.innerHTML = "";
 	}
 
 	var render = function(container) {
-		container.innerHTML = main_html;
-		debts_list = document.getElementById("debts-list");
-		distlib.services.get_debts().then(function(debts) {
-			clear_debts();
-			load_debts(debts);
+		container.innerHTML = mainHtml;
+		debtsList = document.getElementById("debts-list");
+		distlib.services.getDebts().then(function(debts) {
+			clearDebts();
+			loadDebts(debts);
 		});
 	};
 

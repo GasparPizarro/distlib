@@ -4,7 +4,7 @@ distlib.menu = (function(){
 	var mySidebar;
 	var overlayBg;
 
-	var main_html = String()
+	var mainHtml = String()
 		+ '<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index: 3; width: 250px; display: none;" id="mySidebar">'
 			+ '<br>'
 			+ '<div class="w3-container w3-row">'
@@ -52,7 +52,7 @@ distlib.menu = (function(){
 	}
 
 	var init = function(container) {
-		container.innerHTML = main_html;
+		container.innerHTML = mainHtml;
 		mySidebar = document.getElementById('mySidebar');
 		overlayBg = document.getElementById('myOverlay');
 		document.getElementById('the-button').addEventListener("click", onClickSandwich);
@@ -63,7 +63,7 @@ distlib.menu = (function(){
 			distlib.auth.logout();
 		});
 		window.addEventListener("login", function() {
-			document.getElementById("menu-username").textContent = distlib.auth.get_username();
+			document.getElementById("menu-username").textContent = distlib.auth.getUsername();
 		});
 		window.addEventListener("logout", function() {
 			document.getElementById("menu-username").innerHTML = "";

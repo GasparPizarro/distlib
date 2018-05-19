@@ -1,9 +1,9 @@
 distlib.services = {
 
-	api_host: "http://" + window.location.hostname + ":5000",
+	apiHost: "http://" + window.location.hostname + ":5000",
 
 	search: function(query, page = 0, size = 10) {
-		var url = new URL(this.api_host + "/books/search");
+		var url = new URL(this.apiHost + "/books/search");
 		url.search = new URLSearchParams({
 			"q": query,
 			"page": page,
@@ -12,13 +12,13 @@ distlib.services = {
 		return fetch(url, {
 			type: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
-		}).then(response => response.json().then(json => ({books: json, page_count: response.headers.get("page-count")})));
+		}).then(response => response.json().then(json => ({books: json, pageCount: response.headers.get("page-count")})));
 	},
 
-	get_book: function(book_id) {
-		return fetch(this.api_host + "/books/" + book_id, {headers: {"Authorization": "Token " + distlib.auth.get_token()}}).then(function(response) {
+	getBook: function(bookId) {
+		return fetch(this.apiHost + "/books/" + bookId, {headers: {"Authorization": "Token " + distlib.auth.getToken()}}).then(function(response) {
 			if (response.ok)
 				return response.json();
 			else
@@ -26,8 +26,8 @@ distlib.services = {
 		});
 	},
 
-	get_books: function(page = 0, size = 10) {
-		var url = new URL(this.api_host + "/books");
+	getBooks: function(page = 0, size = 10) {
+		var url = new URL(this.apiHost + "/books");
 		url.search = new URLSearchParams({
 			"page": page,
 			"size": size
@@ -35,125 +35,125 @@ distlib.services = {
 		return fetch(url, {
 			type: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
-		}).then(response => response.json().then(json => ({books: json, page_count: response.headers.get("page-count")})));
+		}).then(response => response.json().then(json => ({books: json, pageCount: response.headers.get("page-count")})));
 	},
 
-	get_loans: function() {
-		return fetch(this.api_host + "/loans", {
+	getLoans: function() {
+		return fetch(this.apiHost + "/loans", {
 			method: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		}).then(response => response.json());
 	},
 
-	get_debts: function() {
-		return fetch(this.api_host + "/debts", {
+	getDebts: function() {
+		return fetch(this.apiHost + "/debts", {
 			method: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		}).then(response => response.json());
 	},
 
-	ask_for_book: function(book_id) {
+	askForBook: function(bookId) {
 		form = new FormData();
-		form.append("book_id", book_id);
-		form.append("recipient", distlib.auth.get_username());
-		form.append("time_range", 1);
-		return fetch(this.api_host + "/loans", {
+		form.append("bookId", bookId);
+		form.append("recipient", distlib.auth.getUsername());
+		form.append("timeRange", 1);
+		return fetch(this.apiHost + "/loans", {
 			method: "POST",
 			body: form,
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		})
 	},
 
-	add_book: function(book) {
+	addBook: function(book) {
 		form = new FormData();
 		form.append("title", book.title);
 		form.append("author", book.author);
 		form.append("year", book.year);
-		return fetch(this.api_host + "/books", {
+		return fetch(this.apiHost + "/books", {
 			method: "POST",
 			body: form,
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		});
 	},
 
-	delete_book: function(book_id) {
-		return fetch(this.api_host + "/books/" + book_id, {
+	deleteBook: function(bookId) {
+		return fetch(this.apiHost + "/books/" + bookId, {
 			method: "DELETE",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		});
 	},
 
-	update_book: function(book_id, data) {
+	updateBook: function(bookId, data) {
 		var form = new FormData();
 		form.append("title", data.title);
 		form.append("author", data.author);
 		form.append("year", data.year);
-		return fetch(this.api_host + "/books/" + book_id, {
+		return fetch(this.apiHost + "/books/" + bookId, {
 			method: "PUT",
 			body: form,
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		});
 	},
 
-	get_username: function() {
+	getUsername: function() {
 		return this.settings.username;
 	},
 
-	reject_loan: function(loan_id) {
-		return fetch(this.api_host + "/loans/" + loan_id + "/reject", {
+	rejectLoan: function(loanId) {
+		return fetch(this.apiHost + "/loans/" + loanId + "/reject", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		});
 	},
 
-	finish_loan: function(loan_id) {
-		return fetch(this.api_host + "/loans/" + loan_id + "/finish", {
+	finishLoan: function(loanId) {
+		return fetch(this.apiHost + "/loans/" + loanId + "/finish", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		});
 	},
 
-	accept_loan: function(loan_id) {
-		return fetch(this.api_host + "/loans/" + loan_id + "/accept", {
+	acceptLoan: function(loanId) {
+		return fetch(this.apiHost + "/loans/" + loanId + "/accept", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		}).then(response => response.json());
 	},
 
-	get_profile: function() {
-		return fetch(this.api_host + "/profile", {
+	getProfile: function() {
+		return fetch(this.apiHost + "/profile", {
 			method: "GET",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			}
 		}).then(response => response.json());
 	},
 
-	update_profile: function() {
-		return fetch(this.api_host + "/profile", {
+	updateProfile: function() {
+		return fetch(this.apiHost + "/profile", {
 			method: "POST",
 			headers: {
-				"Authorization": "Token " + distlib.auth.get_token()
+				"Authorization": "Token " + distlib.auth.getToken()
 			},
 			body: new FormData(document.getElementById("profile-form"))
 		})

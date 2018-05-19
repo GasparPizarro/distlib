@@ -5,9 +5,9 @@ distlib.books = (function() {
 
 	var page;
 
-	var page_count;
+	var pageCount;
 
-	var main_html = String()
+	var mainHtml = String()
 		+ '<div class="w3-container">'
 			+ '<ul class="w3-ul" id="books-list" placeholder="There are no books">'
 			+ '</ul>'
@@ -33,60 +33,60 @@ distlib.books = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var no_books_html = '<p id="empty-books-list" class="w3-disabled">There are no books</p>';
+	var noBooksHtml = '<p id="empty-books-list" class="w3-disabled">There are no books</p>';
 
-	var books_list;
+	var booksList;
 
-	var pagination_buttons;
+	var paginationButtons;
 
-	var show_book_modal;
+	var showBookModal;
 
-	var render = function(container, _, query_parameters) {
-		container.innerHTML = main_html;
-		page = query_parameters.page ? parseInt(query_parameters.page) : 1;
-		var backend_page = page - 1;
-		books_list = document.getElementById("books-list");
-		pagination_buttons = document.getElementById("pagination-buttons");
+	var render = function(container, _, queryParameters) {
+		container.innerHTML = mainHtml;
+		page = queryParameters.page ? parseInt(queryParameters.page) : 1;
+		var backendPage = page - 1;
+		booksList = document.getElementById("books-list");
+		paginationButtons = document.getElementById("pagination-buttons");
 		loadCurrentPage();
 		document.getElementById("show-book-modal").addEventListener("click", showModal);
-		document.getElementById("add-book").addEventListener("click", on_add_book);
+		document.getElementById("add-book").addEventListener("click", onAddBook);
 	};
 
 	var loadCurrentPage = function() {
 		var backendPage = page - 1;
-		distlib.services.get_books(backendPage).then(function(data) {
-			page_count = data.page_count;
+		distlib.services.getBooks(backendPage).then(function(data) {
+			pageCount = data.pageCount;
 			clearBooks();
-			addBooksToView(books_list, data.books);
-			addPaginationButtons(pagination_buttons, page_count);
+			addBooksToView(booksList, data.books);
+			addPaginationButtons(paginationButtons, pageCount);
 			window.scrollTo(0, 0);
 		});
 	};
 
-	var addPaginationButtons = function(container, page_count) {
-		if (page_count == 0)
+	var addPaginationButtons = function(container, pageCount) {
+		if (pageCount == 0)
 			return;
-		pagination_buttons.innerHTML = String()
+		paginationButtons.innerHTML = String()
 			+ (page > 1 ? '<a id="previous-page" href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
-			+ (page <  page_count ? '<a id="next-page" href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
-		var previous_page_button = document.getElementById("previous-page");
-		var next_page_button = document.getElementById("next-page");
-		if (previous_page_button != null)
-			previous_page_button.addEventListener("click", function(event){return goToPage(event, page - 1)});
-		if (next_page_button != null)
-			next_page_button.addEventListener("click", function(event){return goToPage(event, page + 1)});
+			+ (page <  pageCount ? '<a id="next-page" href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
+		var previousPageButton = document.getElementById("previous-page");
+		var nextPageButton = document.getElementById("next-page");
+		if (previousPageButton != null)
+			previousPageButton.addEventListener("click", function(event){return goToPage(event, page - 1)});
+		if (nextPageButton != null)
+			nextPageButton.addEventListener("click", function(event){return goToPage(event, page + 1)});
 	};
 
-	var goToPage = function(event, the_page) {
+	var goToPage = function(event, thePage) {
 		event.preventDefault();
 		event.stopPropagation();
-		page = the_page;
+		page = thePage;
 		history.pushState({}, null, "/books?page=" + page);
 		loadCurrentPage();
 		return false;
 	};
 
-	var on_add_book = function(event) {
+	var onAddBook = function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 		var book = {
@@ -94,7 +94,7 @@ distlib.books = (function() {
 			author: document.querySelector("#add-book-form [name=author]").value,
 			year: document.querySelector("#add-book-form [name=year]").value,
 		}
-		distlib.services.add_book(book).then(function(result) {
+		distlib.services.addBook(book).then(function(result) {
 			window.dispatchEvent(new CustomEvent("routing"));
 			distlib.shell.toast("The book has been added");
 		})
@@ -124,7 +124,7 @@ distlib.books = (function() {
 			}
 
 	var clearBooks = function() {
-		books_list.innerHTML = "";
+		booksList.innerHTML = "";
 	}
 
 	var addBooksToView = function(container, books) {

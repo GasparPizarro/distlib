@@ -1,7 +1,7 @@
 distlib.auth = (function() {
 	'use strict';
 
-	var main_html = String()
+	var mainHtml = String()
 		+ '<div class="w3-modal-content" style="max-width:300px">'
 			+ '<div class="w3-container">'
 				+ '<form id="login-form" class="w3-container">'
@@ -25,20 +25,20 @@ distlib.auth = (function() {
 		window.dispatchEvent(new CustomEvent("routing"));
 	};
 
-	var login = function(the_username, the_password) {
+	var login = function(theUsername, thePassword) {
 		var form = new FormData();
-		form.append("username", the_username);
-		form.append("password", the_password);
-		fetch(distlib.services.api_host + "/token", {
+		form.append("username", theUsername);
+		form.append("password", thePassword);
+		fetch(distlib.services.apiHost + "/token", {
 			method: "POST",
 			body: form,
 		}).then(function(response) {
 			if (response.ok) {
 				return response.json().then(function(data) {
-					username = the_username;
+					username = theUsername;
 					token = data.token;
 					localStorage.setItem("token", data.token);
-					localStorage.setItem("username", the_username);
+					localStorage.setItem("username", theUsername);
 					window.dispatchEvent(new CustomEvent("login"));
 				})
 			}
@@ -62,7 +62,7 @@ distlib.auth = (function() {
 	}
 
 	var init = function(container) {
-		container.innerHTML = main_html;
+		container.innerHTML = mainHtml;
 		username = localStorage.getItem("username");
 		token = localStorage.getItem("token");
 		if (username == null || token == null)
@@ -78,19 +78,19 @@ distlib.auth = (function() {
 		};
 	};
 
-	var get_username = function() {
+	var getUsername = function() {
 		return username;
 	};
 
-	var get_token = function() {
+	var getToken = function() {
 		return token;
 	}
 
 
 	return {
 		init: init,
-		get_username: get_username,
-		get_token: get_token,
+		getUsername: getUsername,
+		getToken: getToken,
 		logout: logout
 	}
 }());

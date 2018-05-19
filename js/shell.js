@@ -5,21 +5,21 @@ distlib.shell = (function() {
 
 		routes: [],
 
-		get_query_parameters: function(query) {
+		getQueryParameters: function(query) {
 			if (query)
 				return query.replace(/(^\?)/, '').split("&").map(function(n){return n = n.split("="), this[n[0]] = decodeURI(n[1]), this}.bind({}))[0];
 			else
 				return {};
 		},
 
-		match_route: function(path) {
+		matchRoute: function(path) {
 			for (var i = 0; i < this.routes.length; i = i + 1) {
 				var route = this.routes[i];
 				var match = route.path.exec(path);
 				if (match != null) {
 					return {
 						module: route.module,
-						path_parameters: match.slice(1)
+						pathParameters: match.slice(1)
 					}
 				}
 			}
@@ -27,17 +27,17 @@ distlib.shell = (function() {
 		}
 	};
 
-	var set_loading = function(status) {
+	var setLoading = function(status) {
 		if (status)
-			loading_modal.style.display = "block";
+			loadingModal.style.display = "block";
 		else
-			loading_modal.style.display = "none";
+			loadingModal.style.display = "none";
 	};
 
-	var main_html = String()
+	var mainHtml = String()
 		+ '<div class="w3-bar w3-top w3-black w3-large w3-center" style="z-index:4">'
 			+ '<button id="the-button" class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey"><i class="fa fa-bars"></i></button>'
-			+ '<div id="mod_title" class="w3-bar-item">The Distributed Library</div>'
+			+ '<div id="modTitle" class="w3-bar-item">The Distributed Library</div>'
 			+ '<div id="loading" class="w3-bar-item w3-right"></div>'
 		+ '</div>'
 		+ '<div id="menu">'
@@ -54,19 +54,19 @@ distlib.shell = (function() {
 		+ '</div>'
 
 
-	var wrong_url_html = String()
+	var wrongUrlHtml = String()
 		+ '<header class="w3-container" style="padding-top:22px">'
 			+ '<h5>Url errónea</h5>'
 		+ '</header>';
 
-	var base_module = {
+	var baseModule = {
 		render: function(container) {
 			history.pushState({}, null, '/search');
 			window.dispatchEvent(new CustomEvent("routing"));
 		}
 	};
 
-	var logout_module = {
+	var logoutModule = {
 		render: function(container) {
 			distlib.auth.logout();
 			history.replaceState({}, null, '/');
@@ -74,30 +74,30 @@ distlib.shell = (function() {
 	}
 
 	var routes = [
-		{path: /\/$/, module: base_module},
+		{path: /\/$/, module: baseModule},
 		{path: /\/search$/, module: distlib.search},
 		{path: /\/settings$/, module: distlib.settings},
 		{path: /\/loans$/, module: distlib.loans},
 		{path: /\/books$/, module: distlib.books},
-		{path: /\/books\/(\w+)$/, module: distlib.book_detail},
+		{path: /\/books\/(\w+)$/, module: distlib.bookDetail},
 		{path: /\/debts$/, module: distlib.debts},
 		{path: /\/profile$/, module: distlib.profile},
-		{path: /\/logout$/, module: logout_module},
+		{path: /\/logout$/, module: logoutModule},
 	];
 
 	var routing = function(event) {
 		var path = window.location.pathname;
-		var query_parameters = router.get_query_parameters(window.location.search);
-		var resolution = router.match_route(path);
+		var queryParameters = router.getQueryParameters(window.location.search);
+		var resolution = router.matchRoute(path);
 		if (resolution) {
 			var module = resolution.module;
-			var path_parameters = resolution.path_parameters;
-			module.render(document.getElementById('main'), path_parameters, query_parameters);
+			var pathParameters = resolution.pathParameters;
+			module.render(document.getElementById('main'), pathParameters, queryParameters);
 			if (module.title)
-				document.getElementById('mod_title').textContent = module.title;
+				document.getElementById('modTitle').textContent = module.title;
 		}
 		else
-			document.getElementById("main").innerHTML = wrong_url_html;
+			document.getElementById("main").innerHTML = wrongUrlHtml;
 	};
 
 	var toast = function(message) {
@@ -111,7 +111,7 @@ distlib.shell = (function() {
 
 	var container;
 
-	var loading_modal;
+	var loadingModal;
 
 	var onClickLink = function(event) {
 		event.preventDefault();
@@ -120,11 +120,11 @@ distlib.shell = (function() {
 		return false;
 	}
 
-	var initModule = function(the_container) {
+	var init = function(theContainer) {
 		router.routes = routes;
-		container = the_container;
-		container.innerHTML = main_html;
-		loading_modal = document.getElementById("loading-modal");
+		container = theContainer;
+		container.innerHTML = mainHtml;
+		loadingModal = document.getElementById("loading-modal");
 		distlib.menu.init(document.getElementById('menu'));
 		window.addEventListener("routing", routing);
 		window.addEventListener("popstate", function() {window.dispatchEvent(new CustomEvent("routing"));});
@@ -136,7 +136,7 @@ distlib.shell = (function() {
 
 	var clearForLogin = function() {
 		document.getElementById("login-modal").style.display = "block";
-		document.getElementById("mod_title").textContent = "The Distributed Library";
+		document.getElementById("modTitle").textContent = "The Distributed Library";
 		document.getElementById("main").innerHTML = "";
 	};
 
@@ -145,9 +145,9 @@ distlib.shell = (function() {
 	};
 
 	return {
-		initModule: initModule,
+		init: init,
 		toast: toast,
-		set_loading: set_loading,
+		setLoading: setLoading,
 		onClickLink: onClickLink
 	};
 }());
