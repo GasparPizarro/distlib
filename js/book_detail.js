@@ -92,6 +92,7 @@ distlib.bookDetail = (function() {
 	};
 
 	var deleteBook = function() {
+		console.log("asdfasdf");
 		distlib.services.deleteBook(bookId).then(function() {
 			distlib.shell.toast("The book has been deleted");
 			history.pushState({}, null, "/books");
@@ -106,6 +107,7 @@ distlib.bookDetail = (function() {
 		var modal = document.getElementById('modal');
 		modal.style.display = "block";
 		modal.addEventListener("click", hideModal);
+		document.getElementById("delete-book").addEventListener("click", deleteBook);
 		return false;
 	};
 

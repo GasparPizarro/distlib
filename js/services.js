@@ -60,9 +60,9 @@ distlib.services = {
 
 	askForBook: function(bookId) {
 		form = new FormData();
-		form.append("bookId", bookId);
+		form.append("book_id", bookId);
 		form.append("recipient", distlib.auth.getUsername());
-		form.append("timeRange", 1);
+		form.append("time_range", 1);
 		return fetch(this.apiHost + "/loans", {
 			method: "POST",
 			body: form,

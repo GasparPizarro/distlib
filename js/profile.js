@@ -39,8 +39,8 @@ distlib.profile = (function() {
 		updateProfileButton = document.getElementById("update-profile-button");
 		username.textContent = distlib.auth.getUsername();
 		distlib.services.getProfile().then(function(profile) {
-			firstName.value = profile.firstName;
-			lastName.value = profile.lastName;
+			firstName.value = profile.first_name;
+			lastName.value = profile.last_name;
 		})
 		updateProfileButton.addEventListener("click", onClickUpdate);
 		document.getElementById("profile-form").addEventListener("keypress", function(event) {
