@@ -233,8 +233,8 @@ class Profile(MethodView):
 
 	def post(self):
 		old_password = request.form.get("old-password", None)
-		new_password1 = request.form.get("new-password1", None)
-		new_password2 = request.form.get("new-password2", None)
+		new_password1 = request.form.get("new-password-1", None)
+		new_password2 = request.form.get("new-password-2", None)
 		if request.form.get("first-name", None):
 			query_db("update user set first_name = ? where username = ?", (request.form["first-name"], g.user))
 		if request.form.get("last-name", None):
