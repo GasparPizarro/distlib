@@ -11,6 +11,7 @@ distlib.search = (function() {
 		+ '<div class="w3-container">'
 			+ '<input id="search-box" class="w3-input w3-margin-top" type="text">'
 			+ '<div id="books-result"></div>'
+			+ '<div id="pagination-buttons" class="w3-center"></div>'
 			+ '<div class="w3-center" id="book-pad" style="height: 75px">'
 		+ '</div>';
 
@@ -22,7 +23,7 @@ distlib.search = (function() {
 
 	var bookPad;
 
-	var render = function(container, pathParameters, queryParameters) {
+	var init = function(container, pathParameters, queryParameters) {
 		container.innerHTML = mainHtml;
 		query = queryParameters.q;
 		page = queryParameters.page ? parseInt(queryParameters.page) : 1;
@@ -80,24 +81,28 @@ distlib.search = (function() {
 			else {
 				booksResult.innerHTML = '<ul class="w3-ul" id="books-list"></ul>';
 				addBooksToView(document.getElementById("books-list"), books);
-				if (pageCount > 0) {
-					var paginationButtons = document.createElement("div");
-					paginationButtons.classList.add("w3-center");
-					paginationButtons.innerHTML = String()
-						+ '<div class="w3-bar">'
-							+ ((page > 1) ? '<a href="?q=' + query + '&page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
-							+ ((page <= pageCount) ? '<a href="?q=' + query + '&page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
-						+ '</div>';
-					booksResult.after(paginationButtons);
-					paginationButtons.querySelectorAll("a").forEach(function(element){element.addEventListener("click", function(event){event.preventDefault(); console.log("asdfadsf")})});
-				}
+				addPaginationButtons(document.getElementById("pagination-buttons"), pageCount);
 			}
 			searchBox.blur();
 		});
 	};
 
+	var addPaginationButtons = function(container, pageCount) {
+		if (pageCount == 0)
+			return;
+		container.innerHTML = String()
+			+ (page > 1 ? '<a id="previous-page" href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
+			+ (page <  pageCount ? '<a id="next-page" href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
+		var previousPageButton = document.getElementById("previous-page");
+		var nextPageButton = document.getElementById("next-page");
+		if (previousPageButton != null)
+			previousPageButton.addEventListener("click", function(event){return goToPage(event, page - 1)});
+		if (nextPageButton != null)
+			nextPageButton.addEventListener("click", function(event){return goToPage(event, page + 1)});
+	};
+
 	return {
-		render: render,
+		init: init,
 		title: title
 	}
 }());

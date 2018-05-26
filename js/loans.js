@@ -50,7 +50,7 @@
 		document.querySelectorAll(".finish-loan").forEach(function(element){element.addEventListener("click", onFinishLoan)});
 	};
 
-	var render = function(container) {
+	var init = function(container) {
 		container.innerHTML = mainHtml;
 		loansList = document.getElementById("loans-list");
 		distlib.services.getLoans().then(function(loans) {
@@ -105,7 +105,7 @@
 	};
 
 	return {
-		render: render,
+		init: init,
 		title: title
 	}
 }());

@@ -122,17 +122,31 @@ class Loans(MethodView):
 
 	decorators = [login_required, environment_user]
 
-	def get(self):
-		loans = query_db("select id, book, recipient, start, span, status from loan where book in (select id from book where owner = ?) and status in (0, 2)", (g.user,))
-		return jsonify([{
-			"id": loan[0],
-			"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (loan[1],), one=True))},
-			"recipient": loan[2],
-			"start": loan[3],
-			"span": loan[4],
-			"status": loan[5]
-		}
-		for loan in loans])
+	def get(self, loan_id=None):
+		if loan_id:
+			loan = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
+			if loan:
+				return jsonify({
+					"id": loan[0],
+					"book": loan[1],
+					"recipient": loan[2],
+					"start": loan[3],
+					"span": loan[4],
+					"status": loan[5]
+				})
+			else:
+				return ('', 404)
+		else:
+			loans = query_db("select id, book, recipient, start, span, status from loan where book in (select id from book where owner = ?) and status in (0, 2)", (g.user,))
+			return jsonify([{
+				"id": loan[0],
+				"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (loan[1],), one=True))},
+				"recipient": loan[2],
+				"start": loan[3],
+				"span": loan[4],
+				"status": loan[5]
+			}
+			for loan in loans])
 
 	def post(self):
 		book_id = request.form['book_id']
@@ -152,70 +166,30 @@ class Loans(MethodView):
 			"status": 0
 		})
 
-@app.route("/loans/<int:loan_id>/accept", methods=['POST'])
-@environment_user
-@login_required
-def accept_loan(loan_id):
-	owner, = query_db("select owner from book where id = (select book from loan where id = ?)", (loan_id, ), one=True)
-	print(owner)
-	print(g.user)
-	if owner != g.user:
-		return jsonify({"error": "user does not own book"}), 400
-	query = query_db("update loan set status = ?, start = ? where id = ?", (2, datetime.datetime.today(), loan_id))
-	id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
-	return jsonify({
-		"id": id,
-		"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (book,), one=True))},
-		"recipient": recipient,
-		"start": start,
-		"span": span,
-		"status": status
-	})
-
-@app.route("/loans/<int:loan_id>/reject", methods=['POST'])
-@environment_user
-@login_required
-def reject_loan(loan_id):
-	query = query_db("update loan set status = ?, start = ? where id = ?", (1, datetime.datetime.today(), loan_id))
-	id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
-	return jsonify({
-		"id": id,
-		"book": book,
-		"recipient": recipient,
-		"start": start,
-		"span": span,
-		"status": status
-	})
-
-
-@app.route("/loans/<int:loan_id>/finish", methods=['POST'])
-@environment_user
-@login_required
-def finish_loan(loan_id):
-	query = query_db("update loan set status = ?, start = ? where id = ?", (3, datetime.datetime.today(), loan_id))
-	id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
-	return jsonify({
-		"id": id,
-		"book": book,
-		"recipient": recipient,
-		"start": start,
-		"span": span,
-		"status": status
-	})
-
-@app.route("/loans/<int:loan_id>", methods=['GET'])
-@environment_user
-@login_required
-def loan(loan_id):
-	loans = query_db("select id, book, recipient, start, span, status from loan where id = ?", (g.user,))
-	return jsonify({
-		"id": loan[0],
-		"book": loan[1],
-		"recipient": loan[2],
-		"start": loan[3],
-		"span": loan[4],
-		"status": loan[5]
-	})
+	def patch(self, loan_id):
+		status = request.form.get("status")
+		if status == "accepted":
+			owner, = query_db("select owner from book where id = (select book from loan where id = ?)", (loan_id, ), one=True)
+			if owner != g.user:
+				return jsonify({"error": "user does not own book"}), 400
+			query = query_db("update loan set status = ?, start = ? where id = ?", (2, datetime.datetime.today(), loan_id))
+			id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
+		elif status == "rejected":
+			query = query_db("update loan set status = ?, start = ? where id = ?", (1, datetime.datetime.today(), loan_id))
+			id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
+		elif status == "finished":
+			query = query_db("update loan set status = ?, start = ? where id = ?", (3, datetime.datetime.today(), loan_id))
+			id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
+		else:
+			return ('', 400)
+		return jsonify({
+			"id": id,
+			"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (book,), one=True))},
+			"recipient": recipient,
+			"start": start,
+			"span": span,
+			"status": status
+		})
 
 class Profile(MethodView):
 
@@ -274,11 +248,17 @@ def logout():
 	return jsonify({"status": "logged_out"})
 
 app.after_request(cors)
+app.route('/<path:path>', endpoint=catch_all, methods=['OPTIONS'])
+
 app.add_url_rule('/profile', view_func=Profile.as_view('profile'))
 app.add_url_rule('/books', view_func=Books.as_view('books'))
 app.add_url_rule('/books/<int:book_id>', view_func=Book.as_view('book'))
-app.add_url_rule('/loans', view_func=Loans.as_view('loans'))
-app.route('/<path:path>', endpoint=catch_all, methods=['OPTIONS'])
+
+loans_view = Loans.as_view('loans')
+app.add_url_rule('/loans', defaults={'loan_id': None}, view_func=loans_view, methods=['GET'])
+app.add_url_rule('/loans', view_func=loans_view, methods=['POST'])
+app.add_url_rule('/loans/<int:loan_id>', view_func=loans_view, methods=['GET', 'PATCH'])
+
 app.teardown_appcontext(close_connection)
 
 if __name__ == "__main__":

@@ -44,7 +44,7 @@ distlib.profile = (function() {
 		});
 	};
 
-	var render = function(container, pathParameters, queryParameters) {
+	var init = function(container, pathParameters, queryParameters) {
 		container.innerHTML = mainHtml;
 		username = document.getElementById("username");
 		firstName = document.getElementById("first-name");
@@ -66,6 +66,6 @@ distlib.profile = (function() {
 
 	return {
 		title: title,
-		render: render
+		init: init
 	}
 }());

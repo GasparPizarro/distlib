@@ -47,7 +47,7 @@ distlib.bookDetail = (function() {
 
 	var actionButton;
 
-	var render = function(container, pathParameters, queryParameters) {
+	var init = function(container, pathParameters, queryParameters) {
 		bookId = pathParameters[0];
 		if (!bookId)
 			return;
@@ -141,7 +141,7 @@ distlib.bookDetail = (function() {
 	}
 
 	return {
-		render: render,
+		init: init,
 		title: title
 	}
 }());

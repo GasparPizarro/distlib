@@ -60,14 +60,14 @@ distlib.shell = (function() {
 		+ '</header>';
 
 	var baseModule = {
-		render: function(container) {
+		init: function(container) {
 			history.pushState({}, null, '/search');
 			window.dispatchEvent(new CustomEvent("routing"));
 		}
 	};
 
 	var logoutModule = {
-		render: function(container) {
+		init: function(container) {
 			distlib.auth.logout();
 			history.replaceState({}, null, '/');
 		}
@@ -92,7 +92,7 @@ distlib.shell = (function() {
 		if (resolution) {
 			var module = resolution.module;
 			var pathParameters = resolution.pathParameters;
-			module.render(document.getElementById('main'), pathParameters, queryParameters);
+			module.init(document.getElementById('main'), pathParameters, queryParameters);
 			if (module.title)
 				document.getElementById('modTitle').textContent = module.title;
 		}

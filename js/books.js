@@ -41,7 +41,7 @@ distlib.books = (function() {
 
 	var showBookModal;
 
-	var render = function(container, _, queryParameters) {
+	var init = function(container, _, queryParameters) {
 		container.innerHTML = mainHtml;
 		page = queryParameters.page ? parseInt(queryParameters.page) : 1;
 		var backendPage = page - 1;
@@ -66,7 +66,7 @@ distlib.books = (function() {
 	var addPaginationButtons = function(container, pageCount) {
 		if (pageCount == 0)
 			return;
-		paginationButtons.innerHTML = String()
+		container.innerHTML = String()
 			+ (page > 1 ? '<a id="previous-page" href="?page=' + (page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
 			+ (page <  pageCount ? '<a id="next-page" href="?page=' + (page + 1) + '" class="w3-button">&raquo;</a>' : '')
 		var previousPageButton = document.getElementById("previous-page");
@@ -151,7 +151,7 @@ distlib.books = (function() {
 	}
 
 	return {
-		render: render,
+		init: init,
 		title: title
 	}
 }());

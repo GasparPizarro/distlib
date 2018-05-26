@@ -113,31 +113,40 @@ distlib.services = {
 		return this.settings.username;
 	},
 
-	rejectLoan: function(loanId) {
-		return fetch(this.apiHost + "/loans/" + loanId + "/reject", {
-			method: "POST",
+	acceptLoan: function(loanId) {
+		form = new FormData();
+		form.append("status", "accepted");
+		return fetch(this.apiHost + "/loans/" + loanId, {
+			method: "PATCH",
 			headers: {
 				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			},
+			body: form
+		}).then(response => response.json());
+	},
+
+	rejectLoan: function(loanId) {
+		form = new FormData();
+		form.append("status", "rejected");
+		return fetch(this.apiHost + "/loans/" + loanId, {
+			method: "PATCH",
+			headers: {
+				"Authorization": "Token " + distlib.auth.getToken()
+			},
+			body: form
 		});
 	},
 
 	finishLoan: function(loanId) {
-		return fetch(this.apiHost + "/loans/" + loanId + "/finish", {
-			method: "POST",
+		form = new FormData();
+		form.append("status", "finished");
+		return fetch(this.apiHost + "/loans/" + loanId, {
+			method: "PATCH",
 			headers: {
 				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			},
+			body: form
 		});
-	},
-
-	acceptLoan: function(loanId) {
-		return fetch(this.apiHost + "/loans/" + loanId + "/accept", {
-			method: "POST",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
-		}).then(response => response.json());
 	},
 
 	getProfile: function() {

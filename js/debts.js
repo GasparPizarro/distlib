@@ -34,7 +34,7 @@ distlib.debts = (function() {
 		debtsList.innerHTML = "";
 	}
 
-	var render = function(container) {
+	var init = function(container) {
 		container.innerHTML = mainHtml;
 		debtsList = document.getElementById("debts-list");
 		distlib.services.getDebts().then(function(debts) {
@@ -44,7 +44,7 @@ distlib.debts = (function() {
 	};
 
 	return {
-		render: render,
+		init: init,
 		title: title
 	}
 }());
