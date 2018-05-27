@@ -24,8 +24,6 @@ distlib.search = (function() {
 			+ '<div class="w3-center" style="height: 75px">'
 		+ '</div>';
 
-	var noResultsHtml = '<p id="empty-books-list" class="w3-disabled">No results</p>';
-
 	var init = function(container, pathParameters, queryParameters) {
 		container.innerHTML = mainHtml;
 		model.query = queryParameters.q;
@@ -43,10 +41,6 @@ distlib.search = (function() {
 				search().then(render);
 			}
 		);
-	};
-
-	var clearResult = function() {
-		view.booksResult.innerHTML = "";
 	};
 
 	var addBooksToView = function(container, books) {
@@ -75,19 +69,17 @@ distlib.search = (function() {
 
 	var search = function() {
 		if (model.query == null) {
-			console.log("there is no data")
 			return new Promise(function(_){});
 		}
 		return distlib.services.search(model.query, model.page).then(
 			function(data) {
 				model.books = data.books;
-				model.pageCount = data.page_count;
+				model.pageCount = data.pageCount;
 			}
 		);
 	};
 
 	var render = function() {
-		console.log("rendering data");
 		if (model.books == null)
 			return;
 		view.booksResult.style.display = "block";
@@ -137,20 +129,6 @@ distlib.search = (function() {
 		history.pushState({}, null, "/search?q=" + model.query + "&page=" + model.page);
 		search().then(render);
 	}
-
-	var addPaginationButtons = function(container, pageCount) {
-		if (pageCount == 0)
-			return;
-		container.innerHTML = String()
-			+ (model.page > 1 ? '<a id="previous-page" href="?page=' + (model.page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
-			+ (model.page <  pageCount ? '<a id="next-page" href="?page=' + (model.page + 1) + '" class="w3-button">&raquo;</a>' : '')
-		var previousPageButton = document.getElementById("previous-page");
-		var nextPageButton = document.getElementById("next-page");
-		if (previousPageButton != null)
-			previousPageButton.addEventListener("click", function(event){return goToPage(event, model.page - 1)});
-		if (nextPageButton != null)
-			nextPageButton.addEventListener("click", function(event){return goToPage(event, model.page + 1)});
-	};
 
 	return {
 		init: init,

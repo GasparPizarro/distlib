@@ -55,7 +55,7 @@ distlib.books = (function() {
 
 	var loadData = function() {
 		return distlib.services.getBooks(model.page).then(function(data) {
-			console.log("getting data");
+
 			model.pageCount = data.pageCount;
 			model.books = data.books;
 		});
