@@ -13,26 +13,38 @@ from utils import login_required, get_db, close_connection, query_db, environmen
 
 app = Flask(__name__)
 
-
 class Books(MethodView):
 
 	decorators = [login_required, environment_user]
 
-	def get(self):
-		page = int(request.args.get("page", 0))
-		size = int(request.args.get("size", 10))
-		book_count = int(query_db("select count(*) from book where owner = ?", (g.user,), one=True)[0])
-		books = query_db("select id, title, author, year from book where owner = ? order by title collate nocase limit ? offset ?", (g.user, size, page * size))
-		response = jsonify([{
-			"id": id,
-			"title": title,
-			"owner": g.user,
-			"author": author,
-			"year": year,
-			"bearer": query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0] if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None,
-		} for (id, title, author, year) in books])
-		response.headers["page-count"] = book_count // size
-		return response
+	def get(self, book_id=None):
+		if not book_id:
+			page = int(request.args.get("page", 0))
+			size = int(request.args.get("size", 10))
+			book_count = int(query_db("select count(*) from book where owner = ?", (g.user,), one=True)[0])
+			books = query_db("select id, title, author, year from book where owner = ? order by title collate nocase limit ? offset ?", (g.user, size, page * size))
+			response = jsonify([{
+				"id": id,
+				"title": title,
+				"owner": g.user,
+				"author": author,
+				"year": year,
+				"bearer": query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0] if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None,
+			} for (id, title, author, year) in books])
+			response.headers["page-count"] = book_count // size
+			return response
+		else :
+			try:
+				id_, owner, title, author, year = query_db("select id, owner, title, author, year from book where id = ?", (book_id,), one=True)
+			except TypeError:
+				return ('', 404)
+			return jsonify({
+				"id": id_,
+				"owner": owner,
+				"title": title,
+				"author": author,
+				"year": year
+			})
 
 	def post(self):
 		title = request.form['title']
@@ -45,24 +57,6 @@ class Books(MethodView):
 			"id": cursor.lastrowid,
 			"title": title,
 			"owner": g.user,
-			"author": author,
-			"year": year
-		})
-
-
-class Book(MethodView):
-
-	decorators = [login_required, environment_user]
-
-	def get(self, book_id):
-		try:
-			id_, owner, title, author, year = query_db("select id, owner, title, author, year from book where id = ?", (book_id,), one=True)
-		except TypeError:
-			return ('', 404)
-		return jsonify({
-			"id": id_,
-			"owner": owner,
-			"title": title,
 			"author": author,
 			"year": year
 		})
@@ -81,16 +75,18 @@ class Book(MethodView):
 		return  ('', 204)
 
 
+
+
 @app.route("/books/search", methods=['GET'])
 @environment_user
 @login_required
 def book_search():
 	query = request.args["q"]
-	page = int(request.args.get("page", 0))
+	page = int(request.args.get("page", 1))
 	size = int(request.args.get("size", 10))
 	book_count = int(query_db("select count(*) from book where title like ? or author like ?", ("%" + query + "%", "%" + query + "%"), one=True)[0])
 	print(book_count)
-	books = query_db("select id, owner, title, author, year from book where title like ? or author like ? group by title limit ? offset ?", ("%" + query + "%", "%" + query + "%", size, page * size))
+	books = query_db("select id, owner, title, author, year from book where title like ? or author like ? limit ? offset ?", ("%" + query + "%", "%" + query + "%", size, (page - 1) * size))
 	response = jsonify([{
 		"id": id,
 		"owner": owner,
@@ -251,12 +247,13 @@ app.after_request(cors)
 app.route('/<path:path>', endpoint=catch_all, methods=['OPTIONS'])
 
 app.add_url_rule('/profile', view_func=Profile.as_view('profile'))
-app.add_url_rule('/books', view_func=Books.as_view('books'))
-app.add_url_rule('/books/<int:book_id>', view_func=Book.as_view('book'))
+
+books_view = Books.as_view('books')
+app.add_url_rule('/books', view_func=books_view, methods=['GET', 'POST'])
+app.add_url_rule('/books/<int:book_id>', view_func=books_view, methods=['GET', 'PATCH', 'DELETE'])
 
 loans_view = Loans.as_view('loans')
-app.add_url_rule('/loans', defaults={'loan_id': None}, view_func=loans_view, methods=['GET'])
-app.add_url_rule('/loans', view_func=loans_view, methods=['POST'])
+app.add_url_rule('/loans', view_func=loans_view, methods=['GET', 'POST'])
 app.add_url_rule('/loans/<int:loan_id>', view_func=loans_view, methods=['GET', 'PATCH'])
 
 app.teardown_appcontext(close_connection)

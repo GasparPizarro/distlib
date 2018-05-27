@@ -42,8 +42,6 @@ distlib.books = (function() {
 			+ '</div>'
 		+ '</div>';
 
-	var noBooksHtml = '<p id="empty-books-list" class="w3-disabled">There are no books</p>';
-
 	var init = function(container, _, queryParameters) {
 		view.container = container
 		view.container.innerHTML = mainHtml;
