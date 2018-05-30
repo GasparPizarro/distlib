@@ -53,7 +53,7 @@ def environment_user(f):
 def cors(response):
 	response.headers["Access-Control-Expose-Headers"] = ", ".join([header for header in response.headers.keys()])
 	response.headers["Access-Control-Allow-Origin"] = "*"
-	response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, DELETE, PATCH"
+	response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, DELETE, PUT"
 	response.headers["Access-Control-Allow-Headers"] = "origin, content-type, accept, authorization"
 	response.headers["Access-Control-Allow-Credentials"] = True
 	response.headers["Access-Control-Max-Age"] = "1209600"

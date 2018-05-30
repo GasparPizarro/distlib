@@ -90,7 +90,7 @@ distlib.books = (function() {
 		if (nextPageButton != null)
 			nextPageButton.addEventListener("click", function(event) {
 				event.preventDefault();
-				goToPage(event, model.page + 1);
+				goToPage(model.page + 1);
 			});
 		window.scrollTo(0, 0);
 	};

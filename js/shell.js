@@ -27,11 +27,26 @@ distlib.shell = (function() {
 		}
 	};
 
+	var stopEvent = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		console.log("Nope");
+	}
+
+	var loadingCount = 0;
+
 	var setLoading = function(status) {
-		if (status)
-			loadingModal.style.display = "block";
-		else
-			loadingModal.style.display = "none";
+		loadingCount = status ? loadingCount + 1 : Math.max(loadingCount - 1, 0);
+		if (loadingCount) {
+			document.getElementById("loading").innerHTML = '<i class="fa fa-spin fa-spinner"></i>';
+			document.addEventListener("click", stopEvent, true);
+			document.addEventListener("keyup", stopEvent, true);
+		}
+		else {
+			document.getElementById("loading").innerHTML = '';
+			document.removeEventListener("click", stopEvent, true);
+			document.removeEventListener("keyup", stopEvent, true);
+		}
 	};
 
 	var mainHtml = String()
@@ -45,11 +60,6 @@ distlib.shell = (function() {
 		+ '<div id="main" class="w3-main" style="margin-left:250px;margin-top:43px;">'
 		+ '</div>'
 		+ '<div id="toast" class="w3-center w3-black"></div>'
-		+ '<div id="loading-modal" class="w3-modal" style="z-index:4">'
-			+ '<div class="w3-modal-content w3-center" style="max-width:20px">'
-				+ '<i class="fa fa-spin fa-spinner"></i>'
-			+ '</div>'
-		+ '</div>'
 		+ '<div id="login-modal" class="w3-modal w3-animate-opacity">'
 		+ '</div>'
 

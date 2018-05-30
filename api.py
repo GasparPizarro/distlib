@@ -250,7 +250,7 @@ app.add_url_rule('/profile', view_func=Profile.as_view('profile'))
 
 books_view = Books.as_view('books')
 app.add_url_rule('/books', view_func=books_view, methods=['GET', 'POST'])
-app.add_url_rule('/books/<int:book_id>', view_func=books_view, methods=['GET', 'PATCH', 'DELETE'])
+app.add_url_rule('/books/<int:book_id>', view_func=books_view, methods=['GET', 'PUT', 'DELETE'])
 
 loans_view = Loans.as_view('loans')
 app.add_url_rule('/loans', view_func=loans_view, methods=['GET', 'POST'])

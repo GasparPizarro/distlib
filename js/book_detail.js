@@ -92,7 +92,7 @@ distlib.bookDetail = (function() {
 	};
 
 	var deleteBook = function() {
-		
+
 		distlib.services.deleteBook(bookId).then(function() {
 			distlib.shell.toast("The book has been deleted");
 			history.pushState({}, null, "/books");

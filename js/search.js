@@ -66,7 +66,6 @@ distlib.search = (function() {
 		}
 	};
 
-
 	var search = function() {
 		if (model.query == null) {
 			return new Promise(function(_){});
