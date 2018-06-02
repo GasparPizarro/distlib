@@ -10,15 +10,12 @@ distlib.services = {
 			"size": size
 		});
 		return fetch(url, {
-			type: "GET",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			type: "GET"
 		}).then(response => response.json().then(json => ({books: json, pageCount: response.headers.get("page-count")})));
 	},
 
 	getBook: function(bookId) {
-		return fetch(this.apiHost + "/books/" + bookId, {headers: {"Authorization": "Token " + distlib.auth.getToken()}}).then(function(response) {
+		return fetch(this.apiHost + "/books/" + bookId).then(function(response) {
 			if (response.ok)
 				return response.json();
 			else
@@ -33,28 +30,19 @@ distlib.services = {
 			"size": size
 		})
 		return fetch(url, {
-			type: "GET",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			type: "GET"
 		}).then(response => response.json().then(json => ({books: json, pageCount: response.headers.get("page-count")})));
 	},
 
 	getLoans: function() {
 		return fetch(this.apiHost + "/loans", {
-			method: "GET",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			method: "GET"
 		}).then(response => response.json());
 	},
 
 	getDebts: function() {
 		return fetch(this.apiHost + "/debts", {
-			method: "GET",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			method: "GET"
 		}).then(response => response.json());
 	},
 
@@ -65,10 +53,7 @@ distlib.services = {
 		form.append("time_range", 1);
 		return fetch(this.apiHost + "/loans", {
 			method: "POST",
-			body: form,
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			body: form
 		})
 	},
 
@@ -79,19 +64,13 @@ distlib.services = {
 		form.append("year", book.year);
 		return fetch(this.apiHost + "/books", {
 			method: "POST",
-			body: form,
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			body: form
 		});
 	},
 
 	deleteBook: function(bookId) {
 		return fetch(this.apiHost + "/books/" + bookId, {
-			method: "DELETE",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			method: "DELETE"
 		});
 	},
 
@@ -102,10 +81,7 @@ distlib.services = {
 		form.append("year", data.year);
 		return fetch(this.apiHost + "/books/" + bookId, {
 			method: "PUT",
-			body: form,
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			body: form
 		});
 	},
 
@@ -118,9 +94,6 @@ distlib.services = {
 		form.append("status", "accepted");
 		return fetch(this.apiHost + "/loans/" + loanId, {
 			method: "PATCH",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			},
 			body: form
 		}).then(response => response.json());
 	},
@@ -130,9 +103,6 @@ distlib.services = {
 		form.append("status", "rejected");
 		return fetch(this.apiHost + "/loans/" + loanId, {
 			method: "PATCH",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			},
 			body: form
 		});
 	},
@@ -142,28 +112,19 @@ distlib.services = {
 		form.append("status", "finished");
 		return fetch(this.apiHost + "/loans/" + loanId, {
 			method: "PATCH",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			},
 			body: form
 		});
 	},
 
 	getProfile: function() {
 		return fetch(this.apiHost + "/profile", {
-			method: "GET",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			}
+			method: "GET"
 		}).then(response => response.json());
 	},
 
 	updateProfile: function() {
 		return fetch(this.apiHost + "/profile", {
 			method: "POST",
-			headers: {
-				"Authorization": "Token " + distlib.auth.getToken()
-			},
 			body: new FormData(document.getElementById("profile-form"))
 		})
 	}
