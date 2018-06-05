@@ -1,4 +1,4 @@
-	distlib.loans = (function() {
+distlib.loans = (function() {
 
 	var title = "Loans";
 
