@@ -68,10 +68,10 @@ distlib.books = (function() {
 			li.innerHTML = String()
 				+ '<p>'
 					+ '<a href="/books/' + (model.books[i].id) + '">' + model.books[i].title + '</a>'
-					+ '<span class="w3-right">' + model.books[i].year + '</span>'
+					+ '<span class="w3-right"><i class="contextual-menu fa fa-ellipsis-v"></i></span>'
 				+ '</p>'
 				+ '<p>'
-					+ model.books[i].author
+					+ model.books[i].author + ' | ' +  model.books[i].year
 					+ (model.books[i].bearer != null ? '<span class="w3-tag w3-right">' + 'Lent to ' + model.books[i].bearer + '</span>' : '')
 				+ '</p>';
 			view.booksList.appendChild(li);
