@@ -16,6 +16,57 @@ distlib.books = (function() {
 		showBookModal: null,
 	}
 
+
+	var BookDetail = function(book) {
+
+		var view = {
+			title: null,
+			author: null,
+			year: null,
+			editButton: null
+		}
+
+		var render = function(container) {
+			var upper = document.createElement("p");
+			view.title = document.createElement("a");
+			view.title.href = '/books/' + (book.id);
+			view.title.innerText = book.title;
+			view.editButton = document.createElement("span");
+			view.editButton.classList.add("w3-right");
+			view.editButton.innerHTML = '<i class="contextual-menu fa fa-pencil"></i>';
+			view.editButton.addEventListener("click", edit);
+			upper.appendChild(view.title);
+			upper.appendChild(view.editButton);
+
+			var lower = document.createElement("p");
+
+
+			var lower = document.createElement("p");
+			view.author = document.createElement("div");
+			view.author.style.display = "inline";
+			view.author.innerText = book.author;
+			view.year = document.createElement("div");
+			view.year.style.display = "inline";
+			view.year.innerText = book.year;
+			lower.appendChild(view.author);
+			lower.appendChild(document.createTextNode(" | "));
+			lower.appendChild(view.year);
+			container.appendChild(upper);
+			container.appendChild(lower);
+		};
+
+		var edit = function(event) {
+			console.log(book);
+			view.title.innerHTML = '<input onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.title + '">';
+			view.author.innerHTML = '<input onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.author + '">';
+			view.year.innerHTML = '<input onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.year + '">';
+		}
+
+		return {
+			render: render
+		}
+	};
+
 	var mainHtml = String()
 		+ '<div class="w3-container">'
 			+ '<ul class="w3-ul" id="books-list" placeholder="There are no books">'
@@ -65,15 +116,8 @@ distlib.books = (function() {
 		view.booksList.innerHTML = "";
 		for (var i = 0; i < model.books.length; i = i + 1) {
 			var li = document.createElement("li");
-			li.innerHTML = String()
-				+ '<p>'
-					+ '<a href="/books/' + (model.books[i].id) + '">' + model.books[i].title + '</a>'
-					+ '<span class="w3-right"><i class="contextual-menu fa fa-ellipsis-v"></i></span>'
-				+ '</p>'
-				+ '<p>'
-					+ model.books[i].author + ' | ' +  model.books[i].year
-					+ (model.books[i].bearer != null ? '<span class="w3-tag w3-right">' + 'Lent to ' + model.books[i].bearer + '</span>' : '')
-				+ '</p>';
+			var bookDetail = BookDetail(model.books[i]);
+			bookDetail.render(li);
 			view.booksList.appendChild(li);
 			li.querySelector("p a").addEventListener("click", goToBook);
 		}
