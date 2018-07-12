@@ -26,13 +26,15 @@ distlib.BookDetail = function(book) {
 		}
 	}
 
+	var editing = false;
+
 	var render = function(container) {
 		view.container = container;
 		var upper = document.createElement("div");
 		upper.classList.add("w3-container");
 		view.title = document.createElement("span");
 		view.title.innerText = book.title;
-		view.title.addEventListener("dblclick", edit);
+		view.title.addEventListener("click", edit);
 		var buttons = document.createElement("div");
 		buttons.classList.add("w3-right");
 		view.buttons.delete = document.createElement("button");
@@ -42,6 +44,7 @@ distlib.BookDetail = function(book) {
 		view.buttons.request = document.createElement("button");
 		view.buttons.request.classList.add("w3-button");
 		view.buttons.request.innerHTML = '<i class="fa fa-exchange"></i>';
+		view.buttons.request.addEventListener("click", requestBook);
 
 		buttons.appendChild(view.buttons.delete);
 		buttons.appendChild(view.buttons.request);
@@ -54,11 +57,11 @@ distlib.BookDetail = function(book) {
 		view.author = document.createElement("div");
 		view.author.style.display = "inline";
 		view.author.innerText = book.author;
-		view.author.addEventListener("dblclick", edit);
+		view.author.addEventListener("click", edit);
 		view.year = document.createElement("div");
 		view.year.style.display = "inline";
 		view.year.innerText = book.year;
-		view.year.addEventListener("dblclick", edit);
+		view.year.addEventListener("click", edit);
 		lower.appendChild(view.author);
 		lower.appendChild(document.createTextNode(" | "));
 		lower.appendChild(view.year);
@@ -73,6 +76,9 @@ distlib.BookDetail = function(book) {
 	};
 
 	var edit = function(event) {
+		if (editing)
+			return;
+		editing = true;
 		view.title.innerHTML = '<input style="width: ' + (book.title.length + 1) * 8 + 'px" + onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.title + '">';
 		view.author.innerHTML = '<input style="width: ' + (book.author.length + 1) * 8 + 'px" + onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.author + '">';
 		view.year.innerHTML = '<input style="width: ' + (book.year.length + 1) * 8 + 'px" + onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.year + '">';
@@ -80,6 +86,7 @@ distlib.BookDetail = function(book) {
 			if (event.keyCode != 13)
 				return;
 			acceptChanges(event);
+			editing = false;
 		}
 		view.title.addEventListener("keyup", acceptOnEnter);
 		view.author.addEventListener("keyup", acceptOnEnter);
@@ -87,9 +94,18 @@ distlib.BookDetail = function(book) {
 		document.addEventListener("click", function clickingOutside(event) {
 			if (!view.title.contains(event.target) && !view.author.contains(event.target) && !view.year.contains(event.target)) {
 				rejectChanges(event);
+				editing = false;
 				document.removeEventListener("click", clickingOutside);
 			}
 		});
+		document.addEventListener("keyup", function escaping(event) {
+			if (event.keyCode != 27)
+				return;
+			rejectChanges(event);
+			editing = false;
+			document.removeEventListener("keyup", escaping);
+		});
+		event.target.childNodes[0].focus();
 	}
 
 	var showModal = function(event) {
@@ -117,6 +133,13 @@ distlib.BookDetail = function(book) {
 		view.title.innerText = book.title;
 		view.author.innerText = book.author;
 		view.year.innerText = book.year;
+	}
+
+	var requestBook = function(event) {
+		distlib.services.askForBook(book.id).then(function(data) {
+			distlib.shell.toast("An email has been sent to the book's owner");
+			view.buttons.request.classList.add("w3-disabled");
+		});
 	}
 
 	var acceptChanges = function(event) {
