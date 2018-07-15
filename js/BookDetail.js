@@ -1,4 +1,4 @@
-distlib.BookDetail = function(book) {
+distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 
 	var deleteHtml = String()
 		+ '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
@@ -34,20 +34,25 @@ distlib.BookDetail = function(book) {
 		upper.classList.add("w3-container");
 		view.title = document.createElement("span");
 		view.title.innerText = book.title;
-		view.title.addEventListener("click", edit);
+		if (editable)
+			view.title.addEventListener("click", edit);
 		var buttons = document.createElement("div");
 		buttons.classList.add("w3-right");
-		view.buttons.delete = document.createElement("button");
-		view.buttons.delete.classList.add("w3-button");
-		view.buttons.delete.innerHTML = '<i class="fa fa-times"></i>';
-		view.buttons.delete.addEventListener("click", showModal);
-		view.buttons.request = document.createElement("button");
-		view.buttons.request.classList.add("w3-button");
-		view.buttons.request.innerHTML = '<i class="fa fa-exchange"></i>';
-		view.buttons.request.addEventListener("click", requestBook);
+		if (editable) {
+			view.buttons.delete = document.createElement("button");
+			view.buttons.delete.classList.add("w3-button");
+			view.buttons.delete.innerHTML = '<i class="fa fa-times"></i>';
+			view.buttons.delete.addEventListener("click", showModal);
+			buttons.appendChild(view.buttons.delete);
+		}
+		if (requestable) {
+			view.buttons.request = document.createElement("button");
+			view.buttons.request.classList.add("w3-button");
+			view.buttons.request.innerHTML = '<i class="fa fa-exchange"></i>';
+			view.buttons.request.addEventListener("click", requestBook);
+			buttons.appendChild(view.buttons.request);
+		}
 
-		buttons.appendChild(view.buttons.delete);
-		buttons.appendChild(view.buttons.request);
 
 		upper.appendChild(view.title);
 		upper.appendChild(buttons);
@@ -57,11 +62,13 @@ distlib.BookDetail = function(book) {
 		view.author = document.createElement("div");
 		view.author.style.display = "inline";
 		view.author.innerText = book.author;
-		view.author.addEventListener("click", edit);
+		if (editable)
+			view.author.addEventListener("click", edit);
 		view.year = document.createElement("div");
 		view.year.style.display = "inline";
 		view.year.innerText = book.year;
-		view.year.addEventListener("click", edit);
+		if (editable)
+			view.year.addEventListener("click", edit);
 		lower.appendChild(view.author);
 		lower.appendChild(document.createTextNode(" | "));
 		lower.appendChild(view.year);
@@ -70,6 +77,12 @@ distlib.BookDetail = function(book) {
 			bearer.classList.add("w3-tag", "w3-right");
 			bearer.textContent = 'Lent to ' + book.bearer;
 			lower.appendChild(bearer);
+		}
+		if (showOwner) {
+			var owner = document.createElement("span");
+			owner.classList.add("w3-tag", "w3-right");
+			owner.innerText = book.owner;
+			lower.appendChild(owner);
 		}
 		container.appendChild(upper);
 		container.appendChild(lower);
@@ -122,7 +135,6 @@ distlib.BookDetail = function(book) {
 			}
 		)
 		modal.getElementsByClassName("delete-book")[0].addEventListener("click", function(event) {
-			console.log("dispatching event");
 			distlib.services.deleteBook(book.id).then(function() {
 				view.container.dispatchEvent(new CustomEvent("delete-book", {bubbles: true}));
 			});

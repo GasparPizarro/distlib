@@ -64,12 +64,15 @@ distlib.books = (function() {
 		view.booksList.innerHTML = "";
 		for (var i = 0; i < model.books.length; i = i + 1) {
 			var li = document.createElement("li");
-			var bookDetail = distlib.BookDetail(model.books[i]);
+			var bookDetail = distlib.BookDetail(model.books[i], {
+				editable: model.books[i].bearer == null,
+				requestable: false,
+				showOwner: false
+			});
 			bookDetail.render(li);
 			view.booksList.appendChild(li);
 		}
 		view.booksList.addEventListener("delete-book", function(event) {
-			console.log(event.target);
 			event.target.remove();
 			distlib.shell.toast("The book has been deleted");
 		});

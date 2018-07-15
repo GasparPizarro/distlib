@@ -45,24 +45,15 @@ distlib.search = (function() {
 
 	var addBooksToView = function(container, books) {
 		for (var i = 0; i < books.length; i = i + 1) {
-			var element = document.createElement("li");
-			element.innerHTML = String()
-				+ '<p>'
-					+ '<a href="/books/' + books[i].id + '">'
-						+ books[i].title
-						+ '<span class="w3-right">' + books[i].year + '</span>'
-					+ '</a>'
-				+ '</p>'
-				+ '<p>'
-					+ books[i].author
-					+ '<span class="w3-tag w3-right">' + books[i].owner + '</span>'
-				+ '</p>'
-			container.append(element);
-			element.querySelector("a").addEventListener("click", function(event) {
-				event.preventDefault();
-				history.pushState({}, null, event.target.getAttribute("href"));
-				window.dispatchEvent(new CustomEvent("routing"));
+			var isMine = books[i].owner == distlib.auth.getUsername();
+			var bookDetail = distlib.BookDetail(books[i], {
+				editable: isMine && books[i].bearer == null,
+				requestable: !isMine,
+				showOwner: true
 			});
+			var element = document.createElement("li");
+			bookDetail.render(element);
+			container.append(element);
 		}
 	};
 
@@ -83,26 +74,7 @@ distlib.search = (function() {
 			return;
 		view.booksResult.style.display = "block";
 		view.booksResult.innerHTML = "";
-		for (var i = 0; i < model.books.length; i = i + 1) {
-			var element = document.createElement("li");
-			element.innerHTML = String()
-				+ '<p>'
-					+ '<a href="/books/' + model.books[i].id + '">'
-						+ model.books[i].title
-						+ '<span class="w3-right">' + model.books[i].year + '</span>'
-					+ '</a>'
-				+ '</p>'
-				+ '<p>'
-					+ model.books[i].author
-					+ '<span class="w3-tag w3-right">' + model.books[i].owner + '</span>'
-				+ '</p>'
-			view.booksResult.append(element);
-			element.querySelector("a").addEventListener("click", function(event) {
-				event.preventDefault();
-				history.pushState({}, null, event.target.getAttribute("href"));
-				window.dispatchEvent(new CustomEvent("routing"));
-			});
-		}
+		addBooksToView(view.booksResult, model.books);
 		if (model.pageCount == 0)
 			return;
 		view.paginationButtons.innerHTML = String()

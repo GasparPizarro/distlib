@@ -19,7 +19,7 @@ class Books(MethodView):
 
 	def get(self, book_id=None):
 		if not book_id:
-			page = int(request.args.get("page", 0))
+			page = int(request.args.get("page", 1)) - 1
 			size = int(request.args.get("size", 10))
 			book_count = int(query_db("select count(*) from book where owner = ?", (g.user,), one=True)[0])
 			books = query_db("select id, title, author, year from book where owner = ? order by title collate nocase limit ? offset ?", (g.user, size, page * size))
@@ -71,8 +71,12 @@ class Books(MethodView):
 		return self.get(book_id)
 
 	def delete(self, book_id):
-		query_db("delete from book where id = ?", (book_id,))
-		return  ('', 204)
+		is_lent = query_db("select recipient from loan where book = ? and status = 2", (book_id,), one=True)
+		if is_lent:
+			return ('Cannot delete lent book', 403)
+		else:
+			query_db("delete from book where id = ?", (book_id,))
+			return ('', 204)
 
 
 
@@ -82,7 +86,7 @@ class Books(MethodView):
 @login_required
 def book_search():
 	query = request.args["q"]
-	page = int(request.args.get("page", 1))
+	page = int(request.args.get("page", 1)) - 1
 	size = int(request.args.get("size", 10))
 	book_count = int(query_db("select count(*) from book where title like ? or author like ?", ("%" + query + "%", "%" + query + "%"), one=True)[0])
 	print(book_count)
@@ -92,7 +96,8 @@ def book_search():
 		"owner": owner,
 		"title": title,
 		"author": author,
-		"year": year
+		"year": year,
+		"bearer": query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0] if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None,
 	}
 	for (id, owner, title, author, year) in books])
 	response.headers["page-count"] = book_count // size
