@@ -59,13 +59,11 @@ distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 
 		var lower = document.createElement("div");
 		lower.classList.add("w3-container");
-		view.author = document.createElement("div");
-		view.author.style.display = "inline";
+		view.author = document.createElement("span");
 		view.author.innerText = book.author;
 		if (editable)
 			view.author.addEventListener("click", edit);
-		view.year = document.createElement("div");
-		view.year.style.display = "inline";
+		view.year = document.createElement("span");
 		view.year.innerText = book.year;
 		if (editable)
 			view.year.addEventListener("click", edit);
@@ -88,13 +86,27 @@ distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 		container.appendChild(lower);
 	};
 
+	var createInput = function(text) {
+		var element = document.createElement("input");
+		element.type = "text";
+		element.value = text;
+		element.style.width = text.length * 15 + "px";
+		element.addEventListener("input", function() {
+			this.style.width = this.value.length * 15 + 'px'
+		});
+		return element;
+	};
+
 	var edit = function(event) {
 		if (editing)
 			return;
 		editing = true;
-		view.title.innerHTML = '<input style="width: ' + (book.title.length + 1) * 8 + 'px" + onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.title + '">';
-		view.author.innerHTML = '<input style="width: ' + (book.author.length + 1) * 8 + 'px" + onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.author + '">';
-		view.year.innerHTML = '<input style="width: ' + (book.year.length + 1) * 8 + 'px" + onkeypress="this.style.width = ((this.value.length + 1) * 8) + \'px\';" type="text" value="' + book.year + '">';
+		view.title.innerHTML = '';
+		view.title.appendChild(createInput(book.title));
+		view.author.innerHTML = '';
+		view.author.appendChild(createInput(book.author));
+		view.year.innerHTML = ''
+		view.year.appendChild(createInput(book.year.toString()));
 		var acceptOnEnter = function(event) {
 			if (event.keyCode != 13)
 				return;

@@ -30,7 +30,6 @@ distlib.shell = (function() {
 	var stopEvent = function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		console.log("Nope");
 	}
 
 	var loadingCount = 0;
