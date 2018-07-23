@@ -90,9 +90,10 @@ distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 		var element = document.createElement("input");
 		element.type = "text";
 		element.value = text;
-		element.style.width = text.length * 15 + "px";
+		element.style.width = text.length * 9 + "px";
+		element.classList = "w3-input, w3-border-0";
 		element.addEventListener("input", function() {
-			this.style.width = this.value.length * 15 + 'px'
+			this.style.width = this.value.length * 9 + 'px';
 		});
 		return element;
 	};
