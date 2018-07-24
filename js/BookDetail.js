@@ -31,7 +31,6 @@ distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 	var render = function(container) {
 		view.container = container;
 		var upper = document.createElement("div");
-		upper.classList.add("w3-container");
 		view.title = document.createElement("span");
 		view.title.innerText = book.title;
 		if (editable)
@@ -58,7 +57,6 @@ distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 		upper.appendChild(buttons);
 
 		var lower = document.createElement("div");
-		lower.classList.add("w3-container");
 		view.author = document.createElement("span");
 		view.author.innerText = book.author;
 		if (editable)

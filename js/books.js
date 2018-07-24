@@ -135,7 +135,7 @@ distlib.books = (function() {
 		if (event.target == modal)
 			modal.style.display = "none";
 		return false;
-			}
+	}
 
 	var clearBooks = function() {
 		booksList.innerHTML = "";

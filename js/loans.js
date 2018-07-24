@@ -20,14 +20,15 @@ distlib.loans = (function() {
 			element.id = loans[i].id;
 			if (loans[i].status == 0) {
 				element.innerHTML = String()
-					+ '<p>'
-						+ loans[i].book.title
-						+ '<span class="w3-right">' + loans[i].recipient + '</span>'
-					+ '</p>'
-					+ '<p>'
+					+ '<div class="w3-container">'
+						+ '<span>' + loans[i].book.title + '</span>'
+						+ '<div class="w3-right"><button class="w3-button accept-loan"><i class="fa fa-check"></i></button><button class="w3-button reject-loan"><i class="fa fa-times"></i></button></div>'
+					+ '</div>'
+					+ '<div class="w3-container">'
+						+ loans[i].recipient
+						+ ' | '
 						+ loans[i].span + ' semanas'
-						+ '<span class="w3-right"><button class="w3-button accept-loan"><i class="fa fa-check"></i></button><button class="w3-button reject-loan"><i class="fa fa-times"></i></button></span>'
-					+ '</p>';
+					+ '</div>';
 			}
 			else {
 				var startDate = new Date(loans[i].start);
