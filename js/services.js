@@ -122,10 +122,17 @@ distlib.services = {
 		}).then(response => response.json());
 	},
 
-	updateProfile: function() {
+	updateProfile: function({firstName, lastName, oldPassword, newPassword} = {}) {
+		form = new FormData();
+		form.append("first_name", firstName);
+		form.append("last_name", lastName);
+		if (oldPassword)
+			form.append("old_password", oldPassword);
+		if (newPassword)
+			form.append("new_password", newPassword);
 		return fetch(this.apiHost + "/profile", {
 			method: "POST",
-			body: new FormData(document.getElementById("profile-form"))
+			body: form
 		})
 	}
 };

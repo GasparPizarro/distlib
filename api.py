@@ -207,16 +207,21 @@ class Profile(MethodView):
 		})
 
 	def post(self):
-		old_password = request.form.get("old-password", None)
-		new_password1 = request.form.get("new-password-1", None)
-		new_password2 = request.form.get("new-password-2", None)
-		if request.form.get("first-name", None):
-			query_db("update user set first_name = ? where username = ?", (request.form["first-name"], g.user))
-		if request.form.get("last-name", None):
-			query_db("update user set last_name = ? where username = ?", (request.form["last-name"], g.user))
-		hashed_password = query_db("select password from user where username = ?", (g.user,), one=True)
-		if old_password is not None and bcrypt.checkpw(old_password.encode("utf-8"), hashed_password[0].encode("utf-8")) and new_password1 == new_password1:
-			query_db("update user set password = ? where username = ?", (bcrypt.hashpw(new_password2.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"), g.user))
+		first_name = request.form.get("first_name", None)
+		last_name = request.form.get("last_name", None)
+		old_password = request.form.get("old_password", None)
+		new_password = request.form.get("new_password", None)
+		print(old_password)
+		print(new_password)
+		if new_password:
+			hashed_password = query_db("select password from user where username = ?", (g.user,), one=True)
+			if not (old_password and bcrypt.checkpw(old_password.encode("utf-8"), hashed_password[0].encode("utf-8"))):
+				return jsonify({"error": "Wrong password"}), 400
+			query_db("update user set password = ? where username = ?", (bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"), g.user))
+		if first_name:
+			query_db("update user set first_name = ? where username = ?", (first_name, g.user))
+		if last_name:
+			query_db("update user set last_name = ? where username = ?", (last_name, g.user))
 		profile = query_db("select username, first_name, last_name from user where username = ?", (g.user,), one=True)
 		if profile is not None:
 			username, first_name, last_name = profile

@@ -23,11 +23,11 @@ distlib.profile = (function() {
 			+ '</p>'
 			+ '<p>'
 				+ '<label class="w3-text">New password</label>'
-				+ '<input id="new-password" name="new-password" class="w3-input" type="password"/>'
+				+ '<input id="new-password-1" name="new-password-1" class="w3-input" type="password"/>'
 			+ '</p>'
 			+ '<p>'
 				+ '<label class="w3-text">Confirm new password</label>'
-				+ '<input id="new-password" name="new-password-2" class="w3-input" type="password"/>'
+				+ '<input id="new-password-2" name="new-password-2" class="w3-input" type="password"/>'
 			+ '</p>'
 			+ '<button id="update-profile-button" type="button" class="w3-button w3-green">Update data</button>'
 		+ '</form>'
@@ -39,7 +39,28 @@ distlib.profile = (function() {
 
 	var onClickUpdate = function(event) {
 		event.preventDefault();
-		distlib.services.updateProfile().then(function() {
+		var firstName = document.getElementById("first-name").value;
+		var lastName = document.getElementById("last-name").value;
+
+		var oldPassword = document.getElementById("old-password").value;
+		var newPassword1 = document.getElementById("new-password-1").value;
+		var newPassword2 = document.getElementById("new-password-2").value;
+
+		var params = {
+			firstName: firstName,
+			lastName: lastName
+		}
+
+		if (oldPassword) {
+			if (newPassword1 != newPassword2) {
+				distlib.shell.toast("New passwords do not match");
+				return;
+			}
+			params.oldPassword = oldPassword;
+			params.newPassword = newPassword1;
+		}
+
+		distlib.services.updateProfile(params).then(function() {
 			distlib.shell.toast("Profile has been updated");
 		});
 	};
