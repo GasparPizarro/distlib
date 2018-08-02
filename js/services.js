@@ -124,12 +124,14 @@ distlib.services = {
 
 	updateProfile: function({firstName, lastName, oldPassword, newPassword} = {}) {
 		form = new FormData();
-		form.append("first_name", firstName);
-		form.append("last_name", lastName);
 		if (oldPassword)
 			form.append("old_password", oldPassword);
 		if (newPassword)
 			form.append("new_password", newPassword);
+		if (firstName)
+			form.append("first_name", firstName);
+		if (lastName)
+			form.append("last_name", lastName);
 		return fetch(this.apiHost + "/profile", {
 			method: "POST",
 			body: form

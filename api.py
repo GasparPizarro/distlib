@@ -211,8 +211,6 @@ class Profile(MethodView):
 		last_name = request.form.get("last_name", None)
 		old_password = request.form.get("old_password", None)
 		new_password = request.form.get("new_password", None)
-		print(old_password)
-		print(new_password)
 		if new_password:
 			hashed_password = query_db("select password from user where username = ?", (g.user,), one=True)
 			if not (old_password and bcrypt.checkpw(old_password.encode("utf-8"), hashed_password[0].encode("utf-8"))):
@@ -225,6 +223,8 @@ class Profile(MethodView):
 		profile = query_db("select username, first_name, last_name from user where username = ?", (g.user,), one=True)
 		if profile is not None:
 			username, first_name, last_name = profile
+		if new_password:
+			query_db("delete from user_token where username = ?", (g.user,))
 		return jsonify({
 			"username": username,
 			"first_name": first_name,
@@ -244,13 +244,13 @@ def get_token():
 			query_db("insert into user_token (username, token) values (?, ?)", (username, token))
 		return jsonify({"token": token})
 	else:
-		return jsonify({"error": "Bad credentials"}), 400
+		return jsonify({"error": "Bad credentials"}), 401
 
 @app.route("/logout", methods=['GET'])
 @environment_user
 @login_required
 def logout():
-	query_db("delete from user_token where user_username = ?", (g.user,))
+	query_db("delete from user_token where username = ?", (g.user,))
 	return jsonify({"status": "logged_out"})
 
 app.after_request(cors)

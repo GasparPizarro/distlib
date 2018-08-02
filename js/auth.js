@@ -29,6 +29,8 @@ distlib.auth = (function() {
 		var form = new FormData();
 		form.append("username", theUsername);
 		form.append("password", thePassword);
+		if (document.getElementById("bad-login"))
+			document.getElementById("login-status").innerHTML= "";
 		fetch(distlib.services.apiHost + "/token", {
 			method: "POST",
 			body: form,

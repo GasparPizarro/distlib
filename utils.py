@@ -41,12 +41,12 @@ def environment_user(f):
 		if auth_header is not None:
 			token = auth_header[len("Token "):]
 		else:
-			return jsonify({"error": "Bad credentials"}), 400
+			return jsonify({"error": "Bad credentials"}), 401
 		username = query_db("select username from user_token where token = ?", (token,), one=True)
 		if username is not None:
 			g.user = username[0]
 		else:
-			return jsonify({"error": "Bad credentials"}), 400
+			return jsonify({"error": "Bad credentials"}), 401
 		return f(*args, **kwargs)
 	return decorated_function
 
