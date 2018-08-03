@@ -34,9 +34,9 @@ CREATE TABLE loan (
 	foreign key(book) references book(id)
 );
 
-insert into user (username, first_name, last_name, password) values ("user1", "user", "one", "user1@yopmail.com", "$2b$12$eOvhl/Fo1VmU16Jt.lDqVuOvhywRZTkrt1ZoPvmDPRv6W2xDlb.F2");
-insert into user (username, first_name, last_name, password) values ("user2", "user", "two", "user2@yopmail.com", "$2b$12$eOvhl/Fo1VmU16Jt.lDqVuOvhywRZTkrt1ZoPvmDPRv6W2xDlb.F2");
-insert into user (username, first_name, last_name, password) values ("user3", "user", "three", "user3@yopmail.com", "$2b$12$eOvhl/Fo1VmU16Jt.lDqVuOvhywRZTkrt1ZoPvmDPRv6W2xDlb.F2");
+insert into user (username, first_name, last_name, email, password) values ("user1", "user", "one", "user1@yopmail.com", "$2b$12$eOvhl/Fo1VmU16Jt.lDqVuOvhywRZTkrt1ZoPvmDPRv6W2xDlb.F2");
+insert into user (username, first_name, last_name, email, password) values ("user2", "user", "two", "user2@yopmail.com", "$2b$12$eOvhl/Fo1VmU16Jt.lDqVuOvhywRZTkrt1ZoPvmDPRv6W2xDlb.F2");
+
 
 
 insert into book (owner, title, author, year) values ("user1", "Animal Farm", "George Orwell", 1945);
