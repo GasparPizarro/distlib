@@ -63,9 +63,13 @@ distlib.profile = (function() {
 				return;
 			}
 		}
-		distlib.services.updateProfile({oldPassword: oldPassword, newPassword: newPassword2}).then(function() {
-			distlib.shell.toast("Profile has been updated");
-			distlib.auth.logout();
+		distlib.services.updateProfile({oldPassword: oldPassword, newPassword: newPassword2}).then(function(response) {
+			if (response.ok) {
+				distlib.shell.toast("Profile has been updated");
+				distlib.auth.logout();
+			}
+			else
+				distlib.shell.toast("Wrong password");
 		});
 	};
 

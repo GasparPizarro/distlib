@@ -216,6 +216,7 @@ class Profile(MethodView):
 			if not (old_password and bcrypt.checkpw(old_password.encode("utf-8"), hashed_password[0].encode("utf-8"))):
 				return jsonify({"error": "Wrong password"}), 400
 			query_db("update user set password = ? where username = ?", (bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"), g.user))
+			query_db("delete from user_token where username = ?", (g.user, ))
 		if first_name:
 			query_db("update user set first_name = ? where username = ?", (first_name, g.user))
 		if last_name:
