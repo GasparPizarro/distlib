@@ -145,6 +145,13 @@ distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 				return false;
 			}
 		)
+		window.addEventListener("keypress", function closeModal(event) {
+			if (event.keyCode == 27) {
+				modal.style.display = "none";
+				window.removeEventListener("keypress", closeModal);
+			}
+			return false;
+		});
 		modal.getElementsByClassName("delete-book")[0].addEventListener("click", function(event) {
 			distlib.services.deleteBook(book.id).then(function() {
 				view.container.dispatchEvent(new CustomEvent("delete-book", {bubbles: true}));
