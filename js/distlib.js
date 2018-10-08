@@ -15,9 +15,10 @@ distlib = (function() {
 		}
 		else
 			newArguments = arguments;
-		return oldFetch.apply(null, newArguments).then(function(response) {
+		return oldFetch.apply(null, newArguments).catch(function(response) {
+			distlib.shell.toast("Cannot connect with servers");
+		}).finally(function() {
 			distlib.shell.setLoading(false);
-			return response;
 		});
 	};
 
