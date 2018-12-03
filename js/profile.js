@@ -8,6 +8,7 @@ distlib.profile = (function() {
 			+ '<h5 id="username">username</h5>'
 		+ '</header>'
 		+ '<form id="profile-form" class="w3-container w3-half">'
+			+ '<h6>Profile</h6>'
 			+ '<p>'
 				+ '<label class="w3-text">First Name</label>'
 				+ '<input id="first-name" name="first-name" class="w3-input" type="text"/>'
