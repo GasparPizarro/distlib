@@ -16,13 +16,11 @@ distlib.loans = (function() {
 
 	var loadLoans = function(loans) {
 		for (var i = 0; i < loans.length; i = i + 1) {
+			let	loan = loans[i];
 			element = document.createElement("li");
-			element.id = loans[i].id;
-			distlib.Loan(loans[i]).render(element);
+			new distlib.Loan(loan.id, loan.book, loan.recipient, loan.start, loan.span, loan.status).render(element);
 			loansList.appendChild(element);
 		}
-		document.querySelectorAll(".accept-loan").forEach(function(element){element.addEventListener("click", onAcceptLoan)});
-		document.querySelectorAll(".finish-loan").forEach(function(element){element.addEventListener("click", onFinishLoan)});
 	};
 
 	var init = function(container) {
@@ -32,11 +30,14 @@ distlib.loans = (function() {
 			clearLoans();
 			loadLoans(loans);
 		});
-		var deleteLoan = function(event) {
+		loansList.addEventListener("reject-loan", function(event) {
 			event.target.remove();
-		};
-		loansList.addEventListener("reject-loan", deleteLoan);
-		loansList.addEventListener("finish-loan", deleteLoan);
+			distlib.shell.toast("The loan has been rejected");
+		});
+		loansList.addEventListener("finish-loan", function(event) {
+			event.target.remove();
+			distlib.shell.toast("The loan has been finished");
+		});
 	};
 
 	return {

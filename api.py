@@ -7,6 +7,7 @@ import sqlite3
 import string
 import datetime
 import time
+import math
 import random
 import bcrypt
 from utils import login_required, get_db, close_connection, query_db, environment_user, cors, catch_all
@@ -31,7 +32,7 @@ class Books(MethodView):
 				"year": year,
 				"bearer": query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0] if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None,
 			} for (id, title, author, year) in books])
-			response.headers["page-count"] = book_count // size
+			response.headers["page-count"] = math.ceil(book_count / size)
 			return response
 		else :
 			try:
@@ -86,10 +87,9 @@ class Books(MethodView):
 @login_required
 def book_search():
 	query = request.args["q"]
-	page = int(request.args.get("page", 1)) - 1
+	page = int(request.args.get("page", 1))
 	size = int(request.args.get("size", 10))
 	book_count = int(query_db("select count(*) from book where title like ? or author like ?", ("%" + query + "%", "%" + query + "%"), one=True)[0])
-	print(book_count)
 	books = query_db("select id, owner, title, author, year from book where title like ? or author like ? limit ? offset ?", ("%" + query + "%", "%" + query + "%", size, (page - 1) * size))
 	response = jsonify([{
 		"id": id,
@@ -98,9 +98,8 @@ def book_search():
 		"author": author,
 		"year": year,
 		"bearer": query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0] if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None,
-	}
-	for (id, owner, title, author, year) in books])
-	response.headers["page-count"] = book_count // size
+	} for (id, owner, title, author, year) in books])
+	response.headers["page-count"] = math.ceil(book_count / size)
 	return response
 
 

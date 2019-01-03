@@ -1,104 +1,93 @@
-distlib.Loan = function(loan) {
+distlib.Loan = function(id, book, recipient, start, span, status) {
+	this.id = id;
+	this.book = book;
+	this.recipient = recipient;
+	this.start = start;
+	this.span = span;
+	this.status = status;
+}
 
-	var view = {
-		container: null,
-		title: null,
-		buttons: {
-			accept: null,
-			reject: null,
-			finish: null,
-		},
-		recipient: null,
-		time: null
-	};
+distlib.Loan.prototype.update = function() {
+	while (this.container.firstChild)
+		this.container.removeChild(this.container.firstChild);
 
-	model = {}
+	var upper = document.createElement("div");
 
-	var update = function() {
-		while (view.container.firstChild)
-			view.container.removeChild(view.container.firstChild);
+	var title = document.createElement("span");
+	title.innerText = this.book.title;
 
-		var upper = document.createElement("div");
+	var buttons = document.createElement("div");
+	buttons.classList.add("w3-right");
 
-		view.title = document.createElement("span");
-		view.title.innerText = model.loan.book.title;
+	if (this.status == 0) {
+		var accept = document.createElement("button");
+		accept.classList.add("w3-button");
+		accept.innerHTML = '<i class="fa fa-check"></i>';
+		accept.addEventListener("click", this.accept.bind(this));
+		buttons.appendChild(accept);
 
-		view.buttons = document.createElement("div");
-		view.buttons.classList.add("w3-right");
-
-		if (model.loan.status == 0) {
-			view.buttons.accept = document.createElement("button");
-			view.buttons.accept.classList.add("w3-button");
-			view.buttons.accept.innerHTML = '<i class="fa fa-check"></i>';
-			view.buttons.accept.addEventListener("click", accept);
-			view.buttons.appendChild(view.buttons.accept);
-
-			view.buttons.reject = document.createElement("button");
-			view.buttons.reject.classList.add("w3-button");
-			view.buttons.reject.innerHTML = '<i class="fa fa-times"></i>';
-			view.buttons.reject.addEventListener("click", reject);
-			view.buttons.appendChild(view.buttons.reject);
-		}
-		else {
-			view.buttons.accept = document.createElement("button");
-			view.buttons.accept.classList.add("w3-button");
-			view.buttons.accept.innerHTML = '<i class="fa fa-check"></i>';
-			view.buttons.accept.addEventListener("click", finish);
-			view.buttons.appendChild(view.buttons.accept);
-		}
-
-		upper.appendChild(view.title);
-		upper.appendChild(view.buttons);
-
-		var lower = document.createElement("div");
-
-		var recipient = document.createElement("span");
-		recipient.innerText = model.loan.recipient
-
-		view.time = document.createElement("span");
-		if (model.loan.status == 0)
-			view.time.innerText = model.loan.span + ' weeks';
-		else {
-			var startDate = new Date(model.loan.start);
-			var endDate = new Date(model.loan.start);
-			endDate.setDate(startDate.getDate() + model.loan.span * 7);
-			view.time.innerText = 'Due on ' + endDate.getDate() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getFullYear();
-		}
-
-		lower.appendChild(recipient);
-		lower.appendChild(document.createTextNode(" | "));
-		lower.appendChild(view.time)
-
-		view.container.appendChild(upper);
-		view.container.appendChild(lower);
+		var reject = document.createElement("button");
+		reject.classList.add("w3-button");
+		reject.innerHTML = '<i class="fa fa-times"></i>';
+		reject.addEventListener("click", this.reject.bind(this));
+		buttons.appendChild(reject);
+	}
+	else {
+		var accept = document.createElement("button");
+		accept.classList.add("w3-button");
+		accept.innerHTML = '<i class="fa fa-check"></i>';
+		accept.addEventListener("click", this.finish.bind(this));
+		buttons.appendChild(accept);
 	}
 
-	var render = function(container) {
-		view.container = container;
-		model.loan = loan;
-		update();
-	};
+	upper.appendChild(title);
+	upper.appendChild(buttons);
 
-	var accept = function() {
-		distlib.services.acceptLoan(loan.id).then(function(loan) {
-			model.loan = loan;
-			update();
-		});
-	};
+	var lower = document.createElement("div");
 
-	var finish = function() {
-		distlib.services.finishLoan(loan.id).then(function() {
-			view.container.dispatchEvent(new CustomEvent("finish-loan", {bubbles: true}));
-		});
-	};
+	var recipient = document.createElement("span");
+	recipient.innerText = this.recipient
 
-	var reject = function() {
-		distlib.services.rejectLoan(loan.id).then(function() {
-			view.container.dispatchEvent(new CustomEvent("reject-loan", {bubbles: true}));
-		});
-	};
-
-	return {
-		render: render
+	var time = document.createElement("span");
+	if (this.status == 0)
+		time.innerText = this.span + ' weeks';
+	else {
+		var startDate = new Date(this.start);
+		var endDate = new Date(this.start);
+		endDate.setDate(startDate.getDate() + this.span * 7);
+		time.innerText = 'Due on ' + endDate.getDate() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getFullYear();
 	}
+
+	lower.appendChild(recipient);
+	lower.appendChild(document.createTextNode(" | "));
+	lower.appendChild(time)
+
+	this.container.appendChild(upper);
+	this.container.appendChild(lower);
+};
+
+distlib.Loan.prototype.render = function(container) {
+	this.container = container;
+	this.update();
+};
+
+distlib.Loan.prototype.accept = function() {
+	distlib.services.acceptLoan(this.id).then(function(loan) {
+		this.status = loan.status;
+		this.update();
+	}.bind(this));
+};
+
+distlib.Loan.prototype.reject = function() {
+	distlib.services.rejectLoan(this.id).then(function(loan) {
+		this.status = loan.status;
+		this.container.dispatchEvent(new CustomEvent("reject-loan", {bubbles: true}));
+	}.bind(this));
+};
+
+distlib.Loan.prototype.finish = function() {
+	distlib.services.finishLoan(this.id).then(function(loan) {
+		this.status = loan.status;
+		this.container.dispatchEvent(new CustomEvent("finish-loan", {bubbles: true}));
+	}.bind(this));
 };

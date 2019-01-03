@@ -1,31 +1,7 @@
 distlib.shell = (function() {
 	'use strict';
 
-	var router = {
-
-		routes: [],
-
-		getQueryParameters: function(query) {
-			if (query)
-				return query.replace(/(^\?)/, '').split("&").map(function(n){return n = n.split("="), this[n[0]] = decodeURI(n[1]), this}.bind({}))[0];
-			else
-				return {};
-		},
-
-		matchRoute: function(path) {
-			for (var i = 0; i < this.routes.length; i = i + 1) {
-				var route = this.routes[i];
-				var match = route.path.exec(path);
-				if (match != null) {
-					return {
-						module: route.module,
-						pathParameters: match.slice(1)
-					}
-				}
-			}
-			return null;
-		}
-	};
+	var router = new RouteRecognizer();
 
 	var stopEvent = function(event) {
 		event.preventDefault();
@@ -82,25 +58,13 @@ distlib.shell = (function() {
 		}
 	}
 
-	var routes = [
-		{path: /\/$/, module: baseModule},
-		{path: /\/search$/, module: distlib.search},
-		{path: /\/settings$/, module: distlib.settings},
-		{path: /\/loans$/, module: distlib.loans},
-		{path: /\/books$/, module: distlib.books},
-		{path: /\/books\/(\w+)$/, module: distlib.bookDetail},
-		{path: /\/debts$/, module: distlib.debts},
-		{path: /\/profile$/, module: distlib.profile},
-		{path: /\/logout$/, module: logoutModule},
-	];
-
 	var routing = function(event) {
 		var path = window.location.pathname;
-		var queryParameters = router.getQueryParameters(window.location.search);
-		var resolution = router.matchRoute(path);
-		if (resolution) {
-			var module = resolution.module;
-			var pathParameters = resolution.pathParameters;
+		var match = router.recognize(location.pathname + location.search + location.hash);
+		if (match) {
+			var module = match[0].handler;
+			var pathParameters = match[0].params;
+			var queryParameters = match.queryParams;
 			module.init(document.getElementById('main'), pathParameters, queryParameters);
 			if (module.title)
 				document.getElementById('modTitle').textContent = module.title;
@@ -130,7 +94,15 @@ distlib.shell = (function() {
 	}
 
 	var init = function(theContainer) {
-		router.routes = routes;
+		router.add([{path: '', handler: baseModule}]);
+		router.add([{path: '/search', handler: distlib.search}]);
+		router.add([{path: '/settings', handler: distlib.settings}]);
+		router.add([{path: '/loans', handler: distlib.loans}]);
+		router.add([{path: '/books', handler: distlib.books}]);
+		router.add([{path: '/books/:id', handler: distlib.bookDetail}]);
+		router.add([{path: '/debts', handler: distlib.debts}]);
+		router.add([{path: '/profile', handler: distlib.profile}]);
+		router.add([{path: '/logout', handler: logoutModule}]);
 		container = theContainer;
 		container.innerHTML = mainHtml;
 		loadingModal = document.getElementById("loading-modal");
@@ -157,6 +129,7 @@ distlib.shell = (function() {
 		init: init,
 		toast: toast,
 		setLoading: setLoading,
-		onClickLink: onClickLink
+		onClickLink: onClickLink,
+		router:router
 	};
 }());

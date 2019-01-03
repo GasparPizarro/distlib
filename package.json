@@ -1,0 +1,22 @@
+{
+  "name": "distlib",
+  "version": "1.0.0",
+  "description": "Experimental pure Javascript web application. This has been done just as a toy application, to test the capabilities of Javascript . This does not have any real practical application, but this does not stop me from pitching it, so here it goes:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GasparPizarro/distlib.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GasparPizarro/distlib/issues"
+  },
+  "homepage": "https://github.com/GasparPizarro/distlib#readme",
+  "dependencies": {
+    "route-recognizer": "^0.3.4"
+  }
+}

@@ -1,20 +1,10 @@
 distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
+	this.book = book;
+	this.requestable = requestable;
+	this.editable = editable;
+	this.showOwner = showOwner;
 
-	var deleteHtml = String()
-		+ '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
-			+ '<div class="w3-container">'
-				+ '<div class="w3-section">'
-					+ '<h3 class="w3-center">¿Are you sure?</h3>'
-					+ '<div class="w3-center">'
-						+ '<button class="w3-button w3-red delete-book" type="button">Delete</button>'
-						+ ' '
-						+ '<button class="w3-button w3-green cancel-modal" type="button">Cancel</button>'
-					+ '</div>'
-				+ '</div>'
-			+ '</div>'
-		+ '</div>';
-
-	var view = {
+	this.view = {
 		container: null,
 		title: null,
 		author: null,
@@ -24,167 +14,177 @@ distlib.BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 			delete: null,
 			request: null
 		}
+	};
+
+	this.editing = false;
+};
+
+distlib.BookDetail.prototype.deleteHtml = String()
+	+ '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
+		+ '<div class="w3-container">'
+			+ '<div class="w3-section">'
+				+ '<h3 class="w3-center">¿Are you sure?</h3>'
+				+ '<div class="w3-center">'
+					+ '<button class="w3-button w3-red delete-book" type="button">Delete</button>'
+					+ ' '
+					+ '<button class="w3-button w3-green cancel-modal" type="button">Cancel</button>'
+				+ '</div>'
+			+ '</div>'
+		+ '</div>'
+	+ '</div>';
+
+distlib.BookDetail.prototype.render = function(container) {
+	this.view.container = container;
+	var upper = document.createElement("div");
+	this.view.title = document.createElement("span");
+	this.view.title.innerText = this.book.title;
+	if (this.editable)
+		this.view.title.addEventListener("click", this.edit.bind(this));
+	var buttons = document.createElement("div");
+	buttons.classList.add("w3-right");
+	if (this.editable) {
+		this.view.buttons.delete = document.createElement("button");
+		this.view.buttons.delete.classList.add("w3-button");
+		this.view.buttons.delete.innerHTML = '<i class="fa fa-times"></i>';
+		this.view.buttons.delete.addEventListener("click", this.showModal.bind(this));
+		buttons.appendChild(this.view.buttons.delete);
+	}
+	if (this.requestable) {
+		this.view.buttons.request = document.createElement("button");
+		this.view.buttons.request.classList.add("w3-button");
+		this.view.buttons.request.innerHTML = '<i class="fa fa-exchange"></i>';
+		this.view.buttons.request.addEventListener("click", this.requestBook.bind(this));
+		buttons.appendChild(this.view.buttons.request);
 	}
 
-	var editing = false;
 
-	var render = function(container) {
-		view.container = container;
-		var upper = document.createElement("div");
-		view.title = document.createElement("span");
-		view.title.innerText = book.title;
-		if (editable)
-			view.title.addEventListener("click", edit);
-		var buttons = document.createElement("div");
-		buttons.classList.add("w3-right");
-		if (editable) {
-			view.buttons.delete = document.createElement("button");
-			view.buttons.delete.classList.add("w3-button");
-			view.buttons.delete.innerHTML = '<i class="fa fa-times"></i>';
-			view.buttons.delete.addEventListener("click", showModal);
-			buttons.appendChild(view.buttons.delete);
-		}
-		if (requestable) {
-			view.buttons.request = document.createElement("button");
-			view.buttons.request.classList.add("w3-button");
-			view.buttons.request.innerHTML = '<i class="fa fa-exchange"></i>';
-			view.buttons.request.addEventListener("click", requestBook);
-			buttons.appendChild(view.buttons.request);
-		}
+	upper.appendChild(this.view.title);
+	upper.appendChild(buttons);
 
+	var lower = document.createElement("div");
+	this.view.author = document.createElement("span");
+	this.view.author.innerText = this.book.author;
+	if (this.editable)
+		this.view.author.addEventListener("click", this.edit.bind(this));
+	this.view.year = document.createElement("span");
+	this.view.year.innerText = this.book.year;
+	if (this.editable)
+		this.view.year.addEventListener("click", this.edit.bind(this));
+	lower.appendChild(this.view.author);
+	lower.appendChild(document.createTextNode(" | "));
+	lower.appendChild(this.view.year);
+	if (this.book.bearer != null) {
+		var bearer = document.createElement("span");
+		bearer.classList.add("w3-tag", "w3-right");
+		bearer.textContent = 'Lent to ' + this.book.bearer;
+		lower.appendChild(bearer);
+	}
+	if (this.showOwner) {
+		var owner = document.createElement("span");
+		owner.classList.add("w3-tag", "w3-right");
+		owner.innerText = this.book.owner;
+		lower.appendChild(owner);
+	}
+	container.appendChild(upper);
+	container.appendChild(lower);
+};
 
-		upper.appendChild(view.title);
-		upper.appendChild(buttons);
+distlib.BookDetail.prototype.createInput = function(text) {
+	var element = document.createElement("input");
+	element.type = "text";
+	element.value = text;
+	element.style.width = text.length * 9 + "px";
+	element.classList = "w3-input, w3-border-0";
+	element.addEventListener("input", function() {
+		this.style.width = this.value.length * 9 + 'px';
+	});
+	return element;
+};
 
-		var lower = document.createElement("div");
-		view.author = document.createElement("span");
-		view.author.innerText = book.author;
-		if (editable)
-			view.author.addEventListener("click", edit);
-		view.year = document.createElement("span");
-		view.year.innerText = book.year;
-		if (editable)
-			view.year.addEventListener("click", edit);
-		lower.appendChild(view.author);
-		lower.appendChild(document.createTextNode(" | "));
-		lower.appendChild(view.year);
-		if (book.bearer != null) {
-			var bearer = document.createElement("span");
-			bearer.classList.add("w3-tag", "w3-right");
-			bearer.textContent = 'Lent to ' + book.bearer;
-			lower.appendChild(bearer);
-		}
-		if (showOwner) {
-			var owner = document.createElement("span");
-			owner.classList.add("w3-tag", "w3-right");
-			owner.innerText = book.owner;
-			lower.appendChild(owner);
-		}
-		container.appendChild(upper);
-		container.appendChild(lower);
-	};
-
-	var createInput = function(text) {
-		var element = document.createElement("input");
-		element.type = "text";
-		element.value = text;
-		element.style.width = text.length * 9 + "px";
-		element.classList = "w3-input, w3-border-0";
-		element.addEventListener("input", function() {
-			this.style.width = this.value.length * 9 + 'px';
-		});
-		return element;
-	};
-
-	var edit = function(event) {
-		if (editing)
+distlib.BookDetail.prototype.edit = function(event) {
+	if (this.editing)
+		return;
+	this.editing = true;
+	this.view.title.innerHTML = '';
+	this.view.title.appendChild(this.createInput(this.book.title));
+	this.view.author.innerHTML = '';
+	this.view.author.appendChild(this.createInput(this.book.author));
+	this.view.year.innerHTML = ''
+	this.view.year.appendChild(this.createInput(this.book.year.toString()));
+	var acceptOnEnter = function(event) {
+		if (event.keyCode != 13)
 			return;
-		editing = true;
-		view.title.innerHTML = '';
-		view.title.appendChild(createInput(book.title));
-		view.author.innerHTML = '';
-		view.author.appendChild(createInput(book.author));
-		view.year.innerHTML = ''
-		view.year.appendChild(createInput(book.year.toString()));
-		var acceptOnEnter = function(event) {
-			if (event.keyCode != 13)
-				return;
-			acceptChanges(event);
-			editing = false;
+		this.acceptChanges(event);
+		this.editing = false;
+	}
+	this.view.title.addEventListener("keyup", acceptOnEnter.bind(this));
+	this.view.author.addEventListener("keyup", acceptOnEnter.bind(this));
+	this.view.year.addEventListener("keyup", acceptOnEnter.bind(this));
+	document.addEventListener("click", function clickingOutside(event) {
+		if (!this.view.title.contains(event.target) && !this.view.author.contains(event.target) && !this.view.year.contains(event.target)) {
+			this.rejectChanges(event);
+			this.editing = false;
+			document.removeEventListener("click", clickingOutside);
 		}
-		view.title.addEventListener("keyup", acceptOnEnter);
-		view.author.addEventListener("keyup", acceptOnEnter);
-		view.year.addEventListener("keyup", acceptOnEnter);
-		document.addEventListener("click", function clickingOutside(event) {
-			if (!view.title.contains(event.target) && !view.author.contains(event.target) && !view.year.contains(event.target)) {
-				rejectChanges(event);
-				editing = false;
-				document.removeEventListener("click", clickingOutside);
-			}
-		});
-		document.addEventListener("keyup", function escaping(event) {
-			if (event.keyCode != 27)
-				return;
-			rejectChanges(event);
-			editing = false;
-			document.removeEventListener("keyup", escaping);
-		});
-		event.target.childNodes[0].focus();
-	}
+	}.bind(this));
+	document.addEventListener("keyup", function escaping(event) {
+		if (event.keyCode != 27)
+			return;
+		this.rejectChanges(event);
+		this.editing = false;
+		document.removeEventListener("keyup", escaping);
+	}.bind(this));
+	event.target.childNodes[0].focus();
+};
 
-	var showModal = function(event) {
-		var modal = document.createElement("div");
-		modal.classList.add("w3-modal");
-		modal.style.display = "block";
-		modal.innerHTML = deleteHtml;
-		view.container.appendChild(modal);
-		modal.addEventListener("click", function(event) {
-				var cancelModal = modal.getElementsByClassName("cancel-modal")[0];
-				if (event.target == modal || event.target == cancelModal)
-					modal.style.display = "none";
-				return false;
-			}
-		)
-		window.addEventListener("keypress", function closeModal(event) {
-			if (event.keyCode == 27) {
+distlib.BookDetail.prototype.showModal = function() {
+	var modal = document.createElement("div");
+	modal.classList.add("w3-modal");
+	modal.style.display = "block";
+	modal.innerHTML = this.deleteHtml;
+	this.view.container.appendChild(modal);
+	modal.addEventListener("click", function(event) {
+			var cancelModal = modal.getElementsByClassName("cancel-modal")[0];
+			if (event.target == modal || event.target == cancelModal)
 				modal.style.display = "none";
-				window.removeEventListener("keypress", closeModal);
-			}
 			return false;
-		});
-		modal.getElementsByClassName("delete-book")[0].addEventListener("click", function(event) {
-			distlib.services.deleteBook(book.id).then(function() {
-				view.container.dispatchEvent(new CustomEvent("delete-book", {bubbles: true}));
-			});
-		});
-	}
+		}
+	)
+	window.addEventListener("keypress", function closeModal(event) {
+		if (event.keyCode == 27) {
+			modal.style.display = "none";
+			window.removeEventListener("keypress", closeModal);
+		}
+		return false;
+	});
+	modal.getElementsByClassName("delete-book")[0].addEventListener("click", function() {
+		distlib.services.deleteBook(this.book.id).then(function() {
+			this.view.container.dispatchEvent(new CustomEvent("delete-book", {bubbles: true}));
+		}.bind(this));
+	}.bind(this));
+};
 
-	var rejectChanges = function(event) {
-		view.title.innerText = book.title;
-		view.author.innerText = book.author;
-		view.year.innerText = book.year;
-	}
+distlib.BookDetail.prototype.rejectChanges = function() {
+	this.view.title.innerText = this.book.title;
+	this.view.author.innerText = this.book.author;
+	this.view.year.innerText = this.book.year;
+};
 
-	var requestBook = function(event) {
-		distlib.services.askForBook(book.id).then(function(data) {
-			distlib.shell.toast("An email has been sent to the book's owner");
-			view.buttons.request.classList.add("w3-disabled");
-		});
-	}
+distlib.BookDetail.prototype.requestBook = function() {
+	distlib.services.askForBook(this.book.id).then(function(data) {
+		distlib.shell.toast("An email has been sent to the book's owner");
+		this.view.buttons.request.classList.add("w3-disabled");
+	}.bind(this));
+};
 
-	var acceptChanges = function(event) {
-		book.title = view.title.firstChild.value;
-		book.author = view.author.firstChild.value;
-		book.year = view.year.firstChild.value;
-		distlib.services.updateBook(book.id, book).then(function() {
-			distlib.shell.toast("The book has been updated");
-			view.title.innerText = book.title;
-			view.author.innerText = book.author;
-			view.year.innerText = book.year;
-		})
-	}
-
-	return {
-		render: render
-	}
+distlib.BookDetail.prototype.acceptChanges = function(event) {
+	this.book.title = this.view.title.firstChild.value;
+	this.book.author = this.view.author.firstChild.value;
+	this.book.year = this.view.year.firstChild.value;
+	distlib.services.updateBook(this.book.id, this.book).then(function() {
+		distlib.shell.toast("The book has been updated");
+		this.view.title.innerText = this.book.title;
+		this.view.author.innerText = this.book.author;
+		this.view.year.innerText = this.book.year;
+	}.bind(this))
 };

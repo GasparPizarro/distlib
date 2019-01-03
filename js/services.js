@@ -1,8 +1,8 @@
-distlib.services = {
+	distlib.services = {
 
 	apiHost: "http://" + window.location.hostname + ":5000",
 
-	search: function(query, page = 0, size = 10) {
+	search: function(query, page = 1, size = 5) {
 		var url = new URL(this.apiHost + "/books/search");
 		url.search = new URLSearchParams({
 			"q": query,
@@ -11,7 +11,7 @@ distlib.services = {
 		});
 		return fetch(url, {
 			type: "GET"
-		}).then(response => response.json().then(json => ({books: json, pageCount: response.headers.get("page-count")})));
+		}).then(response => response.json().then(json => ({books: json, pageCount: parseInt(response.headers.get("page-count"))})));
 	},
 
 	getBook: function(bookId) {

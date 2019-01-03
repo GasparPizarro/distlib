@@ -46,7 +46,7 @@ distlib.search = (function() {
 	var addBooksToView = function(container, books) {
 		for (var i = 0; i < books.length; i = i + 1) {
 			var isMine = books[i].owner == distlib.auth.getUsername();
-			var bookDetail = distlib.BookDetail(books[i], {
+			var bookDetail = new distlib.BookDetail(books[i], {
 				editable: isMine && books[i].bearer == null,
 				requestable: !isMine,
 				showOwner: true
@@ -59,7 +59,7 @@ distlib.search = (function() {
 
 	var search = function() {
 		if (model.query == null) {
-			return new Promise(function(_){});
+			return new Promise(function(){});
 		}
 		return distlib.services.search(model.query, model.page).then(
 			function(data) {
@@ -75,23 +75,32 @@ distlib.search = (function() {
 		view.booksResult.style.display = "block";
 		view.booksResult.innerHTML = "";
 		addBooksToView(view.booksResult, model.books);
+		while (view.paginationButtons.firstChild)
+			view.paginationButtons.removeChild(view.paginationButtons.firstChild);
 		if (model.pageCount == 0)
 			return;
-		view.paginationButtons.innerHTML = String()
-			+ (model.page > 1 ? '<a id="previous-page" href="?q=' + model.query + '&page=' + (model.page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
-			+ (model.page <  model.pageCount ? '<a id="next-page" href="?q=' + model.query + '&page=' + (model.page + 1) + '" class="w3-button">&raquo;</a>' : '')
-		var previousPageButton = document.getElementById("previous-page");
-		var nextPageButton = document.getElementById("next-page");
-		if (previousPageButton != null)
+		if (model.page > 1) {
+			var previousPageButton = document.createElement("a");
+			previousPageButton.href = '?q=' + model.query + '&page=' + (model.page - 1);
+			previousPageButton.classList.add('w3-bar-item', 'w3-button');
+			previousPageButton.innerText = '«';
 			previousPageButton.addEventListener("click", function(event){
 				event.preventDefault();
-				return goToPage(model.page - 1)
+				return goToPage(model.page - 1);
 			});
-		if (nextPageButton != null)
+			view.paginationButtons.appendChild(previousPageButton);
+		}
+		if (model.page < model.pageCount) {
+			var nextPageButton = document.createElement("a");
+			nextPageButton.href = '?q=' + model.query + '&page=' + (model.page + 1);
+			nextPageButton.classList.add('w3-bar-item', 'w3-button');
+			nextPageButton.innerText = '»';
 			nextPageButton.addEventListener("click", function(event){
 				event.preventDefault();
 				return goToPage(model.page + 1)
 			});
+			view.paginationButtons.appendChild(nextPageButton);
+		}
 		view.searchBox.blur();
 	};
 
