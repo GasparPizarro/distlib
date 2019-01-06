@@ -2,7 +2,7 @@ distlib.auth = (function() {
 	'use strict';
 
 	var mainHtml = String()
-		+ '<div class="w3-modal-content" style="max-width:300px">'
+	+ '<div class="w3-modal-content" style="max-width:300px; margin-left: auto; margin-right: auto;">'
 			+ '<div class="w3-container">'
 				+ '<form id="login-form" class="w3-container">'
 					+ '<div class="w3-section">'
