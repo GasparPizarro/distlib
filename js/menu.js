@@ -74,5 +74,26 @@ distlib.menu = (function(){
 		}, false);
 	}
 
-	return {init: init}
+	var addNotification = function(link) {
+		var item = document.querySelector('a[href="' + link + '"]');
+		if (item == null)
+			return;
+		if (item.getElementsByTagName("span").length) {
+			var badge = item.getElementsByTagName("span")[0];
+			var current = parseInt(badge.textContent);
+			current = current + 1;
+			badge.textContent = current;
+		}
+		else {
+			var badge = document.createElement("span");
+			badge.classList.add("w3-badge", "w3-right");
+			badge.textContent = "1";
+			item.appendChild(badge);
+		}
+	}
+
+	return {
+		init: init,
+		addNotification: addNotification
+	}
 }());
