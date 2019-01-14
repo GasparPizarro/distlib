@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/GasparPizarro/distlib#readme",
   "dependencies": {
-    "route-recognizer": "^0.3.4"
+    "route-recognizer": "^0.3.4",
+    "stretchy": "^1.0.0"
   }
 }

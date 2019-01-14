@@ -94,10 +94,8 @@ distlib.BookDetail.prototype.createInput = function(text) {
 	element.type = "text";
 	element.value = text;
 	element.style.width = text.length * 9 + "px";
-	element.classList = "w3-input, w3-border-0";
-	element.addEventListener("input", function() {
-		this.style.width = this.value.length * 9 + 'px';
-	});
+	element.style.padding = 0;
+	element.classList.add("w3-border-0", "stretchy");
 	return element;
 };
 

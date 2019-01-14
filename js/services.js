@@ -1,4 +1,4 @@
-	distlib.services = {
+distlib.services = {
 
 	apiHost: "http://" + window.location.hostname + ":5000",
 
