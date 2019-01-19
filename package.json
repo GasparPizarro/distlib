@@ -1,22 +1,24 @@
 {
-  "name": "distlib",
   "version": "1.0.0",
-  "description": "Experimental pure Javascript web application. This has been done just as a toy application, to test the capabilities of Javascript . This does not have any real practical application, but this does not stop me from pitching it, so here it goes:",
-  "main": "index.js",
+  "name": "webpack_tutorial",
+  "description": "",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode=development"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/GasparPizarro/distlib.git"
-  },
+  "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/GasparPizarro/distlib/issues"
+  "devDependencies": {
+    "css-loader": "^2.1.0",
+    "file-loader": "^3.0.1",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
   },
-  "homepage": "https://github.com/GasparPizarro/distlib#readme",
   "dependencies": {
+    "lodash": "^4.17.11",
     "route-recognizer": "^0.3.4",
     "stretchy": "^1.0.0"
   }
