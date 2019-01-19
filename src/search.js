@@ -25,23 +25,24 @@ var mainHtml = String()
 		+ '<div class="w3-center" style="height: 75px">'
 	+ '</div>';
 
-var init = function(container, pathParameters, queryParameters) {
+var init = async function(container, pathParameters, queryParameters) {
 	container.innerHTML = mainHtml;
 	model.query = queryParameters.q;
 	model.page = queryParameters.page ? parseInt(queryParameters.page) : 1;
 	view.searchBox = document.getElementById("search-box");
 	view.booksResult = document.getElementById("books-result");
 	view.paginationButtons = document.getElementById("pagination-buttons");
-	search().then(render);
-	view.searchBox.addEventListener("keyup", function (event) {
-			if (event.keyCode != 13)
-				return;
-			model.page = 1;
-			model.query = view.searchBox.value;
-			history.pushState({}, null, window.location.hash + '?q=' + model.query);
-			search().then(render);
-		}
-	);
+	view.searchBox.addEventListener("keyup", async function (event) {
+		if (event.keyCode != 13)
+			return;
+		model.page = 1;
+		model.query = view.searchBox.value;
+		history.pushState({}, null, window.location.hash + '?q=' + model.query);
+		var results = await search();
+		render(results);
+	});
+	var results = await search();
+	render(results);
 };
 
 var addBooksToView = function(container, books) {
@@ -58,16 +59,13 @@ var addBooksToView = function(container, books) {
 	}
 };
 
-var search = function() {
+var search = async function() {
 	if (model.query == null) {
 		return new Promise(function(){});
 	}
-	return services.search(model.query, model.page).then(
-		function(data) {
-			model.books = data.books;
-			model.pageCount = data.pageCount;
-		}
-	);
+	var data = await services.search(model.query, model.page)
+	model.books = data.books;
+	model.pageCount = data.pageCount;
 };
 var render = function() {
 	if (model.books == null)
@@ -104,10 +102,11 @@ var render = function() {
 	view.searchBox.blur();
 };
 
-var goToPage = function(page) {
+var goToPage = async function(page) {
 	model.page = page;
 	history.pushState({}, null, "/search?q=" + model.query + "&page=" + model.page);
-	search().then(render);
+	var results = await search();
+	render(results);
 }
 
 export {init, title}

@@ -40,8 +40,8 @@ var loadDebts = function(debts) {
 var init = async function(container) {
 	container.innerHTML = mainHtml;
 	debtsList = document.getElementById("debts-list");
-	await getDebts();
-	loadDebts();
+	var debts = await getDebts();
+	loadDebts(debts);
 };
 
 export {init, title}

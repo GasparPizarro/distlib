@@ -2,16 +2,19 @@ import * as auth from "./auth";
 
 export const apiHost =  "http://" + window.location.hostname + ":5000";
 
-export function search(query, page = 1, size = 5) {
+export async function search(query, page = 1, size = 5) {
 	var url = new URL(apiHost + "/books/search");
 	url.search = new URLSearchParams({
 		"q": query,
 		"page": page,
 		"size": size
 	});
-	return fetch(url, {
-		type: "GET"
-	}).then(response => response.json().then(json => ({books: json, pageCount: parseInt(response.headers.get("page-count"))})));
+	var response = await fetch(url, {type: "GET"});
+	var data = await response.json();
+	return {
+		books: data,
+		pageCount: parseInt(response.headers.get("page-count"))
+	};
 };
 
 export async function getBooks(page = 0, size = 10) {
@@ -36,10 +39,8 @@ export function getLoans() {
 	}).then(response => response.json());
 };
 
-export function getDebts() {
-	return fetch(apiHost + "/debts", {
-		method: "GET"
-	}).then(response => response.json());
+export async function getDebts() {
+	return (await fetch(apiHost + "/debts", {method: "GET"})).json()
 };
 
 export function askForBook(bookId) {
@@ -81,13 +82,13 @@ export function updateBook(bookId, data) {
 	});
 };
 
-export function acceptLoan(loanId) {
+export async function acceptLoan(loanId) {
 	var form = new FormData();
 	form.append("status", "accepted");
-	return fetch(apiHost + "/loans/" + loanId, {
+	return (await fetch(apiHost + "/loans/" + loanId, {
 		method: "PATCH",
 		body: form
-	}).then(response => response.json());
+	})).json();
 };
 
 export function rejectLoan(loanId) {
@@ -108,10 +109,8 @@ export function finishLoan(loanId) {
 	});
 };
 
-export function getProfile() {
-	return fetch(apiHost + "/profile", {
-		method: "GET"
-	}).then(response => response.json());
+export async function getProfile() {
+	return (await fetch(apiHost + "/profile", {method: "GET"})).json()
 }
 
 export function updateProfile({firstName, lastName, oldPassword, newPassword} = {}) {

@@ -18,7 +18,7 @@ var clearLoans = function() {
 var loadLoans = function(loans) {
 	for (var i = 0; i < loans.length; i = i + 1) {
 		let	loan = loans[i];
-		element = document.createElement("li");
+		var element = document.createElement("li");
 		new Loan(loan.id, loan.book, loan.recipient, loan.start, loan.span, loan.status).render(element);
 		loansList.appendChild(element);
 	}

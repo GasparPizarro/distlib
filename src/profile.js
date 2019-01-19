@@ -43,16 +43,15 @@ var lastName;
 var updateProfileButton;
 var updatePasswordButton;
 
-var onClickUpdateProfile = function(event) {
+var onClickUpdateProfile = async function(event) {
 	event.preventDefault();
 	var firstName = document.getElementById("first-name").value;
 	var lastName = document.getElementById("last-name").value;
-	updateProfile({firstName: firstName, lastName: lastName}).then(function() {
-		toast("Profile has been updated");
-	});
+	await updateProfile({firstName: firstName, lastName: lastName});
+	toast("Profile has been updated");
 };
 
-var onClickUpdatePassword = function(event) {
+var onClickUpdatePassword = async function(event) {
 	event.preventDefault();
 	var oldPassword = document.getElementById("old-password").value;
 	var newPassword1 = document.getElementById("new-password-1").value;
@@ -63,17 +62,16 @@ var onClickUpdatePassword = function(event) {
 			return;
 		}
 	}
-	updateProfile({oldPassword: oldPassword, newPassword: newPassword2}).then(function(response) {
-		if (response.ok) {
-			toast("Profile has been updated");
-			logout();
-		}
-		else
-			toast("Wrong password");
-	});
+	var response = await updateProfile({oldPassword: oldPassword, newPassword: newPassword2});
+	if (response.ok) {
+		toast("Profile has been updated");
+		logout();
+	}
+	else
+		toast("Wrong password");
 };
 
-var init = function(container, pathParameters, queryParameters) {
+var init = async function(container, pathParameters, queryParameters) {
 	container.innerHTML = mainHtml;
 	username = document.getElementById("username");
 	firstName = document.getElementById("first-name");
@@ -81,10 +79,9 @@ var init = function(container, pathParameters, queryParameters) {
 	updateProfileButton = document.getElementById("update-profile-button");
 	updatePasswordButton = document.getElementById("update-password-button");
 	username.textContent = getUsername();
-	getProfile().then(function(profile) {
-		firstName.value = profile.first_name;
-		lastName.value = profile.last_name;
-	})
+	var profile = await getProfile();
+	firstName.value = profile.first_name;
+	lastName.value = profile.last_name;
 	updateProfileButton.addEventListener("click", onClickUpdateProfile);
 	updatePasswordButton.addEventListener("click", onClickUpdatePassword);
 	document.getElementById("profile-form").addEventListener("keypress", function(event) {

@@ -24,29 +24,32 @@ var onLogin = function(event) {
 	window.dispatchEvent(new CustomEvent("routing"));
 };
 
-var login = function(theUsername, thePassword) {
+var login = async function(theUsername, thePassword) {
 	var form = new FormData();
 	form.append("username", theUsername);
 	form.append("password", thePassword);
 	if (document.getElementById("bad-login"))
 		document.getElementById("login-status").innerHTML= "";
-	fetch(services.apiHost + "/token", {
-		method: "POST",
-		body: form,
-	}).then(function(response) {
+	try {
+		var response = await fetch(services.apiHost + "/token", {
+			method: "POST",
+			body: form,
+		});
+
 		if (response.ok) {
-			return response.json().then(function(data) {
-				username = theUsername;
-				token = data.token;
-				localStorage.setItem("token", data.token);
-				localStorage.setItem("username", theUsername);
-				window.dispatchEvent(new CustomEvent("login"));
-			})
+			var data = await response.json();
+			username = theUsername;
+			token = data.token;
+			localStorage.setItem("token", data.token);
+			localStorage.setItem("username", theUsername);
+			window.dispatchEvent(new CustomEvent("login"));
 		}
 		else {
 			wrongCredentials();
 		}
-	}).catch(wrongCredentials);
+	} catch (err) {
+		wrongCredentials();
+	}
 }
 
 var wrongCredentials = function() {

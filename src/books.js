@@ -110,8 +110,10 @@ var onAddBook = async function(event) {
 		author: document.querySelector("#add-book-form [name=author]").value,
 		year: document.querySelector("#add-book-form [name=year]").value,
 	}
-	await addBook(book);
-	toast("The book has been added");
+	addBook(book).then(function() {
+		console.log(book);
+		toast("The book has been added");
+	});
 	return false;
 };
 
