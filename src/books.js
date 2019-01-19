@@ -111,7 +111,7 @@ var onAddBook = async function(event) {
 		year: document.querySelector("#add-book-form [name=year]").value,
 	}
 	addBook(book).then(function() {
-		console.log(book);
+		window.dispatchEvent(new CustomEvent("routing"));
 		toast("The book has been added");
 	});
 	return false;
