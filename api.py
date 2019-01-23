@@ -50,7 +50,7 @@ class Books(MethodView):
 	def post(self):
 		title = request.form['title']
 		author = request.form['author']
-		year = request.form["year"]
+		year = int(request.form["year"])
 		cursor = get_db().execute("insert into book (owner, title, author, year) values (?, ?, ?, ?)", (g.user, title, author, year))
 		get_db().commit()
 		cursor.close()
@@ -66,7 +66,11 @@ class Books(MethodView):
 		updatable_fields = ["title", "author", "year"]
 		title = request.form.get("title", None)
 		author = request.form.get("author", None)
-		year = request.form.get("year", None)
+		try:
+			if request.form.get("year", None):
+				year = int(request.form["year"])
+		except ValueError:
+			return ('', 400)
 		query = "update book set " + (", ".join(["%s = ?" % (field,) for (field, value) in request.form.items() if field in updatable_fields and value])) + " where id = ?"
 		data = query_db(query, [value for (field, value) in request.form.items() if field in updatable_fields and value] + [book_id])
 		return self.get(book_id)

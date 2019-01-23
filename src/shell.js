@@ -129,4 +129,4 @@ var onLogin = function() {
 };
 
 
-export {init,toast,setLoading,onClickLink,router};
+export {init, toast, setLoading, onClickLink, router};

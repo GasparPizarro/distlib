@@ -71,15 +71,17 @@ export function deleteBook(bookId) {
 	});
 };
 
-export function updateBook(bookId, data) {
+export async function updateBook(bookId, title, author, year) {
 	var form = new FormData();
-	form.append("title", data.title);
-	form.append("author", data.author);
-	form.append("year", data.year);
-	return fetch(apiHost + "/books/" + bookId, {
+	form.append("title", title);
+	form.append("author", author);
+	form.append("year", year);
+	var response = await fetch(apiHost + "/books/" + bookId, {
 		method: "PUT",
 		body: form
 	});
+	if (!response.ok)
+		throw "Error"
 };
 
 export async function acceptLoan(loanId) {
