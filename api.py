@@ -48,9 +48,12 @@ class Books(MethodView):
 			})
 
 	def post(self):
-		title = request.form['title']
-		author = request.form['author']
-		year = int(request.form["year"])
+		try:
+			title = request.form['title']
+			author = request.form['author']
+			year = int(request.form["year"])
+		except ValueError:
+			return ('', 400)
 		cursor = get_db().execute("insert into book (owner, title, author, year) values (?, ?, ?, ?)", (g.user, title, author, year))
 		get_db().commit()
 		cursor.close()
