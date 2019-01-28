@@ -1,5 +1,5 @@
-import {Loan} from "./Loan";
-import {getLoans} from "./services";
+import {LoanDetail} from "./LoanDetail";
+import {Loan} from "./models/Loan";
 import {toast} from "./shell";
 
 var title = "Loans";
@@ -19,14 +19,14 @@ var loadLoans = function(loans) {
 	for (var i = 0; i < loans.length; i = i + 1) {
 		let	loan = loans[i];
 		var element = document.createElement("li");
-		new Loan(loan.id, loan.book, loan.recipient, loan.start, loan.span, loan.status).render(element);
+		new LoanDetail(loan).render(element);
 		loansList.appendChild(element);
 	}
 };
 var init = async function(container) {
 	container.innerHTML = mainHtml;
 	loansList = document.getElementById("loans-list");
-	var loans = await getLoans();
+	var loans = await Loan.all();
 	clearLoans();
 	loadLoans(loans);
 	loansList.addEventListener("reject-loan", function(event) {

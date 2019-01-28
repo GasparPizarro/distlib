@@ -1,5 +1,5 @@
 import {BookDetail} from "./BookDetail";
-import * as services from "./services";
+import {Book} from "./models/Book"
 import * as auth from "./auth";
 
 var title = "Book search";
@@ -63,10 +63,11 @@ var search = async function() {
 	if (model.query == null) {
 		return new Promise(function(){});
 	}
-	var data = await services.search(model.query, model.page)
+	var data = await Book.search(model.query, model.page);
 	model.books = data.books;
 	model.pageCount = data.pageCount;
 };
+
 var render = function() {
 	if (model.books == null)
 		return;

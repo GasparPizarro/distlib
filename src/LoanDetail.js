@@ -1,27 +1,20 @@
-import {acceptLoan, rejectLoan, finishLoan} from "./services"
-
-var Loan = function(id, book, recipient, start, span, status) {
-	this.id = id;
-	this.book = book;
-	this.recipient = recipient;
-	this.start = start;
-	this.span = span;
-	this.status = status;
+var LoanDetail = function(loan) {
+	this.loan = loan;
 }
 
-Loan.prototype.update = function() {
+LoanDetail.prototype.update = function() {
 	while (this.container.firstChild)
 		this.container.removeChild(this.container.firstChild);
 
 	var upper = document.createElement("div");
 
 	var title = document.createElement("span");
-	title.innerText = this.book.title;
+	title.innerText = this.loan.book.title;
 
 	var buttons = document.createElement("div");
 	buttons.classList.add("w3-right");
 
-	if (this.status == 0) {
+	if (this.loan.status == 0) {
 		var accept = document.createElement("button");
 		accept.classList.add("w3-button");
 		accept.innerHTML = '<i class="fa fa-check"></i>';
@@ -48,15 +41,15 @@ Loan.prototype.update = function() {
 	var lower = document.createElement("div");
 
 	var recipient = document.createElement("span");
-	recipient.innerText = this.recipient
+	recipient.innerText = this.loan.recipient
 
 	var time = document.createElement("span");
-	if (this.status == 0)
-		time.innerText = this.span + ' weeks';
+	if (this.loan.status == 0)
+		time.innerText = this.loan.span + ' weeks';
 	else {
-		var startDate = new Date(this.start);
-		var endDate = new Date(this.start);
-		endDate.setDate(startDate.getDate() + this.span * 7);
+		var startDate = new Date(this.loan.start);
+		var endDate = new Date(this.loan.start);
+		endDate.setDate(startDate.getDate() + this.loan.span * 7);
 		time.innerText = 'Due on ' + endDate.getDate() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getFullYear();
 	}
 
@@ -68,27 +61,27 @@ Loan.prototype.update = function() {
 	this.container.appendChild(lower);
 };
 
-Loan.prototype.render = function(container) {
+LoanDetail.prototype.render = function(container) {
 	this.container = container;
 	this.update();
 };
 
-Loan.prototype.accept = async function() {
-	var loan = await acceptLoan(this.id);
-	this.status = loan.status;
+LoanDetail.prototype.accept = async function() {
+	var loan = await this.loan.accept();
+	this.loan.status = loan.status;
 	this.update();
 };
 
-Loan.prototype.reject = async function() {
-	var loan = rejectLoan(this.id);
-	this.status = loan.status;
+LoanDetail.prototype.reject = async function() {
+	var loan = await this.loan.reject();
+	this.loan.status = loan.status;
 	this.container.dispatchEvent(new CustomEvent("reject-loan", {bubbles: true}));
 };
 
-Loan.prototype.finish = async function() {
-	var loan = await finishLoan(this.id);
-	this.status = loan.status;
+LoanDetail.prototype.finish = async function() {
+	var loan = await this.loan.finish();
+	this.loan.status = loan.status;
 	this.container.dispatchEvent(new CustomEvent("finish-loan", {bubbles: true}));
 };
 
-export {Loan}
+export {LoanDetail}

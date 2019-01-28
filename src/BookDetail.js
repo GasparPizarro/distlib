@@ -1,5 +1,5 @@
-import {deleteBook, askForBook, updateBook} from "./services";
 import {toast} from "./shell";
+import * as auth from "./auth";
 
 var BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 	this.book = book;
@@ -163,7 +163,7 @@ BookDetail.prototype.showModal = function() {
 		return false;
 	});
 	modal.getElementsByClassName("delete-book")[0].addEventListener("click", async function() {
-		await deleteBook(this.book.id);
+		await this.book.delete();
 		this.view.container.dispatchEvent(new CustomEvent("delete-book", {bubbles: true}));
 	}.bind(this));
 };
@@ -175,30 +175,26 @@ BookDetail.prototype.rejectChanges = function() {
 };
 
 BookDetail.prototype.requestBook = async function() {
-	await askForBook(this.book.id);
+	await this.book.request(auth.getUsername());
 	toast("An email has been sent to the book's owner");
 	this.view.buttons.request.classList.add("w3-disabled");
 };
 
 BookDetail.prototype.acceptChanges = async function(event) {
 	try {
-		await updateBook(
-			this.book.id,
-			this.view.title.firstChild.value,
-			this.view.author.firstChild.value,
-			this.view.year.firstChild.value
-		);
+		await this.book.update({
+			title: this.view.title.firstChild.value,
+			author: this.view.author.firstChild.value,
+			year: this.view.year.firstChild.value
+		});
 		toast("The book has been updated");
-		this.book.title = this.view.title.firstChild.value;
-		this.book.author = this.view.author.firstChild.value;
-		this.book.year = this.view.year.firstChild.value;
+		this.view.title.innerText = this.book.title;
+		this.view.author.innerText = this.book.author;
+		this.view.year.innerText = this.book.year;
 	}
 	catch (err) {
 		toast("There are errors with the update");
 	}
-	this.view.title.innerText = this.book.title;
-	this.view.author.innerText = this.book.author;
-	this.view.year.innerText = this.book.year;
 };
 
 export {BookDetail};

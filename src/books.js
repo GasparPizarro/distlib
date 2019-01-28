@@ -1,6 +1,6 @@
 import {BookDetail} from "./BookDetail";
-import {addBook, getBooks} from "./services"
 import {toast} from "./shell";
+import {Book} from "./models/Book.js";
 
 var title = "My books";
 
@@ -56,7 +56,7 @@ var init = async function(container, _, queryParameters) {
 };
 
 var loadData = async function() {
-	var data = await getBooks(model.page)
+	var data = await Book.all(model.page)
 	model.pageCount = data.pageCount;
 	model.books = data.books;
 };
@@ -65,7 +65,8 @@ var render = function() {
 	view.booksList.innerHTML = "";
 	for (var i = 0; i < model.books.length; i = i + 1) {
 		var li = document.createElement("li");
-		var bookDetail = new BookDetail(model.books[i], {
+		var book = new Book(model.books[i]);
+		var bookDetail = new BookDetail(book, {
 			editable: model.books[i].bearer == null,
 			requestable: false,
 			showOwner: false
@@ -105,15 +106,19 @@ var goToPage = async function(page) {
 var onAddBook = async function(event) {
 	event.preventDefault();
 	event.stopPropagation();
-	var book = {
+	var book = new Book({
 		title: document.querySelector("#add-book-form [name=title]").value,
 		author: document.querySelector("#add-book-form [name=author]").value,
 		year: document.querySelector("#add-book-form [name=year]").value,
-	}
-	addBook(book).then(function() {
+	});
+	try {
+		await book.save();
 		window.dispatchEvent(new CustomEvent("routing"));
 		toast("The book has been added");
-	});
+	}
+	catch (err) {
+		console.log(err);
+	}
 	return false;
 };
 
