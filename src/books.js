@@ -117,6 +117,7 @@ var onAddBook = async function(event) {
 		toast("The book has been added");
 	}
 	catch (err) {
+		toast("Cannot add book");
 		console.log(err);
 	}
 	return false;

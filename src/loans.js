@@ -15,6 +15,7 @@ var loansList;
 var clearLoans = function() {
 	loansList.innerHTML = "";
 }
+
 var loadLoans = function(loans) {
 	for (var i = 0; i < loans.length; i = i + 1) {
 		let	loan = loans[i];
@@ -23,6 +24,7 @@ var loadLoans = function(loans) {
 		loansList.appendChild(element);
 	}
 };
+
 var init = async function(container) {
 	container.innerHTML = mainHtml;
 	loansList = document.getElementById("loans-list");

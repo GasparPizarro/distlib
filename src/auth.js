@@ -90,5 +90,4 @@ var getToken = function() {
 	return token;
 }
 
-
 export {init, getUsername, getToken, logout};
