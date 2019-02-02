@@ -1,5 +1,6 @@
 import {BookDetail} from "./BookDetail";
 import {Book} from "./models/Book"
+import {toast} from "./shell"
 import * as auth from "./auth";
 
 var title = "Book search";
@@ -31,6 +32,10 @@ var init = async function(container, pathParameters, queryParameters) {
 	model.page = queryParameters.page ? parseInt(queryParameters.page) : 1;
 	view.searchBox = document.getElementById("search-box");
 	view.booksResult = document.getElementById("books-result");
+	view.booksResult.addEventListener("delete-book", function(event) {
+		event.target.remove();
+		toast("The book has been deleted");
+	});
 	view.paginationButtons = document.getElementById("pagination-buttons");
 	view.searchBox.addEventListener("keyup", async function (event) {
 		if (event.keyCode != 13)
