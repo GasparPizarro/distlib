@@ -12,7 +12,7 @@ var router = new RouteRecognizer();
 var stopEvent = function(event) {
 	event.preventDefault();
 	event.stopPropagation();
-}
+};
 
 var loadingCount = 0;
 
@@ -42,7 +42,7 @@ var mainHtml = String()
 	+ '</div>'
 	+ '<div id="toast" class="w3-center w3-black"></div>'
 	+ '<div id="login-modal" class="w3-modal w3-animate-opacity">'
-	+ '</div>'
+	+ '</div>';
 
 var wrongUrlHtml = String()
 	+ '<header class="w3-container" style="padding-top:22px">'
@@ -50,21 +50,20 @@ var wrongUrlHtml = String()
 	+ '</header>';
 
 var baseModule = {
-	init: function(container) {
+	init: function() {
 		history.pushState({}, null, '/search');
 		window.dispatchEvent(new CustomEvent("routing"));
 	}
 };
 
 var logoutModule = {
-	init: function(container) {
+	init: function() {
 		auth.logout();
 		history.replaceState({}, null, '/');
 	}
-}
+};
 
-var routing = function(event) {
-	var path = window.location.pathname;
+var routing = function() {
 	var match = router.recognize(location.pathname + location.search + location.hash);
 	if (match) {
 		var module = match[0].handler;
@@ -85,18 +84,16 @@ var toast = function(message) {
 	setTimeout(function() {
 		element.style.display = "none";
 	}, 3000);
-}
+};
 
 var container;
-
-var loadingModal;
 
 var onClickLink = function(event) {
 	event.preventDefault();
 	history.pushState({}, null, event.target.getAttribute("href"));
 	window.dispatchEvent(new CustomEvent("routing"));
 	return false;
-}
+};
 
 var init = function(theContainer) {
 	router.add([{path: '', handler: baseModule}]);
@@ -108,7 +105,6 @@ var init = function(theContainer) {
 	router.add([{path: '/logout', handler: logoutModule}]);
 	container = theContainer;
 	container.innerHTML = mainHtml;
-	loadingModal = document.getElementById("loading-modal");
 	menu.init(document.getElementById('menu'));
 	window.addEventListener("routing", routing);
 	window.addEventListener("popstate", function() {window.dispatchEvent(new CustomEvent("routing"));});

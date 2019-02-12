@@ -15,14 +15,14 @@ export async function search(query, page = 1, size = 5) {
 		books: data,
 		pageCount: parseInt(response.headers.get("page-count"))
 	};
-};
+}
 
 export async function getBooks(page = 0, size = 10) {
 	var url = new URL(apiHost + "/books");
 	url.search = new URLSearchParams({
 		"page": page,
 		"size": size
-	})
+	});
 	var response = await fetch(url, {
 		type: "GET"
 	});
@@ -30,18 +30,18 @@ export async function getBooks(page = 0, size = 10) {
 	return {
 		books: json,
 		pageCount: response.headers.get("page-count")
-	}
-};
+	};
+}
 
 export function getLoans() {
 	return fetch(apiHost + "/loans", {
 		method: "GET"
 	}).then(response => response.json());
-};
+}
 
 export async function getDebts() {
-	return (await fetch(apiHost + "/debts", {method: "GET"})).json()
-};
+	return (await fetch(apiHost + "/debts", {method: "GET"})).json();
+}
 
 export function askForBook(bookId) {
 	var form = new FormData();
@@ -51,8 +51,8 @@ export function askForBook(bookId) {
 	return fetch(apiHost + "/loans", {
 		method: "POST",
 		body: form
-	})
-};
+	});
+}
 
 export function addBook(book) {
 	var form = new FormData();
@@ -63,13 +63,13 @@ export function addBook(book) {
 		method: "POST",
 		body: form
 	});
-};
+}
 
 export function deleteBook(bookId) {
 	return fetch(apiHost + "/books/" + bookId, {
 		method: "DELETE"
 	});
-};
+}
 
 export async function updateBook(bookId, title, author, year) {
 	var form = new FormData();
@@ -81,8 +81,8 @@ export async function updateBook(bookId, title, author, year) {
 		body: form
 	});
 	if (!response.ok)
-		throw "Error"
-};
+		throw "Error";
+}
 
 export async function acceptLoan(loanId) {
 	var form = new FormData();
@@ -91,7 +91,7 @@ export async function acceptLoan(loanId) {
 		method: "PATCH",
 		body: form
 	})).json();
-};
+}
 
 export function rejectLoan(loanId) {
 	var form = new FormData();
@@ -100,7 +100,7 @@ export function rejectLoan(loanId) {
 		method: "PATCH",
 		body: form
 	});
-};
+}
 
 export function finishLoan(loanId) {
 	var form = new FormData();
@@ -109,10 +109,10 @@ export function finishLoan(loanId) {
 		method: "PATCH",
 		body: form
 	});
-};
+}
 
 export async function getProfile() {
-	return (await fetch(apiHost + "/profile", {method: "GET"})).json()
+	return (await fetch(apiHost + "/profile", {method: "GET"})).json();
 }
 
 export function updateProfile({firstName, lastName, oldPassword, newPassword} = {}) {
@@ -128,5 +128,5 @@ export function updateProfile({firstName, lastName, oldPassword, newPassword} = 
 	return fetch(apiHost + "/profile", {
 		method: "POST",
 		body: form
-	})
+	});
 }

@@ -1,6 +1,6 @@
 import {BookDetail} from "./BookDetail";
-import {Book} from "./models/Book"
-import {toast} from "./shell"
+import {Book} from "./models/Book";
+import {toast} from "./shell";
 import * as auth from "./auth";
 
 var title = "Book search";
@@ -16,7 +16,7 @@ var view = {
 	searchBox: null,
 	booksResult: null,
 	paginationButtons: null
-}
+};
 
 var mainHtml = String()
 	+ '<div class="w3-container">'
@@ -101,7 +101,7 @@ var render = function() {
 		nextPageButton.innerText = '»';
 		nextPageButton.addEventListener("click", function(event){
 			event.preventDefault();
-			return goToPage(model.page + 1)
+			return goToPage(model.page + 1);
 		});
 		view.paginationButtons.appendChild(nextPageButton);
 	}
@@ -113,6 +113,6 @@ var goToPage = async function(page) {
 	history.pushState({}, null, "/search?q=" + model.query + "&page=" + model.page);
 	var results = await search();
 	render(results);
-}
+};
 
-export {init, title}
+export {init, title};

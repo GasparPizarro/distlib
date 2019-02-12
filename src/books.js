@@ -15,7 +15,7 @@ var view = {
 	booksList: null,
 	paginationButtons: null,
 	showBookModal: null,
-}
+};
 
 var mainHtml = String()
 	+ '<div class="w3-container">'
@@ -44,7 +44,7 @@ var mainHtml = String()
 	+ '</div>';
 
 var init = async function(container, _, queryParameters) {
-	view.container = container
+	view.container = container;
 	view.container.innerHTML = mainHtml;
 	model.page = queryParameters.page ? parseInt(queryParameters.page) : 1;
 	view.booksList = document.getElementById("books-list");
@@ -56,7 +56,7 @@ var init = async function(container, _, queryParameters) {
 };
 
 var loadData = async function() {
-	var data = await Book.all(model.page)
+	var data = await Book.all(model.page);
 	model.pageCount = data.pageCount;
 	model.books = data.books;
 };
@@ -80,7 +80,7 @@ var render = function() {
 	});
 	view.paginationButtons.innerHTML = String()
 		+ (model.page > 1 ? '<a id="previous-page" href="?page=' + (model.page - 1) + '" class="w3-bar-item w3-button">&laquo;</a>' : '')
-		+ (model.page < model.pageCount ? '<a id="next-page" href="?page=' + (model.page + 1) + '" class="w3-button">&raquo;</a>' : '')
+		+ (model.page < model.pageCount ? '<a id="next-page" href="?page=' + (model.page + 1) + '" class="w3-button">&raquo;</a>' : '');
 	var previousPageButton = document.getElementById("previous-page");
 	var nextPageButton = document.getElementById("next-page");
 	if (previousPageButton != null)
@@ -101,7 +101,7 @@ var goToPage = async function(page) {
 	history.pushState({}, null, "/books?page=" + model.page);
 	await loadData();
 	render();
-}
+};
 
 var onAddBook = async function(event) {
 	event.preventDefault();
@@ -118,7 +118,6 @@ var onAddBook = async function(event) {
 	}
 	catch (err) {
 		toast("Cannot add book");
-		console.log(err);
 	}
 	return false;
 };
@@ -136,23 +135,13 @@ var showModal = function(event) {
 var escapeFromModal = function(event) {
 	if (event.key == "Escape")
 		document.getElementById('book-modal').style.display = "none";
-}
+};
 
 var hideModal = function(event) {
 	var modal = document.getElementById('book-modal');
 	if (event.target == modal)
 		modal.style.display = "none";
 	return false;
-}
+};
 
-var clearBooks = function() {
-	booksList.innerHTML = "";
-}
-
-var goToBook = function(event) {
-	event.preventDefault();
-	history.pushState({}, null, event.target.getAttribute("href"));
-	window.dispatchEvent(new CustomEvent("routing"));
-}
-
-export {init, title}
+export {init, title};

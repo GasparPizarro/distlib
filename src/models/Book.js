@@ -6,12 +6,12 @@ var Book = function({id = null, owner = null, title = null, author = null, year 
 	this.title = title;
 	this.author = author;
 	this.year = year;
-}
+};
 
 Book.prototype.delete = function() {
-   return fetch(apiHost + "/books/" + this.id, {
-	   method: "DELETE"
-   });
+	return fetch(apiHost + "/books/" + this.id, {
+		method: "DELETE"
+	});
 };
 
 Book.prototype.request = function(recipient, timeRange = 1) {
@@ -22,7 +22,7 @@ Book.prototype.request = function(recipient, timeRange = 1) {
 	return fetch(apiHost + "/loans", {
 		method: "POST",
 		body: form
-	})
+	});
 };
 
 Book.prototype.update = async function({title = null, author = null, year = null}) {
@@ -33,7 +33,7 @@ Book.prototype.update = async function({title = null, author = null, year = null
 		form.append("author", author);
 	if (year != null)
 		form.append("year", year);
-	var response = await fetch(apiHost + "/books/" + this.id, {
+	await fetch(apiHost + "/books/" + this.id, {
 		method: "PUT",
 		body: form
 	});
@@ -67,7 +67,7 @@ Book.all = async function(page = 0, size = 10) {
 	url.search = new URLSearchParams({
 		"page": page,
 		"size": size
-	})
+	});
 	var response = await fetch(url, {
 		type: "GET"
 	});
@@ -75,8 +75,8 @@ Book.all = async function(page = 0, size = 10) {
 	return {
 		books: json.map((datum) => new Book(datum)),
 		pageCount: response.headers.get("page-count")
-	}
-}
+	};
+};
 
 Book.search = async function search(query, page = 1, size = 5) {
 	var url = new URL(apiHost + "/books/search");

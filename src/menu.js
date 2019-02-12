@@ -26,7 +26,7 @@ var mainHtml = String()
 			+ '<a href="/logout" id="logout" class="w3-bar-item w3-button w3-padding"><i class="fa fa-sign-out fa-fw"></i> Log out</a>'
 		+ '</div>'
 	+ '</nav>'
-	+ '<div class="w3-overlay w3-hide-large w3-animate-opacity" style="cursor: pointer; display: none;" title="close side menu" id="myOverlay"></div>'
+	+ '<div class="w3-overlay w3-hide-large w3-animate-opacity" style="cursor: pointer; display: none;" title="close side menu" id="myOverlay"></div>';
 
 var activate = function(menu, path) {
 	for (var i = 0; i < menu.length; i = i + 1) {
@@ -48,7 +48,7 @@ var onClickSandwich = function() {
 	}
 };
 
-var onClickOverlay = function(event) {
+var onClickOverlay = function() {
 	mySidebar.style.display = 'none';
 	overlayBg.style.display = 'none';
 };
@@ -59,7 +59,9 @@ var init = function(container) {
 	overlayBg = document.getElementById('myOverlay');
 	document.getElementById('the-button').addEventListener("click", onClickSandwich);
 	document.getElementById('myOverlay').addEventListener("click", onClickOverlay);
-	mySidebar.querySelectorAll('a:not(#logout)').forEach(function(element) {element.addEventListener("click", shell.onClickLink)});
+	mySidebar.querySelectorAll('a:not(#logout)').forEach(function(element) {
+		element.addEventListener("click", shell.onClickLink);
+	});
 	document.getElementById("logout").addEventListener("click", function(event) {
 		event.preventDefault();
 		auth.logout();
@@ -80,18 +82,19 @@ var addNotification = function(link) {
 	var item = document.querySelector('a[href="' + link + '"]');
 	if (item == null)
 		return;
+	let badge;
 	if (item.getElementsByTagName("span").length) {
-		var badge = item.getElementsByTagName("span")[0];
+		badge = item.getElementsByTagName("span")[0];
 		var current = parseInt(badge.textContent);
 		current = current + 1;
 		badge.textContent = current;
 	}
 	else {
-		var badge = document.createElement("span");
+		badge = document.createElement("span");
 		badge.classList.add("w3-badge", "w3-right");
 		badge.textContent = "1";
 		item.appendChild(badge);
 	}
 };
 
-export {init, addNotification}
+export {init, addNotification};

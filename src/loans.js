@@ -14,7 +14,7 @@ var loansList;
 
 var clearLoans = function() {
 	loansList.innerHTML = "";
-}
+};
 
 var loadLoans = function(loans) {
 	for (var i = 0; i < loans.length; i = i + 1) {

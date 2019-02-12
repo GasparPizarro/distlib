@@ -1,4 +1,4 @@
-import {getProfile, updateProfile} from "./services"
+import {getProfile, updateProfile} from "./services";
 import {toast} from "./shell";
 import {logout, getUsername} from "./auth";
 
@@ -35,7 +35,7 @@ var mainHtml = String()
 			+ '<input id="new-password-2" name="new-password-2" class="w3-input" type="password"/>'
 		+ '</p>'
 		+ '<button id="update-password-button" type="button" class="w3-button w3-green">Update password</button>'
-	+ '</form>'
+	+ '</form>';
 
 var username;
 var firstName;
@@ -71,7 +71,7 @@ var onClickUpdatePassword = async function(event) {
 		toast("Wrong password");
 };
 
-var init = async function(container, pathParameters, queryParameters) {
+var init = async function(container) {
 	container.innerHTML = mainHtml;
 	username = document.getElementById("username");
 	firstName = document.getElementById("first-name");
@@ -85,17 +85,15 @@ var init = async function(container, pathParameters, queryParameters) {
 	updateProfileButton.addEventListener("click", onClickUpdateProfile);
 	updatePasswordButton.addEventListener("click", onClickUpdatePassword);
 	document.getElementById("profile-form").addEventListener("keypress", function(event) {
-			if (event.keyCode != 13)
-				return;
-			onClickUpdateProfile(event);
-		}
-	);
+		if (event.keyCode != 13)
+			return;
+		onClickUpdateProfile(event);
+	});
 	document.getElementById("password-form").addEventListener("keypress", function(event) {
-			if (event.keyCode != 13)
-				return;
-			onClickUpdatePassword(event);
-		}
-	);
+		if (event.keyCode != 13)
+			return;
+		onClickUpdatePassword(event);
+	});
 };
 
-export {title, init}
+export {title, init};

@@ -7,14 +7,14 @@ var Loan = function({id = null, book = null, recipient = null, start = null, spa
 	this.start = start;
 	this.span = span;
 	this.status = status;
-}
+};
 
 Loan.all = async function() {
 	var response = await fetch(apiHost + "/loans", {
 		method: "GET"
-	})
+	});
 	var json = await response.json();
-	return json.map((datum) => new Loan(datum))
+	return json.map((datum) => new Loan(datum));
 };
 
 Loan.prototype.accept = async function() {

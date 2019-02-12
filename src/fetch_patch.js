@@ -1,11 +1,11 @@
-import * as shell from "./shell";
+import {setLoading, toast}  from "./shell";
 import * as auth from "./auth";
 
 var oldFetch = window.fetch;
 
 window.fetch = function() {
-	shell.setLoading(true);
-	var newArguments = newArguments = Array.prototype.slice.call(arguments);;
+	setLoading(true);
+	var newArguments = newArguments = Array.prototype.slice.call(arguments);
 	if (auth.getToken()) {
 		if (arguments.length <= 1)
 			newArguments.push({});
@@ -15,9 +15,9 @@ window.fetch = function() {
 	}
 	else
 		newArguments = arguments;
-	return oldFetch.apply(null, newArguments).catch(function(response) {
-		shell.toast("Cannot connect with servers");
+	return oldFetch.apply(null, newArguments).catch(function() {
+		toast("Cannot connect with servers");
 	}).finally(function() {
-		shell.setLoading(false);
+		setLoading(false);
 	});
 };

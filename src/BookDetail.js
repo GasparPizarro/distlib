@@ -107,24 +107,24 @@ BookDetail.prototype.edit = function(event) {
 	if (this.editing)
 		return;
 	this.editing = true;
-	this.view.title.innerHTML = '';
-	this.view.title.appendChild(this.createInput(this.book.title));
-	this.view.author.innerHTML = '';
-	this.view.author.appendChild(this.createInput(this.book.author));
-	this.view.year.innerHTML = ''
-	this.view.year.appendChild(this.createInput(this.book.year.toString()));
+	this.view.title.contentEditable = true;
+	this.view.author.contentEditable = true;
+	this.view.year.contentEditable = true;
 	var acceptOnEnter = (event) => {
 		if (event.keyCode != 13)
-			return;
-		this.acceptChanges(event);
+			return false;
+		this.acceptChanges();
 		this.editing = false;
-		this.view.title.removeEventListener("keyup", acceptOnEnter, true);
-		this.view.author.removeEventListener("keyup", acceptOnEnter, true);
-		this.view.year.removeEventListener("keyup", acceptOnEnter, true);
+		this.view.title.contentEditable = false;
+		this.view.author.contentEditable = false;
+		this.view.year.contentEditable = false;
+		this.view.title.removeEventListener("keydown", acceptOnEnter, true);
+		this.view.author.removeEventListener("keydown", acceptOnEnter, true);
+		this.view.year.removeEventListener("keydown", acceptOnEnter, true);
 	};
-	this.view.title.addEventListener("keyup", acceptOnEnter, true);
-	this.view.author.addEventListener("keyup", acceptOnEnter, true);
-	this.view.year.addEventListener("keyup", acceptOnEnter, true);
+	this.view.title.addEventListener("keydown", acceptOnEnter, true);
+	this.view.author.addEventListener("keydown", acceptOnEnter, true);
+	this.view.year.addEventListener("keydown", acceptOnEnter, true);
 	document.addEventListener("click", function clickingOutside(event) {
 		if (!this.view.title.contains(event.target) && !this.view.author.contains(event.target) && !this.view.year.contains(event.target)) {
 			this.rejectChanges(event);
@@ -132,14 +132,14 @@ BookDetail.prototype.edit = function(event) {
 			document.removeEventListener("click", clickingOutside);
 		}
 	}.bind(this));
-	document.addEventListener("keyup", function escaping(event) {
+	document.addEventListener("keydown", function escaping(event) {
 		if (event.keyCode != 27)
 			return;
 		this.rejectChanges(event);
 		this.editing = false;
-		document.removeEventListener("keyup", escaping);
+		document.removeEventListener("keydown", escaping);
 	}.bind(this));
-	event.target.childNodes[0].focus();
+	event.target.focus();
 };
 
 BookDetail.prototype.showModal = function() {
@@ -149,12 +149,11 @@ BookDetail.prototype.showModal = function() {
 	modal.innerHTML = this.deleteHtml;
 	this.view.container.appendChild(modal);
 	modal.addEventListener("click", function(event) {
-			var cancelModal = modal.getElementsByClassName("cancel-modal")[0];
-			if (event.target == modal || event.target == cancelModal)
-				modal.style.display = "none";
-			return false;
-		}
-	)
+		var cancelModal = modal.getElementsByClassName("cancel-modal")[0];
+		if (event.target == modal || event.target == cancelModal)
+			modal.style.display = "none";
+		return false;
+	});
 	window.addEventListener("keypress", function closeModal(event) {
 		if (event.keyCode == 27) {
 			modal.style.display = "none";
@@ -180,12 +179,12 @@ BookDetail.prototype.requestBook = async function() {
 	this.view.buttons.request.classList.add("w3-disabled");
 };
 
-BookDetail.prototype.acceptChanges = async function(event) {
+BookDetail.prototype.acceptChanges = async function() {
 	try {
 		await this.book.update({
-			title: this.view.title.firstChild.value,
-			author: this.view.author.firstChild.value,
-			year: this.view.year.firstChild.value
+			title: this.view.title.textContent,
+			author: this.view.author.textContent,
+			year: this.view.year.textContente
 		});
 		toast("The book has been updated");
 		this.view.title.innerText = this.book.title;

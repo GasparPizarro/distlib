@@ -19,7 +19,7 @@ var mainHtml = String()
 var username = null;
 var token = null;
 
-var onLogin = function(event) {
+var onLogin = function() {
 	document.getElementById("login-form").reset();
 	window.dispatchEvent(new CustomEvent("routing"));
 };
@@ -50,7 +50,7 @@ var login = async function(theUsername, thePassword) {
 	} catch (err) {
 		wrongCredentials();
 	}
-}
+};
 
 var wrongCredentials = function() {
 	if (!document.getElementById("bad-login"))
@@ -63,7 +63,7 @@ var logout = function() {
 	username = null;
 	token = null;
 	window.dispatchEvent(new CustomEvent("logout"));
-}
+};
 
 var init = function(container) {
 	container.innerHTML = mainHtml;
@@ -74,7 +74,7 @@ var init = function(container) {
 	else
 		window.dispatchEvent(new CustomEvent("login"));
 	window.addEventListener('login', onLogin);
-	document.getElementById("login-form").onsubmit = function(event) {
+	document.getElementById("login-form").onsubmit = function() {
 		var username = document.querySelector("#login-form [name=username]").value;
 		var password = document.querySelector("#login-form [name=password]").value;
 		login(username, password);
@@ -88,6 +88,6 @@ var getUsername = function() {
 
 var getToken = function() {
 	return token;
-}
+};
 
 export {init, getUsername, getToken, logout};

@@ -6,7 +6,7 @@ var mainHtml = String()
 	+ '<div class="w3-container">'
 		+ '<ul class="w3-ul" id="debts-list" placeholder="There are no debts">'
 		+ '</ul>'
-	+ '</div>'
+	+ '</div>';
 
 var debtsList;
 
@@ -35,7 +35,7 @@ var loadDebts = function(debts) {
 		debt.appendChild(lower);
 		debtsList.append(debt);
 	}
-}
+};
 
 var init = async function(container) {
 	container.innerHTML = mainHtml;
@@ -44,4 +44,4 @@ var init = async function(container) {
 	loadDebts(debts);
 };
 
-export {init, title}
+export {init, title};

@@ -1,6 +1,6 @@
 var LoanDetail = function(loan) {
 	this.loan = loan;
-}
+};
 
 LoanDetail.prototype.update = function() {
 	while (this.container.firstChild)
@@ -14,10 +14,10 @@ LoanDetail.prototype.update = function() {
 	var buttons = document.createElement("div");
 	buttons.classList.add("w3-right");
 
-	if (this.loan.status == 0) {
-		var accept = document.createElement("button");
-		accept.classList.add("w3-button");
-		accept.innerHTML = '<i class="fa fa-check"></i>';
+	var accept = document.createElement("button");
+	accept.classList.add("w3-button");
+	accept.innerHTML = '<i class="fa fa-check"></i>';
+	if (this.loan.status == 0) {		
 		accept.addEventListener("click", this.accept.bind(this));
 		buttons.appendChild(accept);
 
@@ -28,9 +28,6 @@ LoanDetail.prototype.update = function() {
 		buttons.appendChild(reject);
 	}
 	else {
-		var accept = document.createElement("button");
-		accept.classList.add("w3-button");
-		accept.innerHTML = '<i class="fa fa-check"></i>';
 		accept.addEventListener("click", this.finish.bind(this));
 		buttons.appendChild(accept);
 	}
@@ -41,7 +38,7 @@ LoanDetail.prototype.update = function() {
 	var lower = document.createElement("div");
 
 	var recipient = document.createElement("span");
-	recipient.innerText = this.loan.recipient
+	recipient.innerText = this.loan.recipient;
 
 	var time = document.createElement("span");
 	if (this.loan.status == 0)
@@ -55,7 +52,7 @@ LoanDetail.prototype.update = function() {
 
 	lower.appendChild(recipient);
 	lower.appendChild(document.createTextNode(" | "));
-	lower.appendChild(time)
+	lower.appendChild(time);
 
 	this.container.appendChild(upper);
 	this.container.appendChild(lower);
@@ -84,4 +81,4 @@ LoanDetail.prototype.finish = async function() {
 	this.container.dispatchEvent(new CustomEvent("finish-loan", {bubbles: true}));
 };
 
-export {LoanDetail}
+export {LoanDetail};

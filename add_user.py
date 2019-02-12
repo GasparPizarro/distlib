@@ -1,7 +1,6 @@
 import sys
 import sqlite3
 from getpass import getpass
-from utils import query_db
 import bcrypt
 
 DATABASE = './data.db'
