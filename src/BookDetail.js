@@ -121,6 +121,7 @@ BookDetail.prototype.edit = function(event) {
 		this.view.title.removeEventListener("keydown", acceptOnEnter, true);
 		this.view.author.removeEventListener("keydown", acceptOnEnter, true);
 		this.view.year.removeEventListener("keydown", acceptOnEnter, true);
+		event.target.blur();
 	};
 	this.view.title.addEventListener("keydown", acceptOnEnter, true);
 	this.view.author.addEventListener("keydown", acceptOnEnter, true);
@@ -138,6 +139,7 @@ BookDetail.prototype.edit = function(event) {
 		this.rejectChanges(event);
 		this.editing = false;
 		document.removeEventListener("keydown", escaping);
+		event.target.blur();
 	}.bind(this));
 	event.target.focus();
 };
