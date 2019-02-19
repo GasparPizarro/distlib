@@ -108,24 +108,37 @@ BookDetail.prototype.edit = function(event) {
 		return;
 	this.editing = true;
 	this.view.title.contentEditable = true;
+	this.view.title.style.backgroundColor = "white";
 	this.view.author.contentEditable = true;
+	this.view.author.style.backgroundColor = "white";
 	this.view.year.contentEditable = true;
-	var acceptOnEnter = (event) => {
+	this.view.year.style.backgroundColor = "white";
+	var onlyNumbers = (event) => {
+		if (isNaN(String.fromCharCode(event.which)))
+			event.preventDefault();
+	}
+	var acceptOnEnter = async (event) => {
 		if (event.keyCode != 13)
 			return false;
-		this.acceptChanges();
+		event.preventDefault();
+		await this.acceptChanges();
 		this.editing = false;
 		this.view.title.contentEditable = false;
 		this.view.author.contentEditable = false;
 		this.view.year.contentEditable = false;
+		this.view.title.style.backgroundColor = null;
+		this.view.author.style.backgroundColor = null;
+		this.view.year.style.backgroundColor = null;
 		this.view.title.removeEventListener("keydown", acceptOnEnter, true);
 		this.view.author.removeEventListener("keydown", acceptOnEnter, true);
 		this.view.year.removeEventListener("keydown", acceptOnEnter, true);
+		this.view.year.removeEventListener("keydown", onlyNumbers, true);
 		event.target.blur();
 	};
 	this.view.title.addEventListener("keydown", acceptOnEnter, true);
 	this.view.author.addEventListener("keydown", acceptOnEnter, true);
 	this.view.year.addEventListener("keydown", acceptOnEnter, true);
+	this.view.year.addEventListener("keydown", onlyNumbers, true);
 	document.addEventListener("click", function clickingOutside(event) {
 		if (!this.view.title.contains(event.target) && !this.view.author.contains(event.target) && !this.view.year.contains(event.target)) {
 			this.rejectChanges(event);
@@ -171,8 +184,11 @@ BookDetail.prototype.showModal = function() {
 
 BookDetail.prototype.rejectChanges = function() {
 	this.view.title.innerText = this.book.title;
+	this.view.title.style.backgroundColor = null;
 	this.view.author.innerText = this.book.author;
+	this.view.author.style.backgroundColor = null;
 	this.view.year.innerText = this.book.year;
+	this.view.year.style.backgroundColor = null;
 };
 
 BookDetail.prototype.requestBook = async function() {
@@ -186,15 +202,17 @@ BookDetail.prototype.acceptChanges = async function() {
 		await this.book.update({
 			title: this.view.title.textContent,
 			author: this.view.author.textContent,
-			year: this.view.year.textContente
+			year: this.view.year.textContent
 		});
 		toast("The book has been updated");
-		this.view.title.innerText = this.book.title;
-		this.view.author.innerText = this.book.author;
-		this.view.year.innerText = this.book.year;
 	}
 	catch (err) {
 		toast("There are errors with the update");
+	}
+	finally {
+		this.view.title.innerText = this.book.title;
+		this.view.author.innerText = this.book.author;
+		this.view.year.innerText = this.book.year;
 	}
 };
 

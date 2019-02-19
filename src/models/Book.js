@@ -33,10 +33,12 @@ Book.prototype.update = async function({title = null, author = null, year = null
 		form.append("author", author);
 	if (year != null)
 		form.append("year", year);
-	await fetch(apiHost + "/books/" + this.id, {
+	let response = await fetch(apiHost + "/books/" + this.id, {
 		method: "PUT",
 		body: form
 	});
+	if (response.status != 200)
+		throw Error;
 	if (title != null)
 		this.title = title;
 	if (author != null)
