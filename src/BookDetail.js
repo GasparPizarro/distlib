@@ -118,10 +118,6 @@ BookDetail.prototype.edit = function(event) {
 	this.view.author.style.backgroundColor = "white";
 	this.view.year.contentEditable = true;
 	this.view.year.style.backgroundColor = "white";
-	var onlyNumbers = (event) => {
-		if (isNaN(String.fromCharCode(event.which)))
-			event.preventDefault();
-	}
 	var acceptOnEnter = async (event) => {
 		if (event.keyCode != 13)
 			return false;
@@ -137,13 +133,11 @@ BookDetail.prototype.edit = function(event) {
 		this.view.title.removeEventListener("keydown", acceptOnEnter, true);
 		this.view.author.removeEventListener("keydown", acceptOnEnter, true);
 		this.view.year.removeEventListener("keydown", acceptOnEnter, true);
-		this.view.year.removeEventListener("keydown", onlyNumbers, true);
 		event.target.blur();
 	};
 	this.view.title.addEventListener("keydown", acceptOnEnter, true);
 	this.view.author.addEventListener("keydown", acceptOnEnter, true);
 	this.view.year.addEventListener("keydown", acceptOnEnter, true);
-	this.view.year.addEventListener("keydown", onlyNumbers, true);
 	document.addEventListener("click", function clickingOutside(event) {
 		if (!this.view.title.contains(event.target) && !this.view.author.contains(event.target) && !this.view.year.contains(event.target)) {
 			this.rejectChanges(event);
