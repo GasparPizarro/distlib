@@ -205,9 +205,9 @@ BookDetail.prototype.requestBook = async function() {
 BookDetail.prototype.acceptChanges = async function() {
 	try {
 		await this.book.update({
-			title: this.view.title.textContent,
-			author: this.view.author.textContent,
-			year: this.view.year.textContent
+			title: this.view.title.value,
+			author: this.view.author.value,
+			year: this.view.year.value
 		});
 		toast("The book has been updated");
 	}
