@@ -1,5 +1,6 @@
 import {toast} from "./shell";
 import * as auth from "./auth";
+import "stretchy";
 
 var BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 	this.book = book;
@@ -40,8 +41,9 @@ BookDetail.prototype.deleteHtml = String()
 BookDetail.prototype.render = function(container) {
 	this.view.container = container;
 	var upper = document.createElement("div");
-	this.view.title = document.createElement("span");
-	this.view.title.innerText = this.book.title;
+	this.view.title = document.createElement("input");
+	this.view.title.value = this.book.title;
+	this.view.title.classList.add("w3-border-0", "the-input");
 	if (this.editable)
 		this.view.title.addEventListener("click", this.edit.bind(this));
 	var buttons = document.createElement("div");
@@ -66,12 +68,15 @@ BookDetail.prototype.render = function(container) {
 	upper.appendChild(buttons);
 
 	var lower = document.createElement("div");
-	this.view.author = document.createElement("span");
-	this.view.author.innerText = this.book.author;
+	this.view.author = document.createElement("input");
+	this.view.author.value = this.book.author;
+	this.view.author.classList.add("w3-border-0", "the-input");
 	if (this.editable)
 		this.view.author.addEventListener("click", this.edit.bind(this));
-	this.view.year = document.createElement("span");
-	this.view.year.innerText = this.book.year;
+	this.view.year = document.createElement("input");
+	this.view.year.value = this.book.year;
+	this.view.year.type = "number";
+	this.view.year.classList.add("w3-border-0", "the-input");
 	if (this.editable)
 		this.view.year.addEventListener("click", this.edit.bind(this));
 	lower.appendChild(this.view.author);
