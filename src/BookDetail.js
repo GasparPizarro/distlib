@@ -42,8 +42,8 @@ BookDetail.prototype.render = function(container) {
 	this.view.container = container;
 	var upper = document.createElement("div");
 	this.view.title = document.createElement("input");
+	this.view.title.classList.add("the-input");
 	this.view.title.value = this.book.title;
-	this.view.title.classList.add("w3-border-0", "the-input");
 	if (this.editable)
 		this.view.title.addEventListener("click", this.edit.bind(this));
 	var buttons = document.createElement("div");
@@ -69,14 +69,14 @@ BookDetail.prototype.render = function(container) {
 
 	var lower = document.createElement("div");
 	this.view.author = document.createElement("input");
+	this.view.author.classList.add("the-input");
 	this.view.author.value = this.book.author;
-	this.view.author.classList.add("w3-border-0", "the-input");
 	if (this.editable)
 		this.view.author.addEventListener("click", this.edit.bind(this));
 	this.view.year = document.createElement("input");
-	this.view.year.value = this.book.year;
 	this.view.year.type = "number";
-	this.view.year.classList.add("w3-border-0", "the-input");
+	this.view.year.classList.add("the-input");
+	this.view.year.value = this.book.year;
 	if (this.editable)
 		this.view.year.addEventListener("click", this.edit.bind(this));
 	lower.appendChild(this.view.author);
@@ -98,25 +98,13 @@ BookDetail.prototype.render = function(container) {
 	container.appendChild(lower);
 };
 
-BookDetail.prototype.createInput = function(text) {
-	var element = document.createElement("input");
-	element.type = "text";
-	element.value = text;
-	element.style.width = text.length * 9 + "px";
-	element.style.padding = 0;
-	element.classList.add("w3-border-0", "stretchy");
-	return element;
-};
 
 BookDetail.prototype.edit = function(event) {
 	if (this.editing)
 		return;
 	this.editing = true;
-	this.view.title.contentEditable = true;
 	this.view.title.style.backgroundColor = "white";
-	this.view.author.contentEditable = true;
 	this.view.author.style.backgroundColor = "white";
-	this.view.year.contentEditable = true;
 	this.view.year.style.backgroundColor = "white";
 	var acceptOnEnter = async (event) => {
 		if (event.keyCode != 13)
@@ -124,9 +112,6 @@ BookDetail.prototype.edit = function(event) {
 		event.preventDefault();
 		await this.acceptChanges();
 		this.editing = false;
-		this.view.title.contentEditable = false;
-		this.view.author.contentEditable = false;
-		this.view.year.contentEditable = false;
 		this.view.title.style.backgroundColor = null;
 		this.view.author.style.backgroundColor = null;
 		this.view.year.style.backgroundColor = null;
@@ -182,11 +167,11 @@ BookDetail.prototype.showModal = function() {
 };
 
 BookDetail.prototype.rejectChanges = function() {
-	this.view.title.innerText = this.book.title;
+	this.view.title.value = this.book.title;
 	this.view.title.style.backgroundColor = null;
-	this.view.author.innerText = this.book.author;
+	this.view.author.value = this.book.author;
 	this.view.author.style.backgroundColor = null;
-	this.view.year.innerText = this.book.year;
+	this.view.year.value = this.book.year;
 	this.view.year.style.backgroundColor = null;
 };
 
@@ -209,9 +194,9 @@ BookDetail.prototype.acceptChanges = async function() {
 		toast("There are errors with the update");
 	}
 	finally {
-		this.view.title.innerText = this.book.title;
-		this.view.author.innerText = this.book.author;
-		this.view.year.innerText = this.book.year;
+		this.view.title.value = this.book.title;
+		this.view.author.value = this.book.author;
+		this.view.year.value = this.book.year;
 	}
 };
 
