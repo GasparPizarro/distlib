@@ -1,6 +1,5 @@
 import {toast} from "./shell";
 import * as auth from "./auth";
-import "stretchy";
 
 var BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 	this.book = book;
@@ -41,9 +40,8 @@ BookDetail.prototype.deleteHtml = String()
 BookDetail.prototype.render = function(container) {
 	this.view.container = container;
 	var upper = document.createElement("div");
-	this.view.title = document.createElement("input");
-	this.view.title.classList.add("the-input");
-	this.view.title.value = this.book.title;
+	this.view.title = document.createElement("span");
+	this.view.title.innerText = this.book.title;
 	if (this.editable)
 		this.view.title.addEventListener("click", this.edit.bind(this));
 	var buttons = document.createElement("div");
@@ -68,15 +66,12 @@ BookDetail.prototype.render = function(container) {
 	upper.appendChild(buttons);
 
 	var lower = document.createElement("div");
-	this.view.author = document.createElement("input");
-	this.view.author.classList.add("the-input");
-	this.view.author.value = this.book.author;
+	this.view.author = document.createElement("span");
+	this.view.author.innerText = this.book.author;
 	if (this.editable)
 		this.view.author.addEventListener("click", this.edit.bind(this));
-	this.view.year = document.createElement("input");
-	this.view.year.type = "number";
-	this.view.year.classList.add("the-input");
-	this.view.year.value = this.book.year;
+	this.view.year = document.createElement("span");
+	this.view.year.innerText = this.book.year;
 	if (this.editable)
 		this.view.year.addEventListener("click", this.edit.bind(this));
 	lower.appendChild(this.view.author);
@@ -103,22 +98,20 @@ BookDetail.prototype.edit = function(event) {
 	if (this.editing)
 		return;
 	this.editing = true;
-	this.view.title.style.backgroundColor = "white";
-	this.view.author.style.backgroundColor = "white";
-	this.view.year.style.backgroundColor = "white";
+	this.view.title.innerHTML = '';
+	this.view.title.appendChild(this.createInput(this.book.title));
+	this.view.author.innerHTML = '';
+	this.view.author.appendChild(this.createInput(this.book.author));
+	this.view.year.innerHTML = ''
+	this.view.year.appendChild(this.createInput(this.book.year.toString()));
 	var acceptOnEnter = async (event) => {
 		if (event.keyCode != 13)
-			return false;
-		event.preventDefault();
-		await this.acceptChanges();
+			return;
+		this.acceptChanges(event);
 		this.editing = false;
-		this.view.title.style.backgroundColor = null;
-		this.view.author.style.backgroundColor = null;
-		this.view.year.style.backgroundColor = null;
 		this.view.title.removeEventListener("keydown", acceptOnEnter, true);
 		this.view.author.removeEventListener("keydown", acceptOnEnter, true);
 		this.view.year.removeEventListener("keydown", acceptOnEnter, true);
-		event.target.blur();
 	};
 	this.view.title.addEventListener("keydown", acceptOnEnter, true);
 	this.view.author.addEventListener("keydown", acceptOnEnter, true);
@@ -138,7 +131,7 @@ BookDetail.prototype.edit = function(event) {
 		document.removeEventListener("keydown", escaping);
 		event.target.blur();
 	}.bind(this));
-	event.target.focus();
+	event.target.childNodes[0].focus();
 };
 
 BookDetail.prototype.showModal = function() {
@@ -167,12 +160,18 @@ BookDetail.prototype.showModal = function() {
 };
 
 BookDetail.prototype.rejectChanges = function() {
-	this.view.title.value = this.book.title;
-	this.view.title.style.backgroundColor = null;
-	this.view.author.value = this.book.author;
-	this.view.author.style.backgroundColor = null;
-	this.view.year.value = this.book.year;
-	this.view.year.style.backgroundColor = null;
+	this.view.title.innerText = this.book.title;
+	this.view.author.innerText = this.book.author;
+	this.view.year.innerText = this.book.year;
+};
+
+BookDetail.prototype.createInput = function(text) {
+	var element = document.createElement("input");
+	element.type = "text";
+	element.value = text;
+	element.style.padding = 0;
+	element.classList.add("w3-border-0", "stretchy");
+	return element;
 };
 
 BookDetail.prototype.requestBook = async function() {
@@ -184,19 +183,19 @@ BookDetail.prototype.requestBook = async function() {
 BookDetail.prototype.acceptChanges = async function() {
 	try {
 		await this.book.update({
-			title: this.view.title.value,
-			author: this.view.author.value,
-			year: this.view.year.value
+			title: this.view.title.firstChild.value,
+			author: this.view.author.firstChild.value,
+			year: this.view.year.firstChild.value
 		});
 		toast("The book has been updated");
 	}
 	catch (err) {
-		toast("There are errors with the update");
+		toast("There were errors with the update");
 	}
 	finally {
-		this.view.title.value = this.book.title;
-		this.view.author.value = this.book.author;
-		this.view.year.value = this.book.year;
+		this.view.title.innerText = this.book.title;
+		this.view.author.innerText = this.book.author;
+		this.view.year.innerText = this.book.year;
 	}
 };
 

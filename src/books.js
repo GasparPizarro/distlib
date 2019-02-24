@@ -1,6 +1,7 @@
 import {BookDetail} from "./BookDetail";
 import {toast} from "./shell";
 import {Book} from "./models/Book.js";
+import "stretchy";
 
 var title = "My books";
 
@@ -73,6 +74,7 @@ var render = function() {
 		});
 		bookDetail.render(li);
 		view.booksList.appendChild(li);
+		Stretchy.resizeAll([bookDetail.view.title, bookDetail.view.author, bookDetail.view.year]);
 	}
 	view.booksList.addEventListener("delete-book", function(event) {
 		event.target.remove();

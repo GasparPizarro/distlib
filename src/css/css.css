@@ -52,13 +52,3 @@ ul:empty::after {
 	margin-left: auto;
 	margin-right: auto;
 }
-
-.the-input {
-	border: none;
-	display: inline;
-	background-color: inherit;
-	font-family: inherit;
-	font-size: inherit;
-	padding: none;
-	width: auto;
-}

@@ -11,7 +11,7 @@ window.onload = function() {
 	document.body.classList.add("w3-light-grey");
 	document.body.id = "distlib";
 	document.title = "The Distributed Library";
-	Stretchy.selectors.filter = ".the-input";
+	Stretchy.selectors.filter = ".stretchy";
 	var tag = document.createElement("meta");
 	tag.name = "viewport";
 	tag.content = "initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
