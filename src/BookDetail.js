@@ -59,8 +59,7 @@ BookDetail.prototype.render = function(container) {
 		this.view.buttons.request.innerHTML = '<i class="fa fa-exchange"></i>';
 		this.view.buttons.request.addEventListener("click", this.requestBook.bind(this));
 		buttons.appendChild(this.view.buttons.request);
-	}
-
+	}   
 
 	upper.appendChild(this.view.title);
 	upper.appendChild(buttons);
@@ -103,7 +102,7 @@ BookDetail.prototype.edit = function(event) {
 	this.view.author.innerHTML = '';
 	this.view.author.appendChild(this.createInput(this.book.author));
 	this.view.year.innerHTML = ''
-	this.view.year.appendChild(this.createInput(this.book.year.toString()));
+	this.view.year.appendChild(this.createInput(this.book.year.toString(), true));
 	var acceptOnEnter = async (event) => {
 		if (event.keyCode != 13)
 			return;
@@ -165,9 +164,12 @@ BookDetail.prototype.rejectChanges = function() {
 	this.view.year.innerText = this.book.year;
 };
 
-BookDetail.prototype.createInput = function(text) {
+BookDetail.prototype.createInput = function(text, isNumber = false) {
 	var element = document.createElement("input");
-	element.type = "text";
+	if (isNumber)
+    	element.type = "number";
+    else
+        element.type = "text";
 	element.value = text;
 	element.style.padding = 0;
 	element.classList.add("w3-border-0", "stretchy");

@@ -74,7 +74,6 @@ var render = function() {
 		});
 		bookDetail.render(li);
 		view.booksList.appendChild(li);
-		Stretchy.resizeAll([bookDetail.view.title, bookDetail.view.author, bookDetail.view.year]);
 	}
 	view.booksList.addEventListener("delete-book", function(event) {
 		event.target.remove();
