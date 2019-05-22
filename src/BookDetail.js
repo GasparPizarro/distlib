@@ -23,18 +23,18 @@ var BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 };
 
 BookDetail.prototype.deleteHtml = String()
-	+ '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
-		+ '<div class="w3-container">'
-			+ '<div class="w3-section">'
-				+ '<h3 class="w3-center">¿Are you sure?</h3>'
-				+ '<div class="w3-center">'
-					+ '<button class="w3-button w3-red delete-book" type="button">Delete</button>'
-					+ ' '
-					+ '<button class="w3-button w3-green cancel-modal" type="button">Cancel</button>'
-				+ '</div>'
-			+ '</div>'
-		+ '</div>'
-	+ '</div>';
+	 + '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
+		 + '<div class="w3-container">'
+			 + '<div class="w3-section">'
+				 + '<h3 class="w3-center">¿Are you sure?</h3>'
+				 + '<div class="w3-center">'
+					 + '<button class="w3-button w3-red delete-book" type="button">Delete</button>'
+					  + ' '
+					 + '<button class="w3-button w3-green cancel-modal" type="button">Cancel</button>'
+				 + '</div>'
+			 + '</div>'
+		 + '</div>'
+	 + '</div>'
 
 
 BookDetail.prototype.render = function(container) {
@@ -59,7 +59,7 @@ BookDetail.prototype.render = function(container) {
 		this.view.buttons.request.innerHTML = '<i class="fa fa-exchange"></i>';
 		this.view.buttons.request.addEventListener("click", this.requestBook.bind(this));
 		buttons.appendChild(this.view.buttons.request);
-	}   
+	}
 
 	upper.appendChild(this.view.title);
 	upper.appendChild(buttons);
@@ -91,7 +91,6 @@ BookDetail.prototype.render = function(container) {
 	container.appendChild(upper);
 	container.appendChild(lower);
 };
-
 
 BookDetail.prototype.edit = function(event) {
 	if (this.editing)
