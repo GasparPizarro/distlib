@@ -17,10 +17,9 @@ LoanDetail.prototype.update = function() {
 	var accept = document.createElement("button");
 	accept.classList.add("w3-button");
 	accept.innerHTML = '<i class="fa fa-check"></i>';
-	if (this.loan.status == 0) {		
+	if (this.loan.status == 0) {
 		accept.addEventListener("click", this.accept.bind(this));
 		buttons.appendChild(accept);
-
 		var reject = document.createElement("button");
 		reject.classList.add("w3-button");
 		reject.innerHTML = '<i class="fa fa-times"></i>';
