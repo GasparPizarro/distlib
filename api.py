@@ -11,6 +11,7 @@ from utils import login_required, get_db, close_connection, query_db, environmen
 
 app = Flask(__name__)
 
+
 class Books(MethodView):
 
 	decorators = [login_required, environment_user]
@@ -20,20 +21,28 @@ class Books(MethodView):
 			page = int(request.args.get("page", 1)) - 1
 			size = int(request.args.get("size", 10))
 			book_count = int(query_db("select count(*) from book where owner = ?", (g.user,), one=True)[0])
-			books = query_db("select id, title, author, year from book where owner = ? order by title collate nocase limit ? offset ?", (g.user, size, page * size))
+			books = query_db(
+				"select id, title, author, year "
+				"from book where owner = ? "
+				"order by title collate nocase "
+				"limit ? offset ?", (g.user, size, page * size))
 			response = jsonify([{
 				"id": id,
 				"title": title,
 				"owner": g.user,
 				"author": author,
 				"year": year,
-				"bearer": query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0] if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None,
+				"bearer": (
+					query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0]
+					if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)
+					else None),
 			} for (id, title, author, year) in books])
 			response.headers["page-count"] = math.ceil(book_count / size)
 			return response
-		else :
+		else:
 			try:
-				id_, owner, title, author, year = query_db("select id, owner, title, author, year from book where id = ?", (book_id,), one=True)
+				id_, owner, title, author, year = query_db(
+					"select id, owner, title, author, year from book where id = ?", (book_id,), one=True)
 			except TypeError:
 				return ('', 404)
 			return jsonify({
@@ -51,7 +60,9 @@ class Books(MethodView):
 			year = int(request.form["year"])
 		except ValueError:
 			return ('', 400)
-		cursor = get_db().execute("insert into book (owner, title, author, year) values (?, ?, ?, ?)", (g.user, title, author, year))
+		cursor = get_db().execute(
+			"insert into book (owner, title, author, year) values (?, ?, ?, ?)",
+			(g.user, title, author, year))
 		get_db().commit()
 		cursor.close()
 		return jsonify({
@@ -64,15 +75,13 @@ class Books(MethodView):
 
 	def put(self, book_id):
 		updatable_fields = ["title", "author", "year"]
-		title = request.form.get("title", None)
-		author = request.form.get("author", None)
-		try:
-			if request.form.get("year", None):
-				year = int(request.form["year"])
-		except ValueError:
-			return ('', 400)
-		query = "update book set " + (", ".join(["%s = ?" % (field,) for (field, value) in request.form.items() if field in updatable_fields and value])) + " where id = ?"
-		data = query_db(query, [value for (field, value) in request.form.items() if field in updatable_fields and value] + [book_id])
+		query = (
+			"update book set "
+			+ (", ".join([
+				"%s = ?" % (field,)
+				for (field, value) in request.form.items() if field in updatable_fields and value]))
+			+ " where id = ?")
+		query_db(query, [value for (field, value) in request.form.items() if field in updatable_fields and value] + [book_id])
 		return self.get(book_id)
 
 	def delete(self, book_id):
@@ -84,8 +93,6 @@ class Books(MethodView):
 			return ('', 204)
 
 
-
-
 @app.route("/books/search", methods=['GET'])
 @environment_user
 @login_required
@@ -93,15 +100,21 @@ def book_search():
 	query = request.args["q"]
 	page = int(request.args.get("page", 1))
 	size = int(request.args.get("size", 10))
-	book_count = int(query_db("select count(*) from book where title like ? or author like ?", ("%" + query + "%", "%" + query + "%"), one=True)[0])
-	books = query_db("select id, owner, title, author, year from book where title like ? or author like ? limit ? offset ?", ("%" + query + "%", "%" + query + "%", size, (page - 1) * size))
+	book_count = int(query_db(
+		"select count(*) from book where title like ? or author like ?",
+		("%" + query + "%", "%" + query + "%"), one=True)[0])
+	books = query_db(
+		"select id, owner, title, author, year from book where title like ? or author like ? limit ? offset ?",
+		("%" + query + "%", "%" + query + "%", size, (page - 1) * size))
 	response = jsonify([{
 		"id": id,
 		"owner": owner,
 		"title": title,
 		"author": author,
 		"year": year,
-		"bearer": query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0] if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None,
+		"bearer": (
+			query_db("select recipient from loan where book = ? and status = 2", (id,), one=True)[0]
+			if query_db("select recipient from loan where book = ? and status = 2", (id,), one=True) else None),
 	} for (id, owner, title, author, year) in books])
 	response.headers["page-count"] = math.ceil(book_count / size)
 	return response
@@ -114,13 +127,17 @@ def debts():
 	debts = query_db("select id, book, start, span, status from loan where recipient = ? and status = 2", (g.user,))
 	return jsonify([{
 		"id": debt[0],
-		"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (debt[1],), one=True))},
+		"book": {
+			field: value
+			for (field, value) in zip(
+				["id", "owner", "title", "author", "year"],
+				query_db("select * from book where id = ?", (debt[1],), one=True))},
 		"lender": query_db("select owner from book where id = ?", (debt[1],), one=True)[0],
 		"start": debt[2],
 		"span": debt[3],
 		"status": debt[4]
-	}
-	for debt in debts])
+	} for debt in debts])
+
 
 class Loans(MethodView):
 
@@ -141,24 +158,30 @@ class Loans(MethodView):
 			else:
 				return ('', 404)
 		else:
-			loans = query_db("select id, book, recipient, start, span, status from loan where book in (select id from book where owner = ?) and status in (0, 2)", (g.user,))
+			loans = query_db(
+				"select id, book, recipient, start, span, status from loan "
+				"where book in (select id from book where owner = ?) and status in (0, 2)", (g.user,))
 			return jsonify([{
 				"id": loan[0],
-				"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (loan[1],), one=True))},
+				"book": {
+					field: value
+					for (field, value) in zip(
+						["id", "owner", "title", "author", "year"],
+						query_db("select * from book where id = ?", (loan[1],), one=True))},
 				"recipient": loan[2],
 				"start": loan[3],
 				"span": loan[4],
 				"status": loan[5]
-			}
-			for loan in loans])
+			} for loan in loans])
 
 	def post(self):
 		book_id = request.form['book_id']
 		recipient = request.form['recipient']
 		time_range = int(request.form['time_range'])
 		start = datetime.datetime.now()
-		end = start + datetime.timedelta(days=time_range)
-		cursor = get_db().execute("insert into loan (book, recipient, start, span, status) values (?, ?, ?, ?, ?)", (book_id, recipient, str(start), time_range, 0))
+		cursor = get_db().execute(
+			"insert into loan (book, recipient, start, span, status) values (?, ?, ?, ?, ?)",
+			(book_id, recipient, str(start), time_range, 0))
 		get_db().commit()
 		cursor.close()
 		return jsonify({
@@ -176,24 +199,35 @@ class Loans(MethodView):
 			owner, = query_db("select owner from book where id = (select book from loan where id = ?)", (loan_id, ), one=True)
 			if owner != g.user:
 				return jsonify({"error": "user does not own book"}), 400
-			query = query_db("update loan set status = ?, start = ? where id = ?", (2, datetime.datetime.today(), loan_id))
-			id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
+			query_db(
+				"update loan set status = ?, start = ? where id = ?",
+				(2, datetime.datetime.today(), loan_id))
+			id, book, recipient, start, span, status = query_db(
+				"select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
 		elif status == "rejected":
-			query = query_db("update loan set status = ?, start = ? where id = ?", (1, datetime.datetime.today(), loan_id))
-			id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
+			query_db("update loan set status = ?, start = ? where id = ?", (1, datetime.datetime.today(), loan_id))
+			id, book, recipient, start, span, status = query_db(
+				"select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
 		elif status == "finished":
-			query = query_db("update loan set status = ?, start = ? where id = ?", (3, datetime.datetime.today(), loan_id))
-			id, book, recipient, start, span, status = query_db("select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
+			query_db(
+				"update loan set status = ?, start = ? where id = ?", (3, datetime.datetime.today(), loan_id))
+			id, book, recipient, start, span, status = query_db(
+				"select id, book, recipient, start, span, status from loan where id = ?", (loan_id,), one=True)
 		else:
 			return ('', 400)
 		return jsonify({
 			"id": id,
-			"book": {field: value for (field, value) in zip(["id", "owner", "title", "author", "year"], query_db("select * from book where id = ?", (book,), one=True))},
+			"book": {
+				field: value
+				for (field, value) in zip(
+					["id", "owner", "title", "author", "year"],
+					query_db("select * from book where id = ?", (book,), one=True))},
 			"recipient": recipient,
 			"start": start,
 			"span": span,
 			"status": status
 		})
+
 
 class Profile(MethodView):
 
@@ -218,7 +252,9 @@ class Profile(MethodView):
 			hashed_password = query_db("select password from user where username = ?", (g.user,), one=True)
 			if not (old_password and bcrypt.checkpw(old_password.encode("utf-8"), hashed_password[0].encode("utf-8"))):
 				return jsonify({"error": "Wrong password"}), 400
-			query_db("update user set password = ? where username = ?", (bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"), g.user))
+			query_db(
+				"update user set password = ? where username = ?",
+				(bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"), g.user))
 			query_db("delete from user_token where username = ?", (g.user, ))
 		if first_name:
 			query_db("update user set first_name = ? where username = ?", (first_name, g.user))
@@ -241,7 +277,10 @@ def get_token():
 	username = request.form['username']
 	password = request.form['password']
 	hashed_password = query_db("select password from user where username = ?", (username,), one=True)
-	if hashed_password is not None and bcrypt.checkpw(password.encode("utf-8"), hashed_password[0].encode("utf-8")):
+	if (
+		hashed_password is not None
+		and bcrypt.checkpw(password.encode("utf-8"), hashed_password[0].encode("utf-8"))
+	):
 		token = query_db("select token from user_token where username = ?", (username,), one=True)
 		if token is None:
 			token = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(40))
@@ -250,12 +289,14 @@ def get_token():
 	else:
 		return jsonify({"error": "Bad credentials"}), 401
 
+
 @app.route("/logout", methods=['GET'])
 @environment_user
 @login_required
 def logout():
 	query_db("delete from user_token where username = ?", (g.user,))
 	return jsonify({"status": "logged_out"})
+
 
 app.after_request(cors)
 app.route('/<path:path>', endpoint=catch_all, methods=['OPTIONS'])

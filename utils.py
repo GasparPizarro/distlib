@@ -13,6 +13,7 @@ def login_required(f):
 		return f(*args, **kwargs)
 	return decorated_function
 
+
 def get_db():
 	db = getattr(g, '_database', None)
 	if db is None:

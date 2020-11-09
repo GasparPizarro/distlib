@@ -18,25 +18,46 @@ var view = {
 	paginationButtons: null
 };
 
-var mainHtml = String()
-	+ '<div class="w3-container">'
-		+ '<input id="search-box" class="w3-input w3-margin-top" type="text">'
-		+ '<ul class="w3-ul" style="display: none" id="books-result" placeholder="No results"></ul>'
-		+ '<div id="pagination-buttons" class="w3-center"></div>'
-		+ '<div class="w3-center" style="height: 75px">'
-	+ '</div>';
+var mainHtml = (() => {
+	let root = document.createElement("div");
+	root.classList.add("w3-container");
+	root.appendChild((() => {
+		view.searchBox = document.createElement("input");
+		view.searchBox.classList.add("w3-input", "w3-margin-top");
+		view.searchBox.type = "text";
+		return view.searchBox;
+	})());
+	root.appendChild((() => {
+		view.booksResult = document.createElement("ul");
+		view.booksResult.classList.add("w3-ul");
+		view.booksResult.style.display = "none";
+		view.booksResult.setAttribute("placeholder", "No results");
+		return view.booksResult;
+	})());
+	root.appendChild((() => {
+		view.paginationButtons = document.createElement("div");
+		view.paginationButtons.classList.add("w3-center");
+		return view.paginationButtons;
+	})());
+	root.appendChild((() => {
+		let root = document.createElement("div");
+		root.classList.add("w3-center");
+		root.style.height = "75px";
+		return root;
+	})());
+	return root;
+})();
 
 var init = async function(container, pathParameters, queryParameters) {
-	container.innerHTML = mainHtml;
+	while (container.firstChild)
+		container.removeChild(container.firstChild);
+	container.appendChild(mainHtml);
 	model.query = queryParameters.q;
 	model.page = queryParameters.page ? parseInt(queryParameters.page) : 1;
-	view.searchBox = document.getElementById("search-box");
-	view.booksResult = document.getElementById("books-result");
 	view.booksResult.addEventListener("delete-book", function(event) {
 		event.target.remove();
 		toast("The book has been deleted");
 	});
-	view.paginationButtons = document.getElementById("pagination-buttons");
 	view.searchBox.addEventListener("keyup", async function (event) {
 		if (event.keyCode != 13)
 			return;
@@ -65,9 +86,8 @@ var addBooksToView = function(container, books) {
 };
 
 var search = async function() {
-	if (model.query == null) {
+	if (model.query == null)
 		return new Promise(function(){});
-	}
 	var data = await Book.search(model.query, model.page);
 	model.books = data.books;
 	model.pageCount = data.pageCount;

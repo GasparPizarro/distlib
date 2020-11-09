@@ -16,18 +16,29 @@ LoanDetail.prototype.update = function() {
 
 	var accept = document.createElement("button");
 	accept.classList.add("w3-button");
-	accept.innerHTML = '<i class="fa fa-check"></i>';
+	accept.appendChild((() => {
+		let root = document.createElement("i");
+		root.classList.add("fa", "fa-check");
+		return root;
+	})());
 	if (this.loan.status == 0) {
 		accept.addEventListener("click", this.accept.bind(this));
+		accept.title = 'Accept';
 		buttons.appendChild(accept);
 		var reject = document.createElement("button");
+		reject.title = 'Reject';
 		reject.classList.add("w3-button");
-		reject.innerHTML = '<i class="fa fa-times"></i>';
+		reject.appendChild((() => {
+			let root = document.createElement("i");
+			root.classList.add("fa", "fa-times");
+			return root;
+		})())
 		reject.addEventListener("click", this.reject.bind(this));
 		buttons.appendChild(reject);
 	}
 	else {
 		accept.addEventListener("click", this.finish.bind(this));
+		accept.title = 'Finish';
 		buttons.appendChild(accept);
 	}
 

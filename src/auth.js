@@ -1,26 +1,74 @@
 import * as services from "./services";
 
-var mainHtml = String()
-+ '<div class="w3-modal-content">'
-		+ '<div class="w3-container">'
-			+ '<form id="login-form" class="w3-container">'
-				+ '<div class="w3-section">'
-					+ '<label>Username</label>'
-					+ '<input class="w3-input w3-margin-bottom" type="text" name="username" required>'
-					+ '<label>Password</label>'
-					+ '<input class="w3-input w3-margin-bottom" type="password" name="password" required>'
-					+ '<div id="login-status" class="w3-center"></div>'
-					+ '<button class="w3-button w3-block w3-green" type="submit" id="login">Ingresar</button>'
-				+ '</div>'
-			+ '</form>'
-		+ '</div>'
-	+ '</div>';
+var loginForm;
+
+var loginStatus;
+
+var mainHtml = (() => {
+	let root = document.createElement('div');
+	root.classList.add('w3-modal-content');
+	root.appendChild((() => {
+		let root = document.createElement('div');
+		root.classList.add('w3-container');
+		root.appendChild((() => {
+			loginForm = document.createElement('form');
+			loginForm.classList.add('w3-container');
+			loginForm.appendChild((() => {
+				let root = document.createElement('div');
+				root.classList.add('w3-section');
+				root.appendChild((() => {
+					let root = document.createElement('label');
+					root.innerText = 'Username';
+					return root;
+				})());
+				root.appendChild((() => {
+					let root = document.createElement('input');
+					root.classList.add('w3-input', 'w3-margin-bottom');
+					root.type = 'text';
+					root.name = 'username'
+					root.required = true;
+					return root;
+				})());
+				root.appendChild((() => {
+					let root = document.createElement('label');
+					root.innerText = 'Password';
+					return root;
+				})());
+				root.appendChild((() => {
+					let root = document.createElement('input');
+					root.classList.add('w3-input', 'w3-margin-bottom');
+					root.type = 'password';
+					root.name = 'password';
+					root.required = true;
+					return root;
+				})());
+				root.appendChild((() => {
+					loginStatus = document.createElement('div');
+					loginStatus.classList.add('w3-center');
+					return loginStatus;
+				})());
+				root.appendChild((() => {
+					let root = document.createElement('button');
+					root.classList.add('w3-button', 'w3-block', 'w3-green');
+					root.type = 'submit';
+					root.id = 'login';
+					root.innerText = 'Ingresar';
+					return root;
+				})());
+				return root;
+			})());
+			return loginForm;
+		})());
+		return root;
+	})());
+	return root;
+})();
 
 var username = null;
 var token = null;
 
 var onLogin = function() {
-	document.getElementById("login-form").reset();
+	loginForm.reset();
 	window.dispatchEvent(new CustomEvent("routing"));
 };
 
@@ -29,7 +77,8 @@ var login = async function(theUsername, thePassword) {
 	form.append("username", theUsername);
 	form.append("password", thePassword);
 	if (document.getElementById("bad-login"))
-		document.getElementById("login-status").innerHTML= "";
+		while(loginStatus.firstChild)
+			loginStatus.removeChild(loginStatus.firstChild);
 	try {
 		var response = await fetch(services.apiHost + "/token", {
 			method: "POST",
@@ -54,7 +103,7 @@ var login = async function(theUsername, thePassword) {
 
 var wrongCredentials = function() {
 	if (!document.getElementById("bad-login"))
-		document.getElementById("login-status").innerHTML = '<p id="bad-login" class="w3-text-red">Wrong credentials</p>';
+		loginStatus.innerHTML = '<p id="bad-login" class="w3-text-red">Wrong credentials</p>';
 };
 
 var logout = function() {
@@ -66,7 +115,7 @@ var logout = function() {
 };
 
 var init = function(container) {
-	container.innerHTML = mainHtml;
+	container.appendChild(mainHtml);
 	username = localStorage.getItem("username");
 	token = localStorage.getItem("token");
 	if (username == null || token == null)
@@ -74,9 +123,9 @@ var init = function(container) {
 	else
 		window.dispatchEvent(new CustomEvent("login"));
 	window.addEventListener('login', onLogin);
-	document.getElementById("login-form").onsubmit = function() {
-		var username = document.querySelector("#login-form [name=username]").value;
-		var password = document.querySelector("#login-form [name=password]").value;
+	loginForm.onsubmit = function() {
+		var username = loginForm.querySelector("[name=username]").value;
+		var password = loginForm.querySelector("[name=password]").value;
 		login(username, password);
 		return false;
 	};

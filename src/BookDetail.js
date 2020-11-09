@@ -22,19 +22,48 @@ var BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 	this.editing = false;
 };
 
-BookDetail.prototype.deleteHtml = String()
-	 + '<div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:300px">'
-		 + '<div class="w3-container">'
-			 + '<div class="w3-section">'
-				 + '<h3 class="w3-center">¿Are you sure?</h3>'
-				 + '<div class="w3-center">'
-					 + '<button class="w3-button w3-red delete-book" type="button">Delete</button>'
-					  + ' '
-					 + '<button class="w3-button w3-green cancel-modal" type="button">Cancel</button>'
-				 + '</div>'
-			 + '</div>'
-		 + '</div>'
-	 + '</div>'
+BookDetail.prototype.deleteElement = (() => {
+	let root = document.createElement("div");
+	root.classList.add("w3-modal-content", "w3-card-4", "w3-animate-opacity");
+	root.style.maxWidth = 300;
+	root.appendChild((() => {
+		let root = document.createElement("div");
+		root.classList.add("w3-container");
+		root.appendChild((() => {
+			let root = document.createElement("div");
+			root.classList.add("w3-section");
+			root.appendChild((() => {
+				let root = document.createElement("h3");
+				root.classList.add("w3-center");
+				root.innerText = "Are you sure?";
+				return root;
+			})());
+			root.appendChild((() => {
+				let root = document.createElement("div");
+				root.classList.add("w3-center");
+				root.appendChild((() => {
+					let root = document.createElement("button");
+					root.classList.add("w3-button", "w3-red", "delete-book");
+					root.type = "button";
+					root.innerText = "Delete";
+					return root;
+				})());
+				root.appendChild(document.createTextNode(' '));
+				root.appendChild((() => {
+					let root = document.createElement("button");
+					root.classList.add("w3-button", "w3-green", "cancel-modal");
+					root.type = "button";
+					root.innerText = "Cancel";
+					return root;
+				})());
+				return root;
+			})());
+			return root;
+		})())
+		return root;
+	})());
+	return root;
+})()
 
 
 BookDetail.prototype.render = function(container) {
@@ -49,14 +78,22 @@ BookDetail.prototype.render = function(container) {
 	if (this.editable) {
 		this.view.buttons.delete = document.createElement("button");
 		this.view.buttons.delete.classList.add("w3-button");
-		this.view.buttons.delete.innerHTML = '<i class="fa fa-times"></i>';
+		this.view.buttons.delete.appendChild((() => {
+			let root = document.createElement('i');
+			root.classList.add('fa', 'fa-times');
+			return root;
+		})());
 		this.view.buttons.delete.addEventListener("click", this.showModal.bind(this));
 		buttons.appendChild(this.view.buttons.delete);
 	}
 	if (this.requestable) {
 		this.view.buttons.request = document.createElement("button");
 		this.view.buttons.request.classList.add("w3-button");
-		this.view.buttons.request.innerHTML = '<i class="fa fa-exchange"></i>';
+		this.view.buttons.request.appendChild((() => {
+			let root = document.createElement('i');
+			root.classList.add('fa', 'fa-exchange');
+			return root;
+		})());
 		this.view.buttons.request.addEventListener("click", this.requestBook.bind(this));
 		buttons.appendChild(this.view.buttons.request);
 	}
@@ -136,7 +173,7 @@ BookDetail.prototype.showModal = function() {
 	var modal = document.createElement("div");
 	modal.classList.add("w3-modal");
 	modal.style.display = "block";
-	modal.innerHTML = this.deleteHtml;
+	modal.appendChild(this.deleteElement);
 	this.view.container.appendChild(modal);
 	modal.addEventListener("click", function(event) {
 		var cancelModal = modal.getElementsByClassName("cancel-modal")[0];
@@ -166,9 +203,9 @@ BookDetail.prototype.rejectChanges = function() {
 BookDetail.prototype.createInput = function(text, isNumber = false) {
 	var element = document.createElement("input");
 	if (isNumber)
-    	element.type = "number";
-    else
-        element.type = "text";
+		element.type = "number";
+	else
+		element.type = "text";
 	element.value = text;
 	element.style.padding = 0;
 	element.classList.add("w3-border-0", "stretchy");

@@ -19,7 +19,11 @@ var loadingCount = 0;
 var setLoading = function(status) {
 	loadingCount = status ? loadingCount + 1 : Math.max(loadingCount - 1, 0);
 	if (loadingCount) {
-		document.getElementById("loading").innerHTML = '<i class="fa fa-spin fa-spinner"></i>';
+		document.getElementById("loading").appendChild((() => {
+			let root = document.createElement("i");
+			root.classList.add("fa", "fa-spin", "fa-spinner");
+			return root;
+		})());
 		document.addEventListener("click", stopEvent, true);
 		document.addEventListener("keyup", stopEvent, true);
 	}
@@ -36,18 +40,21 @@ var mainHtml = String()
 		+ '<div id="modTitle" class="w3-bar-item">The Distributed Library</div>'
 		+ '<div id="loading" class="w3-bar-item w3-right"></div>'
 	+ '</div>'
-	+ '<div id="menu">'
-	+ '</div>'
-	+ '<div id="main" class="w3-main" style="margin-left:250px;margin-top:43px;">'
-	+ '</div>'
+	+ '<div id="menu"></div>'
+	+ '<div id="main" class="w3-main" style="margin-left:250px;margin-top:43px;"></div>'
 	+ '<div id="toast" class="w3-center w3-black"></div>'
-	+ '<div id="login-modal" class="w3-modal w3-animate-opacity">'
-	+ '</div>';
+	+ '<div id="login-modal" class="w3-modal w3-animate-opacity"></div>';
 
-var wrongUrlHtml = String()
-	+ '<header class="w3-container" style="padding-top:22px">'
-		+ '<h5>Url errónea</h5>'
-	+ '</header>';
+var wrongUrlHtml = (() => {
+	let root = document.createElement("header");
+	root.classList.add("w3-container");
+	root.appendChild((() => {
+		let root = document.createElement("h5");
+		root.innerText = "Url errónea";
+		return root;
+	})());
+	return root;
+})();
 
 var baseModule = {
 	init: function() {
@@ -73,8 +80,11 @@ var routing = function() {
 		if (module.title)
 			document.getElementById('modTitle').textContent = module.title;
 	}
-	else
-		document.getElementById("main").innerHTML = wrongUrlHtml;
+	else {
+		while (document.getElementById("main").firstChild)
+			document.getElementById("main").removeChild(document.getElementById("main").firstChild)
+		document.getElementById("main").appendChild(wrongUrlHtml);
+	}
 };
 
 var toast = function(message) {

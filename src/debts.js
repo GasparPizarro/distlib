@@ -2,13 +2,20 @@ import {getDebts} from "./services";
 
 var title = "Debts";
 
-var mainHtml = String()
-	+ '<div class="w3-container">'
-		+ '<ul class="w3-ul" id="debts-list" placeholder="There are no debts">'
-		+ '</ul>'
-	+ '</div>';
-
 var debtsList;
+
+var mainHtml = (() => {
+	let root = document.createElement("div");
+	root.classList.add("w3-container");
+	root.appendChild((() => {
+		debtsList = document.createElement("ul");
+		debtsList.classList.add("w3-ul");
+		debtsList.setAttribute("placeholder", "There are no debts");
+		return debtsList;
+	})());
+	return root;
+})();
+
 
 var loadDebts = function(debts) {
 	while (debtsList.firstChild)
@@ -38,8 +45,9 @@ var loadDebts = function(debts) {
 };
 
 var init = async function(container) {
-	container.innerHTML = mainHtml;
-	debtsList = document.getElementById("debts-list");
+	while (container.firstChild)
+		container.removeChild(container.firstChild);
+	container.appendChild(mainHtml);
 	var debts = await getDebts();
 	loadDebts(debts);
 };

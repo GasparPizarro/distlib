@@ -16,44 +16,148 @@ var view = {
 	booksList: null,
 	paginationButtons: null,
 	showBookModal: null,
+	addBookForm: null
 };
 
-var mainHtml = String()
-	+ '<div class="w3-container">'
-		+ '<ul class="w3-ul" id="books-list" placeholder="There are no books">'
-		+ '</ul>'
-		+ '<div id="pagination-buttons" class="w3-center"></div>'
-		+ '<button id="show-book-modal" class="w3-button w3-black w3-circle" style="padding: 20px; position: fixed; z-index: 1; right: 1em; bottom: 1em;"><i class="fa fa-plus fa-fw"></i></button>'
-	+ '</div>'
-	+ '<div id="book-modal" class="w3-modal w3-animate-opacity">'
-		+ '<div class="w3-modal-content" style="max-width:300px">'
-			+ '<div class="w3-container">'
-				+ '<h3 class="w3-center">New book</h3>'
-				+ '<form id="add-book-form"class="w3-container">'
-					+ '<div class="w3-section">'
-						+ '<label>Title</label>'
-						+ '<input class="w3-input w3-margin-bottom" type="text" name="title" required>'
-						+ '<label>Author</label>'
-						+ '<input class="w3-input w3-margin-bottom" name="author" required>'
-						+ '<label>Year</label>'
-						+ '<input class="w3-input w3-margin-bottom" type="number" name="year" required>'
-						+ '<button class="w3-button w3-block w3-green" type="submit" id="add-book">Add book</button>'
-					+ '</div>'
-				+ '</form>'
-			+ '</div>'
-		+ '</div>'
-	+ '</div>';
+var onAddBook = async function(event) {
+	event.preventDefault();
+	event.stopPropagation();
+	var book = new Book({
+		title: view.addBookForm.querySelector("[name=title]").value,
+		author: view.addBookForm.querySelector("[name=author]").value,
+		year: view.addBookForm.querySelector("[name=year]").value,
+	});
+	try {
+		await book.save();
+		window.dispatchEvent(new CustomEvent("routing"));
+		toast("The book has been added");
+	}
+	catch (err) {
+		toast("Cannot add book");
+	}
+	return false;
+};
+
+var modalNode = (() => {
+	let root = document.createElement('div');
+	root.id = 'book-modal';
+	root.classList.add('w3-modal', 'w3-animate-opacity');
+	root.appendChild((() => {
+		let root = document.createElement('div');
+		root.classList.add('w3-modal-content');
+		root.style.maxWidth = 300;
+		root.appendChild((() => {
+			let root = document.createElement('div');
+			root.classList.add('w3-container');
+			root.appendChild((() => {
+				let root = document.createElement('h3');
+				root.classList.add('w3-center');
+				root.innerText = 'New book';
+				return root;
+			})());
+			root.appendChild((() => {
+				view.addBookForm = document.createElement('form');
+				view.addBookForm.classList.add('w3-container');
+				view.addBookForm.appendChild((() => {
+					let root = document.createElement('div');
+					root.classList.add('w3-section');
+					root.appendChild((() => {
+						let root = document.createElement('label');
+						root.innerText = 'Title';
+						return root;
+					})());
+					root.appendChild((() => {
+						let root = document.createElement('input');
+						root.classList.add('w3-input', 'w3-margin-bottom');
+						root.type = 'text';
+						root.name = 'title';
+						root.required = true;
+						return root;
+					})());
+					root.appendChild((() => {
+						let root = document.createElement('label');
+						root.innerText = 'Author';
+						return root;
+					})());
+					root.appendChild((() => {
+						let root = document.createElement('input');
+						root.classList.add('w3-input', 'w3-margin-bottom');
+						root.type = 'text';
+						root.name = 'author';
+						root.required = true;
+						return root;
+					})());
+					root.appendChild((() => {
+						let root = document.createElement('label');
+						root.innerText = 'Year';
+						return root;
+					})());
+					root.appendChild((() => {
+						let root = document.createElement('input');
+						root.classList.add('w3-input', 'w3-margin-bottom');
+						root.type = 'number';
+						root.name = 'year';
+						root.required = true;
+						return root;
+					})());
+					root.appendChild((() => {
+						let root = document.createElement('button');
+						root.classList.add('w3-button', 'w3-block', 'w3-green');
+						root.type = 'submit';
+						root.id = 'add-book'
+						root.innerText = 'Add book';
+						root.addEventListener('click', onAddBook);
+						return root;
+					})());
+					return root;
+				})());
+				return view.addBookForm;
+			})());
+			return root;
+		})());
+		return root;
+	})());
+	return root;
+})();
+
+var mainHtml = (() => {
+	let root = document.createElement("div");
+	root.classList.add("w3-container");
+	root.appendChild((() => {
+		view.booksList = document.createElement("ul");
+		view.booksList.id = "books-list";
+		view.booksList.classList.add("w3-ul");
+		view.booksList.setAttribute("placeholder", "There are no books");
+		return view.booksList;
+	})());
+	root.appendChild((() => {
+		view.paginationButtons = document.createElement("div");
+		view.paginationButtons.classList.add("w3-center");
+		return view.paginationButtons;
+	})());
+	root.appendChild((() => {
+		view.showBookModal = document.createElement("button");
+		view.showBookModal.classList.add("w3-button", "w3-black", "w3-circle");
+		view.showBookModal.style = "padding: 20px; position: fixed; z-index: 1; right: 1em; bottom: 1em;";
+		view.showBookModal.appendChild((() => {
+			let root = document.createElement("i");
+			root.classList.add("fa", "fa-plus", "fa-fw");
+			return root;
+		})());
+		return view.showBookModal;
+	})());
+	return root;
+})();
 
 var init = async function(container, _, queryParameters) {
 	view.container = container;
-	view.container.innerHTML = mainHtml;
+	while (view.container.firstChild)
+		view.container.removeChild(view.container.firstChild)
+	view.container.appendChild(mainHtml);
 	model.page = queryParameters.page ? parseInt(queryParameters.page) : 1;
-	view.booksList = document.getElementById("books-list");
-	view.paginationButtons = document.getElementById("pagination-buttons");
 	await loadData();
 	render();
-	document.getElementById("show-book-modal").addEventListener("click", showModal);
-	document.getElementById("add-book").addEventListener("click", onAddBook);
+	view.showBookModal.addEventListener("click", showModal);
 };
 
 var loadData = async function() {
@@ -104,28 +208,11 @@ var goToPage = async function(page) {
 	render();
 };
 
-var onAddBook = async function(event) {
-	event.preventDefault();
-	event.stopPropagation();
-	var book = new Book({
-		title: document.querySelector("#add-book-form [name=title]").value,
-		author: document.querySelector("#add-book-form [name=author]").value,
-		year: document.querySelector("#add-book-form [name=year]").value,
-	});
-	try {
-		await book.save();
-		window.dispatchEvent(new CustomEvent("routing"));
-		toast("The book has been added");
-	}
-	catch (err) {
-		toast("Cannot add book");
-	}
-	return false;
-};
 
 var showModal = function(event) {
 	event.preventDefault();
 	event.stopPropagation();
+	view.container.appendChild(modalNode);
 	var modal = document.getElementById('book-modal');
 	modal.style.display = "block";
 	modal.addEventListener("click", hideModal);

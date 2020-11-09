@@ -3,7 +3,7 @@ import * as auth from "./auth";
 
 var oldFetch = window.fetch;
 
-window.fetch = function() {
+window.fetch = async function() {
 	setLoading(true);
 	var newArguments = newArguments = Array.prototype.slice.call(arguments);
 	if (auth.getToken()) {
