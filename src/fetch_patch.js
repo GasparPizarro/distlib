@@ -1,11 +1,10 @@
-import {setLoading, toast}  from "./shell";
 import * as auth from "./auth";
 
-var oldFetch = window.fetch;
+let oldFetch = window.fetch;
 
 window.fetch = async function() {
-	setLoading(true);
-	var newArguments = newArguments = Array.prototype.slice.call(arguments);
+	app.setLoading(true);
+	let newArguments = Array.prototype.slice.call(arguments);
 	if (auth.getToken()) {
 		if (arguments.length <= 1)
 			newArguments.push({});
@@ -16,8 +15,8 @@ window.fetch = async function() {
 	else
 		newArguments = arguments;
 	return oldFetch.apply(null, newArguments).catch(function() {
-		toast("Cannot connect with servers");
+		app.toast("Cannot connect with servers");
 	}).finally(function() {
-		setLoading(false);
+		app.setLoading(false);
 	});
 };

@@ -1,7 +1,6 @@
-import {toast} from "./shell";
 import * as auth from "./auth";
 
-var BookDetail = function(book, {requestable, editable, showOwner} = {}) {
+let BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 	this.book = book;
 	this.requestable = requestable;
 	this.editable = editable;
@@ -22,58 +21,14 @@ var BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 	this.editing = false;
 };
 
-BookDetail.prototype.deleteElement = (() => {
-	let root = document.createElement("div");
-	root.classList.add("w3-modal-content", "w3-card-4", "w3-animate-opacity");
-	root.style.maxWidth = 300;
-	root.appendChild((() => {
-		let root = document.createElement("div");
-		root.classList.add("w3-container");
-		root.appendChild((() => {
-			let root = document.createElement("div");
-			root.classList.add("w3-section");
-			root.appendChild((() => {
-				let root = document.createElement("h3");
-				root.classList.add("w3-center");
-				root.innerText = "Are you sure?";
-				return root;
-			})());
-			root.appendChild((() => {
-				let root = document.createElement("div");
-				root.classList.add("w3-center");
-				root.appendChild((() => {
-					let root = document.createElement("button");
-					root.classList.add("w3-button", "w3-red", "delete-book");
-					root.type = "button";
-					root.innerText = "Delete";
-					return root;
-				})());
-				root.appendChild(document.createTextNode(' '));
-				root.appendChild((() => {
-					let root = document.createElement("button");
-					root.classList.add("w3-button", "w3-green", "cancel-modal");
-					root.type = "button";
-					root.innerText = "Cancel";
-					return root;
-				})());
-				return root;
-			})());
-			return root;
-		})())
-		return root;
-	})());
-	return root;
-})()
-
-
 BookDetail.prototype.render = function(container) {
 	this.view.container = container;
-	var upper = document.createElement("div");
+	let upper = document.createElement("div");
 	this.view.title = document.createElement("span");
 	this.view.title.innerText = this.book.title;
 	if (this.editable)
 		this.view.title.addEventListener("click", this.edit.bind(this));
-	var buttons = document.createElement("div");
+	let buttons = document.createElement("div");
 	buttons.classList.add("w3-right");
 	if (this.editable) {
 		this.view.buttons.delete = document.createElement("button");
@@ -83,7 +38,10 @@ BookDetail.prototype.render = function(container) {
 			root.classList.add('fa', 'fa-times');
 			return root;
 		})());
-		this.view.buttons.delete.addEventListener("click", this.showModal.bind(this));
+		this.view.buttons.delete.addEventListener("click", () => {
+			console.log(this.view.container);
+				this.view.container.dispatchEvent(new CustomEvent("book-delete", {bubbles: true, detail: {book: this.book}}));
+		});
 		buttons.appendChild(this.view.buttons.delete);
 	}
 	if (this.requestable) {
@@ -101,7 +59,7 @@ BookDetail.prototype.render = function(container) {
 	upper.appendChild(this.view.title);
 	upper.appendChild(buttons);
 
-	var lower = document.createElement("div");
+	let lower = document.createElement("div");
 	this.view.author = document.createElement("span");
 	this.view.author.innerText = this.book.author;
 	if (this.editable)
@@ -114,13 +72,13 @@ BookDetail.prototype.render = function(container) {
 	lower.appendChild(document.createTextNode(" | "));
 	lower.appendChild(this.view.year);
 	if (this.book.bearer != null) {
-		var bearer = document.createElement("span");
+		let bearer = document.createElement("span");
 		bearer.classList.add("w3-tag", "w3-right");
 		bearer.textContent = 'Lent to ' + this.book.bearer;
 		lower.appendChild(bearer);
 	}
 	if (this.showOwner) {
-		var owner = document.createElement("span");
+		let owner = document.createElement("span");
 		owner.classList.add("w3-tag", "w3-right");
 		owner.innerText = this.book.owner;
 		lower.appendChild(owner);
@@ -137,9 +95,9 @@ BookDetail.prototype.edit = function(event) {
 	this.view.title.appendChild(this.createInput(this.book.title));
 	this.view.author.innerHTML = '';
 	this.view.author.appendChild(this.createInput(this.book.author));
-	this.view.year.innerHTML = ''
+	this.view.year.innerHTML = '';
 	this.view.year.appendChild(this.createInput(this.book.year.toString(), true));
-	var acceptOnEnter = async (event) => {
+	let acceptOnEnter = async (event) => {
 		if (event.keyCode != 13)
 			return;
 		this.acceptChanges(event);
@@ -170,18 +128,20 @@ BookDetail.prototype.edit = function(event) {
 };
 
 BookDetail.prototype.showModal = function() {
-	var modal = document.createElement("div");
+	console.log(this.view.container);
+	this.view.container.dispatchEvent(new CustomEvent("book-delete", {bubbles: true, detail: {id: 1}}));
+	let modal = document.createElement("div");
 	modal.classList.add("w3-modal");
 	modal.style.display = "block";
 	modal.appendChild(this.deleteElement);
 	this.view.container.appendChild(modal);
 	modal.addEventListener("click", function(event) {
-		var cancelModal = modal.getElementsByClassName("cancel-modal")[0];
+		let cancelModal = modal.getElementsByClassName("cancel-modal")[0];
 		if (event.target == modal || event.target == cancelModal)
 			modal.style.display = "none";
-		return false;
-	});
-	window.addEventListener("keypress", function closeModal(event) {
+			return false;
+		});
+		window.addEventListener("keypress", function closeModal(event) {
 		if (event.keyCode == 27) {
 			modal.style.display = "none";
 			window.removeEventListener("keypress", closeModal);
@@ -201,7 +161,7 @@ BookDetail.prototype.rejectChanges = function() {
 };
 
 BookDetail.prototype.createInput = function(text, isNumber = false) {
-	var element = document.createElement("input");
+	let element = document.createElement("input");
 	if (isNumber)
 		element.type = "number";
 	else
@@ -214,7 +174,7 @@ BookDetail.prototype.createInput = function(text, isNumber = false) {
 
 BookDetail.prototype.requestBook = async function() {
 	await this.book.request(auth.getUsername());
-	toast("An email has been sent to the book's owner");
+	window.app.toast("An email has been sent to the book's owner");
 	this.view.buttons.request.classList.add("w3-disabled");
 };
 
@@ -225,10 +185,10 @@ BookDetail.prototype.acceptChanges = async function() {
 			author: this.view.author.firstChild.value,
 			year: this.view.year.firstChild.value
 		});
-		toast("The book has been updated");
+		window.app.toast("The book has been updated");
 	}
 	catch (err) {
-		toast("There were errors with the update");
+		window.app.toast("There were errors with the update");
 	}
 	finally {
 		this.view.title.innerText = this.book.title;

@@ -4,13 +4,12 @@ import {open} from 'sqlite'
 import multer from 'multer';
 import cors from 'cors';
 import bcrypt from 'bcrypt';
-import socket from "socket.io"
 import {createServer} from 'http';
 import randomstring from 'randomstring';
 
 const app = express();
 var upload = multer();
-app.use(cors());
+app.use(cors({exposedHeaders: '*'}));
 
 const PORT = 5000;
 
@@ -20,15 +19,6 @@ http.listen(8080, "127.0.0.1");
 
 const server = app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`)
-});
-
-var io = socket(http);
-
-io.on("connection", (socket) => {
-    console.log("io's ready");
-    socket.on('chat message', (msg) => {
-        console.log('message: ' + msg);
-    });
 });
 
 app.use(async (req, res, next) => {
@@ -55,6 +45,7 @@ books.get('/', async (req, res) => {
     let page = (req.query.page || 1) - 1;
     let size = req.query.size || 10;
     let rows = await req.db.all("select id, title, author, year from book where owner = ? order by title collate nocase limit ? offset ?", [req.username, size, page * size]);
+    res.set("page-count", Math.floor((await req.db.get("select count(*) from book where owner = ?", [req.username]))["count(*)"] / size));
     res.status(200).json(rows);
 });
 
@@ -266,9 +257,10 @@ app.get("/logout", async (req, res) => {
 });
 
 
-var requireLogin = async function (req, res, next) {
+var requireLogin = async function(req, res, next) {
     if (req.username)
         next();
+        // setTimeout(() => next(), 5000);
     else
         res.status(401).send();
 };

@@ -1,10 +1,10 @@
 import * as services from "./services";
 
-var loginForm;
+let loginForm;
 
-var loginStatus;
+let loginStatus;
 
-var mainHtml = (() => {
+let mainHtml = (() => {
 	let root = document.createElement('div');
 	root.classList.add('w3-modal-content');
 	root.appendChild((() => {
@@ -25,7 +25,7 @@ var mainHtml = (() => {
 					let root = document.createElement('input');
 					root.classList.add('w3-input', 'w3-margin-bottom');
 					root.type = 'text';
-					root.name = 'username'
+					root.name = 'username';
 					root.required = true;
 					return root;
 				})());
@@ -64,29 +64,29 @@ var mainHtml = (() => {
 	return root;
 })();
 
-var username = null;
-var token = null;
+let username = null;
+let token = null;
 
-var onLogin = function() {
+let onLogin = function() {
 	loginForm.reset();
 	window.dispatchEvent(new CustomEvent("routing"));
 };
 
-var login = async function(theUsername, thePassword) {
-	var form = new FormData();
+let login = async function(theUsername, thePassword) {
+	let form = new FormData();
 	form.append("username", theUsername);
 	form.append("password", thePassword);
 	if (document.getElementById("bad-login"))
 		while(loginStatus.firstChild)
 			loginStatus.removeChild(loginStatus.firstChild);
 	try {
-		var response = await fetch(services.apiHost + "/token", {
+		let response = await fetch(services.apiHost + "/token", {
 			method: "POST",
 			body: form,
 		});
 
 		if (response.ok) {
-			var data = await response.json();
+			let data = await response.json();
 			username = theUsername;
 			token = data.token;
 			localStorage.setItem("token", data.token);
@@ -101,12 +101,12 @@ var login = async function(theUsername, thePassword) {
 	}
 };
 
-var wrongCredentials = function() {
+let wrongCredentials = function() {
 	if (!document.getElementById("bad-login"))
 		loginStatus.innerHTML = '<p id="bad-login" class="w3-text-red">Wrong credentials</p>';
 };
 
-var logout = function() {
+let logout = function() {
 	localStorage.removeItem("token");
 	localStorage.removeItem("username");
 	username = null;
@@ -114,7 +114,7 @@ var logout = function() {
 	window.dispatchEvent(new CustomEvent("logout"));
 };
 
-var init = function(container) {
+let init = function(container) {
 	container.appendChild(mainHtml);
 	username = localStorage.getItem("username");
 	token = localStorage.getItem("token");
@@ -124,18 +124,18 @@ var init = function(container) {
 		window.dispatchEvent(new CustomEvent("login"));
 	window.addEventListener('login', onLogin);
 	loginForm.onsubmit = function() {
-		var username = loginForm.querySelector("[name=username]").value;
-		var password = loginForm.querySelector("[name=password]").value;
+		let username = loginForm.querySelector("[name=username]").value;
+		let password = loginForm.querySelector("[name=password]").value;
 		login(username, password);
 		return false;
 	};
 };
 
-var getUsername = function() {
+let getUsername = function() {
 	return username;
 };
 
-var getToken = function() {
+let getToken = function() {
 	return token;
 };
 

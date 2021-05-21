@@ -1,6 +1,6 @@
 import {apiHost} from "../services";
 
-var Loan = function({id = null, book = null, recipient = null, start = null, span = null, status = null}) {
+let Loan = function({id = null, book = null, recipient = null, start = null, span = null, status = null}) {
 	this.id = id;
 	this.book = book;
 	this.recipient = recipient;
@@ -10,15 +10,15 @@ var Loan = function({id = null, book = null, recipient = null, start = null, spa
 };
 
 Loan.all = async function() {
-	var response = await fetch(apiHost + "/loans", {
+	let response = await fetch(apiHost + "/loans", {
 		method: "GET"
 	});
-	var json = await response.json();
+	let json = await response.json();
 	return json.map((datum) => new Loan(datum));
 };
 
 Loan.prototype.accept = async function() {
-	var form = new FormData();
+	let form = new FormData();
 	form.append("status", "accepted");
 	return (await fetch(apiHost + "/loans/" + this.id, {
 		method: "PATCH",
@@ -27,7 +27,7 @@ Loan.prototype.accept = async function() {
 };
 
 Loan.prototype.reject = function() {
-	var form = new FormData();
+	let form = new FormData();
 	form.append("status", "rejected");
 	return fetch(apiHost + "/loans/" + this.id, {
 		method: "PATCH",
@@ -36,7 +36,7 @@ Loan.prototype.reject = function() {
 };
 
 Loan.prototype.finish = function() {
-	var form = new FormData();
+	let form = new FormData();
 	form.append("status", "finished");
 	return fetch(apiHost + "/loans/" + this.id, {
 		method: "PATCH",

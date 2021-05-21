@@ -1,4 +1,4 @@
-var LoanDetail = function(loan) {
+let LoanDetail = function(loan) {
 	this.loan = loan;
 };
 
@@ -6,15 +6,15 @@ LoanDetail.prototype.update = function() {
 	while (this.container.firstChild)
 		this.container.removeChild(this.container.firstChild);
 
-	var upper = document.createElement("div");
+	let upper = document.createElement("div");
 
-	var title = document.createElement("span");
+	let title = document.createElement("span");
 	title.innerText = this.loan.book.title;
 
-	var buttons = document.createElement("div");
+	let buttons = document.createElement("div");
 	buttons.classList.add("w3-right");
 
-	var accept = document.createElement("button");
+	let accept = document.createElement("button");
 	accept.classList.add("w3-button");
 	accept.appendChild((() => {
 		let root = document.createElement("i");
@@ -25,14 +25,14 @@ LoanDetail.prototype.update = function() {
 		accept.addEventListener("click", this.accept.bind(this));
 		accept.title = 'Accept';
 		buttons.appendChild(accept);
-		var reject = document.createElement("button");
+		let reject = document.createElement("button");
 		reject.title = 'Reject';
 		reject.classList.add("w3-button");
 		reject.appendChild((() => {
 			let root = document.createElement("i");
 			root.classList.add("fa", "fa-times");
 			return root;
-		})())
+		})());
 		reject.addEventListener("click", this.reject.bind(this));
 		buttons.appendChild(reject);
 	}
@@ -45,17 +45,17 @@ LoanDetail.prototype.update = function() {
 	upper.appendChild(title);
 	upper.appendChild(buttons);
 
-	var lower = document.createElement("div");
+	let lower = document.createElement("div");
 
-	var recipient = document.createElement("span");
+	let recipient = document.createElement("span");
 	recipient.innerText = this.loan.recipient;
 
-	var time = document.createElement("span");
+	let time = document.createElement("span");
 	if (this.loan.status == 0)
 		time.innerText = this.loan.span + ' weeks';
 	else {
-		var startDate = new Date(this.loan.start);
-		var endDate = new Date(this.loan.start);
+		let startDate = new Date(this.loan.start);
+		let endDate = new Date(this.loan.start);
 		endDate.setDate(startDate.getDate() + this.loan.span * 7);
 		time.innerText = 'Due on ' + endDate.getDate() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getFullYear();
 	}
@@ -74,19 +74,19 @@ LoanDetail.prototype.render = function(container) {
 };
 
 LoanDetail.prototype.accept = async function() {
-	var loan = await this.loan.accept();
+	let loan = await this.loan.accept();
 	this.loan.status = loan.status;
 	this.update();
 };
 
 LoanDetail.prototype.reject = async function() {
-	var loan = await this.loan.reject();
+	let loan = await this.loan.reject();
 	this.loan.status = loan.status;
 	this.container.dispatchEvent(new CustomEvent("reject-loan", {bubbles: true}));
 };
 
 LoanDetail.prototype.finish = async function() {
-	var loan = await this.loan.finish();
+	let loan = await this.loan.finish();
 	this.loan.status = loan.status;
 	this.container.dispatchEvent(new CustomEvent("finish-loan", {bubbles: true}));
 };
