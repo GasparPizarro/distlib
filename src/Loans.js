@@ -19,11 +19,6 @@ let Loans = function() {
 	})();
 };
 
-Loans.prototype.clearLoans = function() {
-	while (this.loansList.firstChild)
-		this.loansList.removeChild(this.loansList.firstChild);
-};
-
 Loans.prototype.loadLoans = function(loans) {
 	for (let i = 0; i < loans.length; i = i + 1) {
 		let loan = loans[i];
@@ -34,11 +29,9 @@ Loans.prototype.loadLoans = function(loans) {
 };
 
 Loans.prototype.init = async function(container) {
-	while (container.firstChild)
-		container.removeChild(container.firstChild);
 	container.appendChild(this.mainHtml);
 	let loans = await Loan.all();
-	this.clearLoans();
+	this.loansList.replaceChildren();
 	this.loadLoans(loans);
 	this.loansList.addEventListener("reject-loan", function(event) {
 		event.target.remove();

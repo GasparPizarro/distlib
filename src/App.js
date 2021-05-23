@@ -26,15 +26,14 @@ let App = function() {
 		root.classList.add("w3-bar", "w3-top", "w3-black", "w3-large", "w3-center");
 		root.style.zIndex = 4;
 		root.appendChild((() => {
-			let root = document.createElement("button");
-			root.id = "the-button";
-			root.classList.add("w3-bar-item", "w3-button", "w3-hide-large", "w3-hover-none", "w3-hover-text-light-grey");
-			root.appendChild((() => {
+			this.sandwichButton = document.createElement("button");
+			this.sandwichButton.classList.add("w3-bar-item", "w3-button", "w3-hide-large", "w3-hover-none", "w3-hover-text-light-grey");
+			this.sandwichButton.appendChild((() => {
 				let root = document.createElement("i");
 				root.classList.add("fa", "fa-bars");
 				return root;
 			})());
-			return root;
+			return this.sandwichButton;
 		})());
 		root.appendChild((() => {
 			this.modTitle = document.createElement("div");
@@ -57,7 +56,7 @@ let App = function() {
 		return root;
 	})();
 
-	this.mainmainHtml = (() => {
+	this.mainHtml = (() => {
 		let root = document.createElement("div");
 		root.id = "main";
 		root.classList.add("w3-main");
@@ -134,30 +133,29 @@ App.prototype.toast = function(message) {
 
 App.prototype.routing = function() {
 	let match = this.router.recognize(location.pathname + location.search + location.hash);
+	this.mainHtml.replaceChildren();
 	if (match) {
 		let module = match[0].handler;
 		let pathParameters = match[0].params;
 		let queryParameters = match.queryParams;
-		module.init(this.mainmainHtml, pathParameters, queryParameters);
+		module.init(this.mainHtml, pathParameters, queryParameters);
 		if (module.title)
 			this.modTitle.textContent = module.title;
 	}
-	else {
-		while (this.mainmainHtml.firstChild)
-			this.mainmainHtml.removeChild(this.mainmainHtml.firstChild);
-		this.mainmainHtml.appendChild(this.wrongUrlHtml);
-	}
+	else
+		this.mainHtml.appendChild(this.wrongUrlHtml);
 };
 
 App.prototype.run = function(theContainer) {
 	this.container = theContainer;
 	this.container.appendChild(this.barHtml);
 	this.container.appendChild(this.menuHtml);
-	this.container.appendChild(this.mainmainHtml);
+	this.container.appendChild(this.mainHtml);
 	this.container.appendChild(this.toastHtml);
 	this.container.appendChild(this.loginModalHtml);
 	let menu = new Menu();
 	menu.init(this.menuHtml);
+	this.sandwichButton.addEventListener("click", menu.onClickSandwich.bind(menu));
 	window.addEventListener("routing", this.routing.bind(this));
 	window.addEventListener("popstate", () => {
 		window.dispatchEvent(new CustomEvent("routing"));
@@ -165,7 +163,7 @@ App.prototype.run = function(theContainer) {
 	window.addEventListener("logout", () => {
 		this.loginModalHtml.style.display = "block";
 		this.modTitle.textContent = "The Distributed Library";
-		this.mainmainHtml.innerHTML = "";
+		this.mainHtml.innerHTML = "";
 	});
 	window.addEventListener("login", this.onLogin.bind(this));
 	auth.init(this.loginModalHtml);

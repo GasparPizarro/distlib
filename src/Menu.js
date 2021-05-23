@@ -15,7 +15,9 @@ let Menu = function() {
 	this.sidebar = (() => {
 		let root = document.createElement("nav");
 		root.classList.add("w3-sidebar", "w3-collapse", "w3-white", "w3-animate-left");
-		root.style = "z-index: 3; width: 250px; display: none;";
+		root.style.zIndex = 3;
+		root.style.width = "250px";
+		root.style.display = "none";
 		root.appendChild(document.createElement("br"));
 		root.appendChild((() => {
 			let root = document.createElement("div");
@@ -120,7 +122,6 @@ Menu.prototype.onClickOverlay = function() {
 Menu.prototype.init = function(container) {
 	container.appendChild(this.sidebar);
 	container.appendChild(this.background);
-	document.getElementById('the-button').addEventListener("click", this.onClickSandwich.bind(this));
 	this.background.addEventListener("click", this.onClickOverlay.bind(this));
 	this.sidebar.querySelectorAll('a:not(#logout)').forEach((element) => {
 		element.addEventListener("click",  function(event) {
@@ -138,8 +139,7 @@ Menu.prototype.init = function(container) {
 		this.menuUsername.textContent = auth.getUsername();
 	});
 	window.addEventListener("logout", () => {
-		while (this.menuUsername.firstChild)
-			this.menuUsername.removeChild(this.menuUsername.firstChild);
+		this.menuUsername.replaceChildren();
 	});
 	window.addEventListener("routing", () => {
 		this.activate(this.actionButtons.childNodes, '/' + location.pathname.substring(1));

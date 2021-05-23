@@ -53,8 +53,7 @@ let Search = function() {
 
 
 Search.prototype.init = async function(container, pathParameters, queryParameters) {
-	while (container.firstChild)
-		container.removeChild(container.firstChild);
+	container.replaceChildren();
 	container.appendChild(this.mainHtml);
 	this.model.query = queryParameters.q;
 	this.model.page = queryParameters.page ? parseInt(queryParameters.page) : 1;
@@ -103,8 +102,7 @@ Search.prototype.render = function() {
 	this.view.booksResult.style.display = "block";
 	this.view.booksResult.innerHTML = "";
 	this.addBooksToView(this.view.booksResult, this.model.books);
-	while (this.view.paginationButtons.firstChild)
-		this.view.paginationButtons.removeChild(this.view.paginationButtons.firstChild);
+	this.view.paginationButtons.replaceChildren();
 	if (this.model.pageCount == 0)
 		return;
 	if (this.model.page > 1) {

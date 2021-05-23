@@ -18,8 +18,7 @@ let Debts = function() {
 
 
 Debts.prototype.loadDebts = function(debts) {
-	while (this.debtsList.firstChild)
-		this.debtsList.removeChild(this.debtsList.firstChild);
+	this.debtsList.replaceChildren();
 	for (let i = 0; i < debts.length; i = i + 1) {
 		let startDate = new Date(debts[i].start);
 		let endDate = new Date(debts[i].start);
@@ -45,8 +44,7 @@ Debts.prototype.loadDebts = function(debts) {
 };
 
 Debts.prototype.init = async function(container) {
-	while (container.firstChild)
-		container.removeChild(container.firstChild);
+	container.replaceChildren();
 	container.appendChild(this.mainHtml);
 	let debts = await getDebts();
 	this.loadDebts(debts);

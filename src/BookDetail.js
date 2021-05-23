@@ -39,8 +39,7 @@ BookDetail.prototype.render = function(container) {
 			return root;
 		})());
 		this.view.buttons.delete.addEventListener("click", () => {
-			console.log(this.view.container);
-				this.view.container.dispatchEvent(new CustomEvent("book-delete", {bubbles: true, detail: {book: this.book}}));
+			this.view.container.dispatchEvent(new CustomEvent("book-delete", {bubbles: true, detail: {book: this.book}}));
 		});
 		buttons.appendChild(this.view.buttons.delete);
 	}

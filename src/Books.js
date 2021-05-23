@@ -28,6 +28,11 @@ let Books = function() {
 			return this.view.booksList;
 		})());
 		root.appendChild((() => {
+			this.view.paginationButtons = document.createElement("div");
+			this.view.paginationButtons.classList.add("w3-center");
+			return this.view.paginationButtons;
+		})());
+		root.appendChild((() => {
 			let root = document.createElement("button");
 			root.classList.add("w3-button", "w3-black", "w3-circle");
 			root.style = "padding: 20px; position: fixed; z-index: 1; right: 1em; bottom: 1em;";
@@ -134,9 +139,9 @@ let Books = function() {
 					return root;
 				})());
 				root.appendChild((() => {
-					let root = document.createElement('form');
-					root.classList.add('w3-container');
-					root.appendChild((() => {
+					this.addBookFormNode = document.createElement('form');
+					this.addBookFormNode.classList.add('w3-container');
+					this.addBookFormNode.appendChild((() => {
 						let root = document.createElement('div');
 						root.classList.add('w3-section');
 						root.appendChild((() => {
@@ -189,7 +194,7 @@ let Books = function() {
 						})());
 						return root;
 					})());
-					return root;
+					return this.addBookFormNode;
 				})());
 				return root;
 			})());
@@ -198,7 +203,6 @@ let Books = function() {
 		return root;
 	})();
 };
-
 
 Books.prototype.onAddBook = async function(event) {
 	event.preventDefault();
@@ -210,15 +214,18 @@ Books.prototype.onAddBook = async function(event) {
 	});
 	try {
 		await book.save();
-		window.dispatchEvent(new CustomEvent("routing"));
 		window.app.toast("The book has been added");
+		await this.loadData();
+		this.render();
+		this.view.container.removeChild(this.addBookModal);
+		this.addBookFormNode.reset();
 	}
 	catch (err) {
+		console.log(err);
 		window.app.toast("Cannot add book");
 	}
 	return false;
 };
-
 
 Books.prototype.init = async function(container, _, queryParameters) {
 	this.view.container = container;
@@ -232,19 +239,19 @@ Books.prototype.init = async function(container, _, queryParameters) {
 			await e.detail.book.delete()
 			window.app.toast("Book is deleted");
 			this.view.container.removeChild(this.deleteBookModal);
+			await this.loadData();
+			this.render();
 		}, {once: true});
 		this.view.container.addEventListener("book-delete-cancel", () => {
 			this.view.container.removeChild(this.deleteBookModal);
 		}, {once: true});
 	});
-	while (this.view.container.firstChild)
-		this.view.container.removeChild(this.view.container.firstChild);
+	this.view.container.replaceChildren();
 	this.view.container.appendChild(this.mainHtml);
 	this.model.page = queryParameters.page ? parseInt(queryParameters.page) : 1;
 	await this.loadData();
 	this.render();
 };
-
 
 Books.prototype.loadData = async function() {
 	let data = await Book.all(this.model.page);
@@ -253,7 +260,8 @@ Books.prototype.loadData = async function() {
 };
 
 Books.prototype.render = function() {
-	this.view.booksList.innerHTML = "";
+	this.view.booksList.replaceChildren();
+	this.view.paginationButtons.replaceChildren();
 	for (let i = 0; i < this.model.books.length; i = i + 1) {
 		let li = document.createElement("li");
 		let book = new Book(this.model.books[i]);
@@ -265,11 +273,70 @@ Books.prototype.render = function() {
 		bookDetail.render(li);
 		this.view.booksList.appendChild(li);
 	}
-	this.view.booksList.addEventListener("delete-book", function(event) {
-		event.target.remove();
-		window.app.toast("The book has been deleted");
-	});
+	this.view.paginationButtons.appendChild(this.getPaginationButtons());
 	window.scrollTo(0, 0);
+};
+
+Books.prototype.getPaginationButtons = function() {
+	let root = document.createElement("div");
+	root.classList.add("w3-bar");
+	if (this.model.page > 1) {
+		root.appendChild((() => {
+			let root = document.createElement("a");
+			root.href = "#";
+			root.classList.add("w3-bar-item", "w3-button");
+			root.textContent = "«";
+			root.href = "/books?page=1";
+			root.addEventListener("click", () => {
+				event.preventDefault();
+				this.goToPage(1);
+			})
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("a");
+			root.href = "#";
+			root.classList.add("w3-bar-item", "w3-button");
+			root.textContent = "<";
+			root.href = "/books?page=" + (this.model.page - 1).toString();
+			root.addEventListener("click", () => {
+				event.preventDefault();
+				this.goToPage(this.model.pageCount - 1);
+			})
+			return root;
+		})());
+	}
+	root.appendChild((() => {
+		let root = document.createElement("a");
+		root.classList.add("w3-bar-item", "w3-button");
+		root.textContent = this.model.page;
+		return root;
+	})());
+	if (this.model.page < this.model.pageCount) {
+		root.appendChild((() => {
+			let root = document.createElement("a");
+			root.classList.add("w3-bar-item", "w3-button");
+			root.textContent = ">";
+			root.href = "/books?page=" + (this.model.page + 1).toString();
+			root.addEventListener("click", () => {
+				event.preventDefault();
+				this.goToPage(this.model.page + 1);
+			})
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("a");
+			root.classList.add("w3-bar-item", "w3-button");
+			root.textContent = "»";
+			root.href = "/books?page=" + this.model.pageCount;
+			root.addEventListener("click", () => {
+				event.preventDefault();
+				this.goToPage(this.model.pageCount);
+			})
+			return root;
+		})());
+	}
+	return root;
 };
 
 Books.prototype.goToPage = async function(page) {

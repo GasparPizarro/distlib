@@ -3,8 +3,7 @@ let LoanDetail = function(loan) {
 };
 
 LoanDetail.prototype.update = function() {
-	while (this.container.firstChild)
-		this.container.removeChild(this.container.firstChild);
+	this.container.replaceChildren();
 
 	let upper = document.createElement("div");
 

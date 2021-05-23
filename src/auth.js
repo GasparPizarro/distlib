@@ -77,8 +77,7 @@ let login = async function(theUsername, thePassword) {
 	form.append("username", theUsername);
 	form.append("password", thePassword);
 	if (document.getElementById("bad-login"))
-		while(loginStatus.firstChild)
-			loginStatus.removeChild(loginStatus.firstChild);
+		loginStatus.replaceChildren();
 	try {
 		let response = await fetch(services.apiHost + "/token", {
 			method: "POST",
@@ -93,9 +92,8 @@ let login = async function(theUsername, thePassword) {
 			localStorage.setItem("username", theUsername);
 			window.dispatchEvent(new CustomEvent("login"));
 		}
-		else {
+		else
 			wrongCredentials();
-		}
 	} catch (err) {
 		wrongCredentials();
 	}

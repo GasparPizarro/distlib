@@ -4,95 +4,172 @@ import {logout, getUsername} from "./auth";
 let Profile = function() {
 	this.title = "Profile";
 
-	this.mainHtml = String()
-		+ '<header class="w3-container" style="padding-top:22px">'
-			+ '<h5 id="username">username</h5>'
-		+ '</header>'
-		+ '<form id="profile-form" class="w3-container w3-half">'
-			+ '<h6>Profile</h6>'
-			+ '<p>'
-				+ '<label class="w3-text">First Name</label>'
-				+ '<input id="first-name" na	me="first-name" class="w3-input" type="text"/>'
-			+ '</p>'
-			+ '<p>'
-				+ '<label class="w3-text">Last Name</label>'
-				+ '<input id="last-name" name="last-name" class="w3-input" type="text"/>'
-			+ '</p>'
-			+ '<button id="update-profile-button" type="button" class="w3-button w3-green">Update profile</button>'
-		+ '</form>'
-		+ '<form id="password-form" class="w3-container w3-half">'
-			+ '<h6>Change password (requires relogin)</h6>'
-			+ '<p>'
-				+ '<label class="w3-text">Old password</label>'
-				+ '<input id="old-password" name="old-password" class="w3-input" type="password"/>'
-			+ '</p>'
-			+ '<p>'
-				+ '<label class="w3-text">New password</label>'
-				+ '<input id="new-password-1" name="new-password-1" class="w3-input" type="password"/>'
-			+ '</p>'
-			+ '<p>'
-				+ '<label class="w3-text">Confirm new password</label>'
-				+ '<input id="new-password-2" name="new-password-2" class="w3-input" type="password"/>'
-			+ '</p>'
-			+ '<button id="update-password-button" type="button" class="w3-button w3-green">Update password</button>'
-		+ '</form>';
+	this.header = (() => {
+		let root = document.createElement("header");
+		root.classList.add("w3-container");
+		root.style.paddingTop = "22px";
+		root.appendChild((() => {
+			this.username = document.createElement("h5");
+			this.username.textContent = "username";
+			return this.username;
+		})());
+		return root;
+	})();
+	this.profileForm = (() => {
+		let root = document.createElement("form");
 
-	this.username = null;
-	this.firstName = null;
-	this.lastName = null;
-	this.updateProfileButton = null;
-	this.updatePasswordButton = null;
+		root.classList.add("w3-container", "w3-half");
+		root.appendChild((() => {
+			let root = document.createElement("h6");
+			root.textContent = "Profile";
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("p");
+			root.appendChild((() => {
+				let root = document.createElement("label");
+				root.textContent = "First name";
+				return root;
+			})());
+			root.appendChild((() => {
+				this.firstName = document.createElement("input");
+				this.firstName.classList.add("w3-input");
+				this.firstName.type = "text";
+				return this.firstName;
+			})());
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("p");
+			root.appendChild((() => {
+				let root = document.createElement("label");
+				root.textContent = "Last name";
+				return root;
+			})());
+			root.appendChild((() => {
+				this.lastName = document.createElement("input");
+				this.lastName.classList.add("w3-input");
+				this.lastName.type = "text";
+				return this.lastName;
+			})());
+			return root;
+		})());
+		root.appendChild((() => {
+			this.updateProfileButton = document.createElement("button");
+			this.updateProfileButton.type = "button";
+			this.updateProfileButton.classList.add("w3-button", "w3-green");
+			this.updateProfileButton.textContent = "Update profile";
+			return this.updateProfileButton;
+		})());
+		return root;
+	})();
 
+	this.passwordForm = (() => {
+		let root = document.createElement("form");
+		root.classList.add("w3-container", "w3-half");
+		root.appendChild((() => {
+			let root = document.createElement("h6");
+			root.textContent = "Change password (requires relogin)";
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("p");
+			root.appendChild((() => {
+				let root = document.createElement("label");
+				root.textContent = "Old password";
+				return root;
+			})());
+			root.appendChild((() => {
+				this.oldPassword = document.createElement("input");
+				this.oldPassword.classList.add("w3-input");
+				this.oldPassword.type = "password";
+				return this.oldPassword;
+			})());
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("p");
+			root.appendChild((() => {
+				let root = document.createElement("label");
+				root.textContent = "New password";
+				return root;
+			})());
+			root.appendChild((() => {
+				this.newPassword1 = document.createElement("input");
+				this.newPassword1.classList.add("w3-input");
+				this.newPassword1.type = "password";
+				return this.newPassword1;
+			})());
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("p");
+			root.appendChild((() => {
+				let root = document.createElement("label");
+				root.textContent = "Confirm new password";
+				return root;
+			})());
+			root.appendChild((() => {
+				this.newPassword2 = document.createElement("input");
+
+				this.newPassword2.classList.add("w3-input");
+				this.newPassword2.type = "password";
+				return this.newPassword2;
+			})());
+			return root;
+		})());
+		root.appendChild((() => {
+			this.updatePasswordButton = document.createElement("button");
+			this.updatePasswordButton.type = "button";
+			this.updatePasswordButton.classList.add("w3-button", "w3-green");
+			this.updatePasswordButton.textContent = "Update password";
+			return this.updatePasswordButton;
+		})());
+		return root;
+	})();
 };
 
 
 Profile.prototype.onClickUpdateProfile = async function(event) {
 	event.preventDefault();
-	let firstName = document.getElementById("first-name").value;
-	let lastName = document.getElementById("last-name").value;
-	await updateProfile({firstName: firstName, lastName: lastName});
+	await updateProfile({firstName: this.firstName.value, lastName: this.lastName.value});
 	window.app.toast("Profile has been updated");
 };
 
 Profile.prototype.onClickUpdatePassword = async function(event) {
 	event.preventDefault();
-	let oldPassword = document.getElementById("old-password").value;
-	let newPassword1 = document.getElementById("new-password-1").value;
-	let newPassword2 = document.getElementById("new-password-2").value;
-	if (oldPassword) {
-		if (newPassword1 != newPassword2) {
+	if (this.oldPassword.value) {
+		if (this.newPassword1.value != this.newPassword2.value) {
 			window.app.toast("New passwords do not match");
 			return;
 		}
 	}
-	let response = await this.updateProfile({oldPassword: oldPassword, newPassword: newPassword2});
+	let response = await updateProfile({oldPassword: this.oldPassword.value, newPassword: this.newPassword2.value});
 	if (response.ok) {
 		window.app.toast("Profile has been updated");
 		logout();
+		// this.passwordForm.reset()
 	}
 	else
 		window.app.toast("Wrong password");
 };
 
 Profile.prototype.init = async function(container) {
-	container.innerHTML = this.mainHtml;
-	this.username = document.getElementById("username");
-	this.firstName = document.getElementById("first-name");
-	this.lastName = document.getElementById("last-name");
-	this.updateProfileButton = document.getElementById("update-profile-button");
-	this.updatePasswordButton = document.getElementById("update-password-button");
+	container.appendChild(this.header);
+	container.appendChild(this.profileForm);
+	container.appendChild(this.passwordForm);
 	this.username.textContent = getUsername();
 	let profile = await getProfile();
 	this.firstName.value = profile.first_name;
 	this.lastName.value = profile.last_name;
-	this.updateProfileButton.addEventListener("click", this.onClickUpdateProfile);
-	this.updatePasswordButton.addEventListener("click", this.onClickUpdatePassword);
-	document.getElementById("profile-form").addEventListener("keypress", (event) => {
+	this.updateProfileButton.addEventListener("click", this.onClickUpdateProfile.bind(this));
+	this.updatePasswordButton.addEventListener("click", this.onClickUpdatePassword.bind(this));
+	this.profileForm.addEventListener("keypress", (event) => {
 		if (event.keyCode != 13)
 			return;
 		this.onClickUpdateProfile(event);
 	});
-	document.getElementById("password-form").addEventListener("keypress", (event) => {
+	this.passwordForm.addEventListener("keypress", (event) => {
 		if (event.keyCode != 13)
 			return;
 		this.onClickUpdatePassword(event);
