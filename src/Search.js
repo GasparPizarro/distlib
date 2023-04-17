@@ -8,7 +8,7 @@ let Search = function() {
 	this.title = "Book search";
 
 	this.model = {
-		query: null,
+		query: '',
 		page: 1,
 		pageCount: 1,
 		books: null
@@ -16,6 +16,7 @@ let Search = function() {
 
 	this.view = {
 		searchBox: null,
+		includeMine: null,
 		booksResult: null,
 		paginationButtons: null
 	};
@@ -28,6 +29,23 @@ let Search = function() {
 			this.view.searchBox.classList.add("w3-input", "w3-margin-top");
 			this.view.searchBox.type = "text";
 			return this.view.searchBox;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("p");
+			root.appendChild((() => {
+				this.view.includeMine = document.createElement("input");
+				this.view.includeMine.classList.add("w3-check");
+				this.view.includeMine.type = "checkbox";
+				this.view.includeMine.checked = false;
+				return this.view.includeMine;
+			})());
+			root.appendChild(document.createTextNode("\n"));
+			root.appendChild((() => {
+				let root = document.createElement("label");
+				root.textContent = "Include mine";
+				return root;
+			})());
+			return root;
 		})());
 		root.appendChild((() => {
 			this.view.booksResult = document.createElement("ul");
@@ -51,6 +69,68 @@ let Search = function() {
 	})();
 };
 
+Search.prototype.getPaginationButtons = function() {
+	let root = document.createElement("div");
+	root.classList.add("w3-bar");
+	if (this.model.page > 1) {
+		root.appendChild((() => {
+			let root = document.createElement("a");
+			root.href = "#";
+			root.classList.add("w3-bar-item", "w3-button");
+			root.textContent = "«";
+			root.href = '?q=' + this.model.query + '&page=1' + (this.view.includeMine.checked ? '&mine=true' : '');
+			root.addEventListener("click", () => {
+				event.preventDefault();
+				this.goToPage(1);
+			})
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("a");
+			root.href = "#";
+			root.classList.add("w3-bar-item", "w3-button");
+			root.textContent = "<";
+			root.href = '?q=' + this.model.query + '&page=' + (this.model.page - 1).toString() + (this.view.includeMine.checked ? '&mine=true' : '');
+			root.addEventListener("click", () => {
+				event.preventDefault();
+				this.goToPage(this.model.page - 1);
+			})
+			return root;
+		})());
+	}
+	root.appendChild((() => {
+		let root = document.createElement("a");
+		root.classList.add("w3-bar-item", "w3-button");
+		root.textContent = this.model.page;
+		return root;
+	})());
+	if (this.model.page < this.model.pageCount) {
+		root.appendChild((() => {
+			let root = document.createElement("a");
+			root.classList.add("w3-bar-item", "w3-button");
+			root.textContent = ">";
+			root.href = '?q=' + this.model.query + '&page=' + (this.model.page + 1).toString() + (this.view.includeMine.checked ? '&mine=true' : '');
+			root.addEventListener("click", () => {
+				event.preventDefault();
+				this.goToPage(this.model.page + 1);
+			})
+			return root;
+		})());
+		root.appendChild((() => {
+			let root = document.createElement("a");
+			root.classList.add("w3-bar-item", "w3-button");
+			root.textContent = "»";
+			root.href = '?q=' + this.model.query + '&page=' + this.model.pageCount + (this.view.includeMine.checked ? '&mine=true' : '');
+			root.addEventListener("click", () => {
+				event.preventDefault();
+				this.goToPage(this.model.pageCount);
+			})
+			return root;
+		})());
+	}
+	return root;
+};
+
 
 Search.prototype.init = async function(container, pathParameters, queryParameters) {
 	container.replaceChildren();
@@ -61,23 +141,29 @@ Search.prototype.init = async function(container, pathParameters, queryParameter
 		event.target.remove();
 		app.toast("The book has been deleted");
 	});
+	this.view.includeMine.addEventListener("click", async () => {
+		history.replaceState({}, null, "/search?q=" + this.model.query + "&page=" + this.model.page + "&mine=" + this.view.includeMine.checked);
+		await this.search();
+		this.render();
+	});
+	this.view.searchBox.value = this.model.query || "";
+	this.view.includeMine.checked = queryParameters.mine == "true";
 	this.view.searchBox.addEventListener("keyup", async (event) => {
 		if (event.keyCode != 13)
 			return;
-		this.model.page = 1;
 		this.model.query = this.view.searchBox.value;
 		history.pushState({}, null, window.location.hash + '?q=' + this.model.query);
-		let results = await this.search();
-		this.render(results);
+		await this.search();
+		this.render();
 	});
-	let results = await this.search();
-	this.render(results);
+	await this.search();
+	this.render();
 };
 
 Search.prototype.search = async function() {
 	if (this.model.query == null)
 		return new Promise(function(){});
-	let data = await Book.search(this.model.query, this.model.page);
+	let data = await Book.search(this.model.query, this.model.page, 10, this.view.includeMine.checked);
 	this.model.books = data.books;
 	this.model.pageCount = data.pageCount;
 };
@@ -86,7 +172,6 @@ Search.prototype.addBooksToView = function(container, books) {
 	for (let i = 0; i < books.length; i = i + 1) {
 		let isMine = books[i].owner == auth.getUsername();
 		let bookDetail = new BookDetail(books[i], {
-			editable: isMine && books[i].bearer == null,
 			requestable: !isMine,
 			showOwner: true
 		});
@@ -100,33 +185,10 @@ Search.prototype.render = function() {
 	if (this.model.books == null)
 		return;
 	this.view.booksResult.style.display = "block";
-	this.view.booksResult.innerHTML = "";
+	this.view.booksResult.replaceChildren();
 	this.addBooksToView(this.view.booksResult, this.model.books);
 	this.view.paginationButtons.replaceChildren();
-	if (this.model.pageCount == 0)
-		return;
-	if (this.model.page > 1) {
-		let previousPageButton = document.createElement("a");
-		previousPageButton.href = '?q=' + this.model.query + '&page=' + (this.model.page - 1);
-		previousPageButton.classList.add('w3-bar-item', 'w3-button');
-		previousPageButton.innerText = '«';
-		previousPageButton.addEventListener("click", (event) => {
-			event.preventDefault();
-			return this.goToPage(this.model.page - 1);
-		});
-		this.view.paginationButtons.appendChild(previousPageButton);
-	}
-	if (this.model.page < this.model.pageCount) {
-		let nextPageButton = document.createElement("a");
-		nextPageButton.href = '?q=' + this.model.query + '&page=' + (this.model.page + 1);
-		nextPageButton.classList.add('w3-bar-item', 'w3-button');
-		nextPageButton.innerText = '»';
-		nextPageButton.addEventListener("click", (event) => {
-			event.preventDefault();
-			return this.goToPage(this.model.page + 1);
-		});
-		this.view.paginationButtons.appendChild(nextPageButton);
-	}
+	this.view.paginationButtons.appendChild(this.getPaginationButtons());
 	this.view.searchBox.blur();
 };
 

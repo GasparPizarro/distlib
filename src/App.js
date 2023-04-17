@@ -133,12 +133,16 @@ App.prototype.toast = function(message) {
 
 App.prototype.routing = function() {
 	let match = this.router.recognize(location.pathname + location.search + location.hash);
-	this.mainHtml.replaceChildren();
+
+	/* Ugly trick to remove event listeners */
+	let clone = this.mainHtml.cloneNode(false);
+	this.mainHtml.replaceWith(clone);
+	this.mainHtml = clone;
+
 	if (match) {
 		let module = match[0].handler;
 		let pathParameters = match[0].params;
-		let queryParameters = match.queryParams;
-		module.init(this.mainHtml, pathParameters, queryParameters);
+		module.init(this.mainHtml, pathParameters, match.queryParams);
 		if (module.title)
 			this.modTitle.textContent = module.title;
 	}

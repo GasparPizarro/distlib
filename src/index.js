@@ -1,12 +1,12 @@
-import {App} from "./App";
+import { App } from "./App";
 import "./fetch_patch";
 import "./css/w3.css";
 import "./css/css.css";
 import "./css/font-awesome.css";
-import "stretchy";
+import * as Stretchy from "stretchy"
 
 
-window.onload = function() {
+window.onload = function () {
 
 	document.body.classList.add("w3-light-grey");
 	document.title = "The Distributed Library";

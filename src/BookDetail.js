@@ -21,6 +21,55 @@ let BookDetail = function(book, {requestable, editable, showOwner} = {}) {
 	this.editing = false;
 };
 
+BookDetail.deleteBookModal = (() => {
+	let root = document.createElement("div");
+	root.classList.add("w3-modal");
+	root.style.display = "block";
+	root.appendChild((() => {
+		let root = document.createElement("div");
+		root.classList.add("w3-modal-content", "w3-card-4", "w3-animate-opacity");
+		root.style.maxWidth = 300;
+		root.appendChild((() => {
+			let root = document.createElement("div");
+			root.classList.add("w3-container");
+			root.appendChild((() => {
+				let root = document.createElement("div");
+				root.classList.add("w3-section");
+				root.appendChild((() => {
+					let root = document.createElement("h3");
+					root.classList.add("w3-center");
+					root.innerText = "Are you sure?";
+					return root;
+				})());
+				root.appendChild((() => {
+					let root = document.createElement("div");
+					root.classList.add("w3-center");
+					root.appendChild((() => {
+						let root = document.createElement("button");
+						root.classList.add("w3-button", "w3-red", "delete-book");
+						root.type = "button";
+						root.innerText = "Delete";
+						return root;
+					})());
+					root.appendChild(document.createTextNode(' '));
+					root.appendChild((() => {
+						let root = document.createElement("button");
+						root.classList.add("w3-button", "w3-green", "cancel-modal");
+						root.type = "button";
+						root.innerText = "Cancel";
+						return root;
+					})());
+					return root;
+				})());
+				return root;
+			})());
+			return root;
+		})());
+		return root;
+	})());
+	return root;
+})();
+
 BookDetail.prototype.render = function(container) {
 	this.view.container = container;
 	let upper = document.createElement("div");
@@ -38,8 +87,15 @@ BookDetail.prototype.render = function(container) {
 			root.classList.add('fa', 'fa-times');
 			return root;
 		})());
-		this.view.buttons.delete.addEventListener("click", () => {
-			this.view.container.dispatchEvent(new CustomEvent("book-delete", {bubbles: true, detail: {book: this.book}}));
+		this.view.buttons.delete.addEventListener("click", async () => {
+			console.log("asdf");
+			let sure = confirm("Are you sure");
+			if (sure) {
+				await this.book.delete();
+				this.view.container.dispatchEvent(new CustomEvent("book-delete", {bubbles: true, detail: {book: this.book}}));
+			}
+			else
+				console.log("Not deleted");
 		});
 		buttons.appendChild(this.view.buttons.delete);
 	}

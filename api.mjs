@@ -97,8 +97,17 @@ books.get("/search", async (req, res) => {
     let query = req.query.q;
     let page = req.query.page;
     let size = req.query.size;
-    let bookCount = (await req.db.get("select count(*) from book where title like ? or author like ?", ["%" + query + "%"]))["count(*)"];
-    let books = await req.db.all("select id, owner, title, author, year from book where title like ? or author like ? limit ? offset ?", ["%" + query + "%", "%" + query + "%", size, (page - 1) * size]);
+    let includeMine = req.query.mine == "true";
+    let bookCount;
+    let books;
+    if (includeMine) {
+        bookCount = (await req.db.get("select count(*) from book where title like ? or author like ?", ["%" + query + "%", "%" + query + "%"]))["count(*)"];
+        books = await req.db.all("select id, owner, title, author, year from book where (title like ? or author like ?) limit ? offset ?", ["%" + query + "%", "%" + query + "%", size, (page - 1) * size]);
+    }
+    else {
+        bookCount = (await req.db.get("select count(*) from book where title like ? or author like ? and owner != ?", ["%" + query + "%", "%" + query + "%", req.username]))["count(*)"];
+        books = await req.db.all("select id, owner, title, author, year from book where (title like ? or author like ?) and owner != ? limit ? offset ?", ["%" + query + "%", "%" + query + "%", req.username, size, (page - 1) * size]);
+    }
     let result = [];
     for (let book of books) {
         let subResult = {
@@ -115,6 +124,7 @@ books.get("/search", async (req, res) => {
         }
         result.push(subResult);
     }
+    res.set("page-count", bookCount / size);
     res.status(200).json(result);
 });
 

@@ -2,21 +2,6 @@ import * as auth from "./auth";
 
 export const apiHost =  "http://" + window.location.hostname + ":5000";
 
-export async function search(query, page = 1, size = 5) {
-	let url = new URL(apiHost + "/books/search");
-	url.search = new URLSearchParams({
-		"q": query,
-		"page": page,
-		"size": size
-	});
-	let response = await fetch(url, {type: "GET"});
-	let data = await response.json();
-	return {
-		books: data,
-		pageCount: parseInt(response.headers.get("page-count"))
-	};
-}
-
 export async function getBooks(page = 0, size = 10) {
 	let url = new URL(apiHost + "/books");
 	url.search = new URLSearchParams({

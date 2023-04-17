@@ -70,9 +70,7 @@ Book.all = async function(page = 0, size = 10) {
 		"page": page,
 		"size": size
 	});
-	let response = await fetch(url, {
-		type: "GET"
-	});
+	let response = await fetch(url, {type: "GET"});
 	let json = await response.json();
 	return {
 		books: json.map((datum) => new Book(datum)),
@@ -80,12 +78,13 @@ Book.all = async function(page = 0, size = 10) {
 	};
 };
 
-Book.search = async function search(query, page = 1, size = 5) {
+Book.search = async function search(query, page = 1, size = 5, mine = true) {
 	let url = new URL(apiHost + "/books/search");
 	url.search = new URLSearchParams({
 		"q": query,
 		"page": page,
-		"size": size
+		"size": size,
+		"mine": mine,
 	});
 	let response = await fetch(url, {type: "GET"});
 	let data = await response.json();

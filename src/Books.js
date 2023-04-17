@@ -58,64 +58,6 @@ let Books = function() {
 		return root;
 	})();
 
-	this.deleteBookModal = (() => {
-		let root = document.createElement("div");
-		let cancelEventListener = (event) => {
-			if (event.target == event.currentTarget)
-				root.dispatchEvent(new CustomEvent("book-delete-cancel", {bubbles: true}));
-		};
-		root.classList.add("w3-modal");
-		root.style.display = "block";
-		root.addEventListener("click", cancelEventListener);
-		root.appendChild((() => {
-			let root = document.createElement("div");
-			root.classList.add("w3-modal-content", "w3-card-4", "w3-animate-opacity");
-			root.style.maxWidth = 300;
-			root.appendChild((() => {
-				let root = document.createElement("div");
-				root.classList.add("w3-container");
-				root.appendChild((() => {
-					let root = document.createElement("div");
-					root.classList.add("w3-section");
-					root.appendChild((() => {
-						let root = document.createElement("h3");
-						root.classList.add("w3-center");
-						root.innerText = "Are you sure?";
-						return root;
-					})());
-					root.appendChild((() => {
-						let root = document.createElement("div");
-						root.classList.add("w3-center");
-						root.appendChild((() => {
-							let root = document.createElement("button");
-							root.classList.add("w3-button", "w3-red", "delete-book");
-							root.type = "button";
-							root.innerText = "Delete";
-							root.addEventListener("click", () => {
-								root.dispatchEvent(new CustomEvent("book-delete-confirm", {bubbles: true, detail: {id: 1}}));
-							});
-							return root;
-						})());
-						root.appendChild(document.createTextNode(' '));
-						root.appendChild((() => {
-							let root = document.createElement("button");
-							root.classList.add("w3-button", "w3-green", "cancel-modal");
-							root.type = "button";
-							root.innerText = "Cancel";
-							root.addEventListener("click", cancelEventListener);
-							return root;
-						})());
-						return root;
-					})());
-					return root;
-				})());
-				return root;
-			})());
-			return root;
-		})());
-		return root;
-	})();
-
 	this.addBookModal = (() => {
 		let root = document.createElement('div');
 		root.addEventListener("click", (event) => {
@@ -229,22 +171,10 @@ Books.prototype.onAddBook = async function(event) {
 
 Books.prototype.init = async function(container, _, queryParameters) {
 	this.view.container = container;
-	this.view.container.addEventListener("book-delete", (e) => {
-		this.view.container.appendChild(this.deleteBookModal);
-		window.addEventListener("keydown", (e) => {
-			if (e.key == "Escape")
-				this.view.container.removeChild(this.deleteBookModal);
-		}, {once: true})
-		this.view.container.addEventListener("book-delete-confirm", async () => {
-			await e.detail.book.delete()
-			window.app.toast("Book is deleted");
-			this.view.container.removeChild(this.deleteBookModal);
-			await this.loadData();
-			this.render();
-		}, {once: true});
-		this.view.container.addEventListener("book-delete-cancel", () => {
-			this.view.container.removeChild(this.deleteBookModal);
-		}, {once: true});
+	this.view.container.addEventListener("book-delete", async 	(e) => {
+		window.app.toast("Book is deleted");
+		await this.loadData();
+		this.render();
 	});
 	this.view.container.replaceChildren();
 	this.view.container.appendChild(this.mainHtml);
@@ -301,7 +231,7 @@ Books.prototype.getPaginationButtons = function() {
 			root.href = "/books?page=" + (this.model.page - 1).toString();
 			root.addEventListener("click", () => {
 				event.preventDefault();
-				this.goToPage(this.model.pageCount - 1);
+				this.goToPage(this.model.page - 1);
 			})
 			return root;
 		})());
