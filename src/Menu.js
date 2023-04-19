@@ -1,7 +1,7 @@
 import * as auth from "./auth";
 import avatar from './img/avatar2.png';
 
-let Menu = function() {
+let Menu = function () {
 	this.logoutbutton;
 	this.menuUsername;
 	this.actionButtons;
@@ -87,7 +87,7 @@ let Menu = function() {
 		root.appendChild((() => {
 			let root = document.createElement("div");
 			root.classList.add("w3-overlay", "w3-hide-large", "w3-animate-opacity");
-			root.style.cursos = "pointer";
+			root.style.cursor = "pointer";
 			root.style.display = "none";
 			return root;
 		})());
@@ -95,7 +95,7 @@ let Menu = function() {
 	})();
 };
 
-Menu.prototype.activate = function(menu, path) {
+Menu.prototype.activate = function (menu, path) {
 	for (let i = 0; i < menu.length; i = i + 1)
 		if (path.startsWith(menu[i].getAttribute('href')))
 			menu[i].classList.add("w3-blue");
@@ -103,7 +103,7 @@ Menu.prototype.activate = function(menu, path) {
 			menu[i].classList.remove("w3-blue");
 };
 
-Menu.prototype.onClickSandwich = function() {
+Menu.prototype.onClickSandwich = function () {
 	if (this.sidebar.style.display == 'block') {
 		this.sidebar.style.display = 'none';
 		this.background.style.display = 'none';
@@ -114,17 +114,17 @@ Menu.prototype.onClickSandwich = function() {
 	}
 };
 
-Menu.prototype.onClickOverlay = function() {
+Menu.prototype.onClickOverlay = function () {
 	this.sidebar.style.display = 'none';
 	this.background.style.display = 'none';
 };
 
-Menu.prototype.init = function(container) {
+Menu.prototype.init = function (container) {
 	container.appendChild(this.sidebar);
 	container.appendChild(this.background);
 	this.background.addEventListener("click", this.onClickOverlay.bind(this));
 	this.sidebar.querySelectorAll('a:not(#logout)').forEach((element) => {
-		element.addEventListener("click",  function(event) {
+		element.addEventListener("click", function (event) {
 			event.preventDefault();
 			history.pushState({}, null, event.target.getAttribute("href"));
 			window.dispatchEvent(new CustomEvent("routing"));
@@ -148,4 +148,4 @@ Menu.prototype.init = function(container) {
 };
 
 
-export {Menu};
+export { Menu };

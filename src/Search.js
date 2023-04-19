@@ -1,10 +1,10 @@
-import {BookDetail} from "./BookDetail";
-import {Book} from "./models/Book";
+import { BookDetail } from "./BookDetail";
+import { Book } from "./models/Book";
 import * as auth from "./auth";
 
 let app = window.app;
 
-let Search = function() {
+let Search = function () {
 	this.title = "Book search";
 
 	this.model = {
@@ -69,7 +69,7 @@ let Search = function() {
 	})();
 };
 
-Search.prototype.getPaginationButtons = function() {
+Search.prototype.getPaginationButtons = function () {
 	let root = document.createElement("div");
 	root.classList.add("w3-bar");
 	if (this.model.page > 1) {
@@ -132,12 +132,12 @@ Search.prototype.getPaginationButtons = function() {
 };
 
 
-Search.prototype.init = async function(container, pathParameters, queryParameters) {
+Search.prototype.init = async function (container, pathParameters, queryParameters) {
 	container.replaceChildren();
 	container.appendChild(this.mainHtml);
 	this.model.query = queryParameters.q;
 	this.model.page = queryParameters.page ? parseInt(queryParameters.page) : 1;
-	this.view.booksResult.addEventListener("delete-book", function(event) {
+	this.view.booksResult.addEventListener("delete-book", function (event) {
 		event.target.remove();
 		app.toast("The book has been deleted");
 	});
@@ -160,15 +160,16 @@ Search.prototype.init = async function(container, pathParameters, queryParameter
 	this.render();
 };
 
-Search.prototype.search = async function() {
+Search.prototype.search = async function () {
 	if (this.model.query == null)
-		return new Promise(function(){});
+		return new Promise(function () { });
 	let data = await Book.search(this.model.query, this.model.page, 10, this.view.includeMine.checked);
+	console.log(data);
 	this.model.books = data.books;
 	this.model.pageCount = data.pageCount;
 };
 
-Search.prototype.addBooksToView = function(container, books) {
+Search.prototype.addBooksToView = function (container, books) {
 	for (let i = 0; i < books.length; i = i + 1) {
 		let isMine = books[i].owner == auth.getUsername();
 		let bookDetail = new BookDetail(books[i], {
@@ -181,7 +182,7 @@ Search.prototype.addBooksToView = function(container, books) {
 	}
 };
 
-Search.prototype.render = function() {
+Search.prototype.render = function () {
 	if (this.model.books == null)
 		return;
 	this.view.booksResult.style.display = "block";
@@ -192,7 +193,7 @@ Search.prototype.render = function() {
 	this.view.searchBox.blur();
 };
 
-Search.prototype.goToPage = async function(page) {
+Search.prototype.goToPage = async function (page) {
 	this.model.page = page;
 	history.pushState({}, null, "/search?q=" + this.model.query + "&page=" + this.model.page);
 	let results = await this.search();
@@ -200,4 +201,4 @@ Search.prototype.goToPage = async function(page) {
 };
 
 
-export {Search};
+export { Search };

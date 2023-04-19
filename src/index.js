@@ -3,7 +3,7 @@ import "./fetch_patch";
 import "./css/w3.css";
 import "./css/css.css";
 import "./css/font-awesome.css";
-import * as Stretchy from "stretchy"
+import * as Stretchy from "stretchy";
 
 
 window.onload = function () {

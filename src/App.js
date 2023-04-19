@@ -1,13 +1,13 @@
 import RouteRecognizer from "route-recognizer";
 import * as auth from "./auth";
-import {Books} from "./Books";
-import {Search} from "./Search";
-import {Loans} from "./Loans";
-import {Debts} from "./Debts";
-import {Profile} from "./Profile";
-import {Menu} from "./Menu";
+import { Books } from "./Books";
+import { Search } from "./Search";
+import { Loans } from "./Loans";
+import { Debts } from "./Debts";
+import { Profile } from "./Profile";
+import { Menu } from "./Menu";
 
-let App = function() {
+let App = function () {
 	this.router = new RouteRecognizer();
 	this.loadingCount = 0;
 	this.wrongUrlHtml = (() => {
@@ -86,27 +86,27 @@ let App = function() {
 	})();
 
 	this.baseModule = {
-		init: function() {
+		init: function () {
 			history.pushState({}, null, '/search');
 			window.dispatchEvent(new CustomEvent("routing"));
 		}
 	};
 
 	this.logoutModule = {
-		init: function() {
+		init: function () {
 			auth.logout();
 			history.replaceState({}, null, '/');
 		}
 	};
 
 	this.routes = [
-		{path: '', handler: this.baseModule},
-		{path: '/search', handler: new Search()},
-		{path: '/loans', handler: new Loans()},
-		{path: '/books', handler: new Books()},
-		{path: '/debts', handler: new Debts()},
-		{path: '/profile', handler: new Profile()},
-		{path: '/logout', handler: this.logoutModule}
+		{ path: '', handler: this.baseModule },
+		{ path: '/search', handler: new Search() },
+		{ path: '/loans', handler: new Loans() },
+		{ path: '/books', handler: new Books() },
+		{ path: '/debts', handler: new Debts() },
+		{ path: '/profile', handler: new Profile() },
+		{ path: '/logout', handler: this.logoutModule }
 	];
 
 	this.routes.forEach((route) => {
@@ -114,7 +114,7 @@ let App = function() {
 	});
 };
 
-App.prototype.setLoading = function(status) {
+App.prototype.setLoading = function (status) {
 	this.loadingCount = status ? this.loadingCount + 1 : Math.max(this.loadingCount - 1, 0);
 	if (this.loadingCount && !this.loadingNode.hasChildNodes())
 		this.loadingNode.appendChild(this.loadingHtml);
@@ -123,7 +123,7 @@ App.prototype.setLoading = function(status) {
 };
 
 
-App.prototype.toast = function(message) {
+App.prototype.toast = function (message) {
 	this.toastHtml.textContent = message;
 	this.toastHtml.style.display = "block";
 	setTimeout(() => {
@@ -131,7 +131,7 @@ App.prototype.toast = function(message) {
 	}, 3000);
 };
 
-App.prototype.routing = function() {
+App.prototype.routing = function () {
 	let match = this.router.recognize(location.pathname + location.search + location.hash);
 
 	/* Ugly trick to remove event listeners */
@@ -150,7 +150,7 @@ App.prototype.routing = function() {
 		this.mainHtml.appendChild(this.wrongUrlHtml);
 };
 
-App.prototype.run = function(theContainer) {
+App.prototype.run = function (theContainer) {
 	this.container = theContainer;
 	this.container.appendChild(this.barHtml);
 	this.container.appendChild(this.menuHtml);
@@ -174,9 +174,9 @@ App.prototype.run = function(theContainer) {
 	window.dispatchEvent(new CustomEvent("routing"));
 };
 
-App.prototype.onLogin = function() {
+App.prototype.onLogin = function () {
 	this.loginModalHtml.style.display = "none";
 };
 
 
-export {App};
+export { App };
